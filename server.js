@@ -3,8 +3,7 @@ var app = express()
 const PORT = 3000
 
 app.get('/', (request, response) => {
-    console.log(request.url)
-    response.send('Today in Destiny')
+    response.sendFile(__dirname + '/public/home.html')
 })
 
 app.listen(PORT, error => {
