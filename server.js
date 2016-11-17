@@ -1,14 +1,13 @@
-var http = require('http')
+var express = require('express')
+var app = express()
 const PORT = 3000
 
-var requestHandler = (request, response) => {
+app.get('/', (request, response) => {
     console.log(request.url)
-    response.end("Today in Destiny")
-}
+    response.send('Today in Destiny')
+})
 
-var server = http.createServer(requestHandler)
-
-server.listen(PORT, error => {
+app.listen(PORT, error => {
     if (error) {
         return console.log("An error occurred.", error)
     }
