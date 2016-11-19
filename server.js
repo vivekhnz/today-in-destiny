@@ -1,9 +1,15 @@
-var express = require('express')
-var app = express()
+var Express = require('express')
+var React = require('react')
+var ReactDOM = require('react-dom/server')
+var App = require('./app/components/App.js')
+
+var app = Express()
 const PORT = 3000
 
 app.get('/', (request, response) => {
-    response.sendFile(__dirname + '/public/home.html')
+    var element = React.createElement(App)
+    var markup = ReactDOM.renderToString(element)
+    response.send(markup)
 })
 
 app.listen(PORT, error => {
