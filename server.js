@@ -4,7 +4,7 @@ var ReactDOM = require('react-dom/server')
 var App = require('./app/components/App.js')
 
 var app = Express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
 app.get('/', (request, response) => {
     var element = React.createElement(App)
