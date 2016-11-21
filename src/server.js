@@ -1,20 +1,21 @@
-var Express = require('express');
-var React = require('react');
-var ReactDOM = require('react-dom/server');
-var swig = require('swig');
-var App = require('./app/components/App.js');
+import Express from 'express';
+import React from 'react';
+import ReactDOM from 'react-dom/server';
+import swig from 'swig';
+import path from 'path';
+
+import App from './app/components/App.js';
 
 var app = Express();
 const PORT = process.env.PORT || 3000;
 
-app.use('/bundle.js', (request, response) => {
-    response.sendFile(__dirname + '/public/js/bundle.js');
-});
+app.use(Express.static(path.join(__dirname, 'public')));
 
 app.use('/', (request, response) => {
     var element = React.createElement(App);
     var html = ReactDOM.renderToString(element);
-    var page = swig.renderFile('views/index.html', { html: html });
+    var page = swig.renderFile(
+        __dirname + '/views/index.html', { html: html });
     response.setHeader('Content-Type', 'text/html');
     response.end(page);
 });
