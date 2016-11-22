@@ -1,8 +1,11 @@
 import gulp from 'gulp';
+import gulpif from 'gulp-if';
 import path from 'path';
 import babel from 'gulp-babel';
 import browserify from 'browserify';
 import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
+import uglify from 'gulp-uglify';
 
 var config = {
     srcDir: 'src',
@@ -14,6 +17,8 @@ var config = {
     },
     bundles: {}
 }
+
+var production = process.env.NODE_ENV === 'production';
 
 config.bundles.app = {
     entry: path.join(config.outDir, 'app/main.js'),
@@ -42,6 +47,8 @@ function bundle({ entry, require, external, output }) {
     return bundler.bundle()
         .on('error', error => console.error(error))
         .pipe(source(output))
+        .pipe(buffer())
+        .pipe(gulpif(production, uglify({ mangle: false })))
         .pipe(gulp.dest(config.outDir));
 }
 
