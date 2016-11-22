@@ -10,17 +10,17 @@ class Advisor extends React.Component {
                 <ul>
                     {
                         this.props.items
-                        ? this.props.items.map(
-                            item => <li key={item}>{item}</li>)
-                        : null
+                            ? this.props.items.map((item, i) =>
+                                <li key={i}>{item}</li>)
+                            : null
                     }
                 </ul>
                 <ul>
                     {
                         this.props.modifiers
-                        ? this.props.modifiers.map(
-                            modifier => <li key={modifier}>{modifier}</li>)
-                        : null
+                            ? this.props.modifiers.map((modifier, i) =>
+                                <li key={i}>{modifier}</li>)
+                            : null
                     }
                 </ul>
             </div>

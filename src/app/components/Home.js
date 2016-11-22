@@ -1,7 +1,77 @@
 import React from 'react';
-import Advisor from './Advisor'
+import AdvisorGroup from './AdvisorGroup';
+import Advisor from './Advisor';
 
 class Home extends React.Component {
+    constructor(props) {
+        super(props);
+
+        const events = [
+            {
+                type: "Agent of the Nine",
+                name: "Xûr has arrived...",
+                timeRemaining: "22h 23m",
+                items: [
+                    "Hard Light",
+                    "An Insurmountable Skullfort",
+                    "Young Ahamkara's Spine",
+                    "Apotheosis Veil",
+                    "Three of Coins"
+                ]
+            },
+            {
+                type: "Trials of Osiris",
+                name: "The Burning Shrine",
+                timeRemaining: "2d 22h 23m"
+            }
+        ];
+        const today = [
+            {
+                type: "Daily Story Mission",
+                name: "Enemy of My Enemy",
+                timeRemaining: "22h 23m"
+            },
+            {
+                type: "Daily Crucible Playlist",
+                name: "Control",
+                timeRemaining: "22h 23m"
+            }
+        ];
+        const thisWeek = [
+            {
+                type: "Raid",
+                name: "Wrath of the Machine",
+                timeRemaining: "2d 22h 23m",
+                modifiers: ["Vosik Challenge"]
+            },
+            {
+                type: "Nightfall Strike",
+                name: "The Wretched Eye",
+                timeRemaining: "2d 22h 23m",
+                modifiers: ["Epic", "Arc Burn", "Brawler", "Ironclad", "Exposure"]
+            },
+            {
+                type: "Heroic Strike Playlist",
+                name: "SIVA Crisis Heroic",
+                timeRemaining: "2d 22h 23m",
+                modifiers: ["Heroic", "Specialist", "Exposure", "Airborne"]
+            },
+            {
+                type: "Weekly Crucible Playlist",
+                name: "Inferno Supremacy",
+                timeRemaining: "2d 22h 23m"
+            },
+            {
+                type: "Raid",
+                name: "King's Fall",
+                timeRemaining: "2d 22h 23m",
+                modifiers: ["Warpriest Challenge"]
+            }
+        ];
+
+        this.state = { events, today, thisWeek };
+    }
+
     render() {
         return (
             <div>
@@ -15,85 +85,9 @@ class Home extends React.Component {
                         <p>18</p>
                     </div>
                 </div>
-                <div>
-                    <p>Events</p>
-                    <ul>
-                        <li>
-                            <Advisor type="Agent of the Nine"
-                                     name="Xûr has arrived..."
-                                     timeRemaining="22h 23m"
-                                     items={[
-                                         "Hard Light",
-                                         "An Insurmountable Skullfort",
-                                         "Young Ahamkara's Spine",
-                                         "Apotheosis Veil",
-                                         "Three of Coins"]} />
-                        </li>
-                        <li>
-                            <Advisor type="Trials of Osiris"
-                                     name="The Burning Shrine"
-                                     timeRemaining="2d 22h 23m" />
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <p>Today</p>
-                    <ul>
-                        <li>
-                            <Advisor type="Daily Story Mission"
-                                     name="Enemy of My Enemy"
-                                     timeRemaining="22h 23m" />
-                        </li>
-                        <li>
-                            <Advisor type="Daily Crucible Playlist"
-                                     name="Control"
-                                     timeRemaining="22h 23m" />
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <p>This Week</p>
-                    <ul>
-                        <li>
-                            <Advisor type="Raid"
-                                     name="Wrath of the Machine"
-                                     timeRemaining="2d 22h 23m"
-                                     modifiers={["Vosik Challenge"]} />
-                        </li>
-                        <li>
-                            <Advisor type="Nightfall Strike"
-                                     name="The Wretched Eye"
-                                     timeRemaining="2d 22h 23m"
-                                     modifiers={[
-                                         "Epic",
-                                         "Arc Burn",
-                                         "Brawler",
-                                         "Ironclad",
-                                         "Exposure"]} />
-                        </li>
-                        <li>
-                            <Advisor type="Heroic Strike Playlist"
-                                     name="SIVA Crisis Heroic"
-                                     timeRemaining="2d 22h 23m"
-                                     modifiers={[
-                                         "Heroic",
-                                         "Specialist",
-                                         "Exposure",
-                                         "Airborne"]} />
-                        </li>
-                        <li>
-                            <Advisor type="Weekly Crucible Playlist"
-                                     name="Inferno Supremacy"
-                                     timeRemaining="2d 22h 23m" />
-                        </li>
-                        <li>
-                            <Advisor type="Raid"
-                                     name="King's Fall"
-                                     timeRemaining="2d 22h 23m"
-                                     modifiers={["Warpriest Challenge"]} />
-                        </li>
-                    </ul>
-                </div>
+                <AdvisorGroup name="Events" advisors={this.state.events} />
+                <AdvisorGroup name="Today" advisors={this.state.today} />
+                <AdvisorGroup name="This Week" advisors={this.state.thisWeek} />
             </div>
         );
     };
