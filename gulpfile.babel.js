@@ -18,7 +18,7 @@ var config = {
     outDir: 'build',
     
     babel: {
-        presets: ['es2015']
+        presets: ['es2015', 'react']
     },
     browserify: {
         entry: 'app/main.js',

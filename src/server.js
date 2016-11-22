@@ -12,8 +12,7 @@ const PORT = process.env.PORT || 3000;
 app.use(Express.static(path.join(__dirname, 'public')));
 
 app.use('/', (request, response) => {
-    var element = React.createElement(App);
-    var html = ReactDOM.renderToString(element);
+    var html = ReactDOM.renderToString(<App/>);
     var page = swig.renderFile(
         __dirname + '/views/index.html', { html: html });
     response.setHeader('Content-Type', 'text/html');
