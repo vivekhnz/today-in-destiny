@@ -7,7 +7,7 @@ import source from 'vinyl-source-stream';
 var config = {
     srcDir: 'src',
     outDir: 'build',
-    appDependencies: ['react', 'react-dom'],
+    appDependencies: ['react', 'react-dom', 'react-router'],
 
     babel: {
         presets: ['es2015', 'react']
@@ -46,14 +46,14 @@ function bundle({ entry, require, external, output }) {
 }
 
 gulp.task('babel', () => {
-    gulp.src(files(config.srcDir, "js"))
+    return gulp.src(files(config.srcDir, "js"))
         .on('error', error => console.error(error))
         .pipe(babel(config.babel))
         .pipe(gulp.dest(config.outDir));
 });
 
 gulp.task('views', () => copy('views'));
-gulp.task('browserify', () => bundle(config.bundles.app));
-gulp.task('browserify-vendor', () => bundle(config.bundles.vendor));
+gulp.task('browserify', ['babel'], () => bundle(config.bundles.app));
+gulp.task('browserify-vendor', ['babel'], () => bundle(config.bundles.vendor));
 
 gulp.task('default', ['babel', 'views', 'browserify', 'browserify-vendor']);
