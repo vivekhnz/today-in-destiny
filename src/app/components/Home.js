@@ -1,4 +1,5 @@
 import React from 'react';
+import Advisor from './Advisor'
 
 class Home extends React.Component {
     render() {
@@ -18,21 +19,20 @@ class Home extends React.Component {
                     <p>Events</p>
                     <ul>
                         <li>
-                            <p>Agent of the Nine</p>
-                            <p>Xûr has arrived...</p>
-                            <p>22h 23m</p>
-                            <ul>
-                                <li />
-                                <li />
-                                <li />
-                                <li />
-                                <li />
-                            </ul>
+                            <Advisor type="Agent of the Nine"
+                                     name="Xûr has arrived..."
+                                     timeRemaining="22h 23m"
+                                     items={[
+                                         "Hard Light",
+                                         "An Insurmountable Skullfort",
+                                         "Young Ahamkara's Spine",
+                                         "Apotheosis Veil",
+                                         "Three of Coins"]} />
                         </li>
                         <li>
-                            <p>Trials of Osiris</p>
-                            <p>The Burning Shrine</p>
-                            <p>2d 22h 23m</p>
+                            <Advisor type="Trials of Osiris"
+                                     name="The Burning Shrine"
+                                     timeRemaining="2d 22h 23m" />
                         </li>
                     </ul>
                 </div>
@@ -40,14 +40,14 @@ class Home extends React.Component {
                     <p>Today</p>
                     <ul>
                         <li>
-                            <p>Daily Story Mission</p>
-                            <p>Enemy of My Enemy</p>
-                            <p>22h 23m</p>
+                            <Advisor type="Daily Story Mission"
+                                     name="Enemy of My Enemy"
+                                     timeRemaining="22h 23m" />
                         </li>
                         <li>
-                            <p>Daily Crucible Playlist</p>
-                            <p>Control</p>
-                            <p>22h 23m</p>
+                            <Advisor type="Daily Crucible Playlist"
+                                     name="Control"
+                                     timeRemaining="22h 23m" />
                         </li>
                     </ul>
                 </div>
@@ -55,48 +55,42 @@ class Home extends React.Component {
                     <p>This Week</p>
                     <ul>
                         <li>
-                            <p>Raid</p>
-                            <p>Wrath of the Machine</p>
-                            <p>2d 22h 23m</p>
-                            <ul>
-                                <li>Vosik Challenge</li>
-                            </ul>
+                            <Advisor type="Raid"
+                                     name="Wrath of the Machine"
+                                     timeRemaining="2d 22h 23m"
+                                     modifiers={["Vosik Challenge"]} />
                         </li>
                         <li>
-                            <p>Nightfall Strike</p>
-                            <p>The Wretched Eye</p>
-                            <p>2d 22h 23m</p>
-                            <ul>
-                                <li>Epic</li>
-                                <li>Arc Burn</li>
-                                <li>Brawler</li>
-                                <li>Ironclad</li>
-                                <li>Exposure</li>
-                            </ul>
+                            <Advisor type="Nightfall Strike"
+                                     name="The Wretched Eye"
+                                     timeRemaining="2d 22h 23m"
+                                     modifiers={[
+                                         "Epic",
+                                         "Arc Burn",
+                                         "Brawler",
+                                         "Ironclad",
+                                         "Exposure"]} />
                         </li>
                         <li>
-                            <p>Heroic Strike Playlist</p>
-                            <p>SIVA Crisis Heroic</p>
-                            <p>2d 22h 23m</p>
-                            <ul>
-                                <li>Heroic</li>
-                                <li>Specialist</li>
-                                <li>Exposure</li>
-                                <li>Airborne</li>
-                            </ul>
+                            <Advisor type="Heroic Strike Playlist"
+                                     name="SIVA Crisis Heroic"
+                                     timeRemaining="2d 22h 23m"
+                                     modifiers={[
+                                         "Heroic",
+                                         "Specialist",
+                                         "Exposure",
+                                         "Airborne"]} />
                         </li>
                         <li>
-                            <p>Weekly Crucible Playlist</p>
-                            <p>Inferno Supremacy</p>
-                            <p>2d 22h 23m</p>
+                            <Advisor type="Weekly Crucible Playlist"
+                                     name="Inferno Supremacy"
+                                     timeRemaining="2d 22h 23m" />
                         </li>
                         <li>
-                            <p>Raid</p>
-                            <p>King's Fall</p>
-                            <p>2d 22h 23m</p>
-                            <ul>
-                                <li>Warpriest Challenge</li>
-                            </ul>
+                            <Advisor type="Raid"
+                                     name="King's Fall"
+                                     timeRemaining="2d 22h 23m"
+                                     modifiers={["Warpriest Challenge"]} />
                         </li>
                     </ul>
                 </div>
