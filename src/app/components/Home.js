@@ -1,4 +1,5 @@
 import React from 'react';
+import Header from './Header';
 import AdvisorGroup from './AdvisorGroup';
 import Advisor from './Advisor';
 
@@ -74,23 +75,18 @@ class Home extends React.Component {
                 { name: "Events", advisors: events },
                 { name: "Today", advisors: today },
                 { name: "This Week", advisors: thisWeek }
-            ]
+            ],
+            date: {
+                month: "Nov",
+                day: 18
+            }
         };
     }
 
     render() {
         return (
             <div>
-                <div>
-                    <div>
-                        <p>Today in</p>
-                        <p>Destiny</p>
-                    </div>
-                    <div>
-                        <p>Nov</p>
-                        <p>18</p>
-                    </div>
-                </div>
+                <Header date={this.state.date} />
                 {
                     this.state.advisorGroups
                         ? this.state.advisorGroups.map((group, i) =>
