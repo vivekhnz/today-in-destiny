@@ -69,7 +69,13 @@ class Home extends React.Component {
             }
         ];
 
-        this.state = { events, today, thisWeek };
+        this.state = {
+            advisorGroups: [
+                { name: "Events", advisors: events },
+                { name: "Today", advisors: today },
+                { name: "This Week", advisors: thisWeek }
+            ]
+        };
     }
 
     render() {
@@ -85,9 +91,14 @@ class Home extends React.Component {
                         <p>18</p>
                     </div>
                 </div>
-                <AdvisorGroup name="Events" advisors={this.state.events} />
-                <AdvisorGroup name="Today" advisors={this.state.today} />
-                <AdvisorGroup name="This Week" advisors={this.state.thisWeek} />
+                {
+                    this.state.advisorGroups
+                        ? this.state.advisorGroups.map((group, i) =>
+                            <AdvisorGroup key={i}
+                                name={group.name}
+                                advisors={group.advisors} />)
+                        : null
+                }
             </div>
         );
     };
