@@ -10,7 +10,7 @@ import uglify from 'gulp-uglify';
 var config = {
     srcDir: 'src',
     outDir: 'build',
-    appDependencies: ['react', 'react-dom', 'react-router'],
+    appDependencies: ['react', 'react-dom', 'react-router', 'alt'],
 
     babel: {
         presets: ['es2015', 'react']
