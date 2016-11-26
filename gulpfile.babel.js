@@ -10,7 +10,10 @@ import uglify from 'gulp-uglify';
 var config = {
     srcDir: 'src',
     outDir: 'build',
-    appDependencies: ['react', 'react-dom', 'react-router', 'alt'],
+    appDependencies: [
+        'react', 'react-dom', 'react-router',
+        'alt', 'alt-container', 'iso'
+    ],
 
     babel: {
         presets: ['es2015', 'react']
@@ -23,7 +26,7 @@ var production = process.env.NODE_ENV === 'production';
 config.bundles.app = {
     entry: path.join(config.outDir, 'app/main.js'),
     external: config.appDependencies,
-    output: 'public/app.bundle.js'  
+    output: 'public/app.bundle.js'
 };
 config.bundles.vendor = {
     require: config.appDependencies,
