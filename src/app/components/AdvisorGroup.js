@@ -20,6 +20,6 @@ class AdvisorGroup extends React.Component {
             </div>
         );
     };
-}
+};
 
 export default AdvisorGroup;
