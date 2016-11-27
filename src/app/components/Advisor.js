@@ -4,9 +4,9 @@ class Advisor extends React.Component {
     render() {
         return (
             <div>
-                <p>{this.props.type}</p>
-                <p>{this.props.name}</p>
-                <p>{this.props.timeRemaining}</p>
+                <p className="advisorType">{this.props.type}</p>
+                <p className="advisorName">{this.props.name}</p>
+                <p className="advisorTimeRemaining">{this.props.timeRemaining}</p>
                 <ul>
                     {
                         this.props.items
@@ -19,7 +19,7 @@ class Advisor extends React.Component {
                     {
                         this.props.modifiers
                             ? this.props.modifiers.map((modifier, i) =>
-                                <li key={i}>{modifier}</li>)
+                                <li key={i} className="advisorModifiers">{modifier}</li>)
                             : null
                     }
                 </ul>

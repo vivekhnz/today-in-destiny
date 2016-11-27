@@ -5,7 +5,7 @@ class AdvisorGroup extends React.Component {
     render() {
         return (
             <div>
-                <p>{this.props.name}</p>
+                <p className="groupHeader">{this.props.name}</p>
                 {
                     this.props.advisors
                         ? this.props.advisors.map((advisor, i) =>

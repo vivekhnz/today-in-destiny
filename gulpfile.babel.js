@@ -63,7 +63,13 @@ gulp.task('babel', () => {
 });
 
 gulp.task('views', () => copy('views'));
+gulp.task('fonts', () => copy('public/fonts'));
+gulp.task('stylesheets', () => copy('public/stylesheets'));
 gulp.task('browserify', ['babel'], () => bundle(config.bundles.app));
 gulp.task('browserify-vendor', ['babel'], () => bundle(config.bundles.vendor));
 
-gulp.task('default', ['babel', 'views', 'browserify', 'browserify-vendor']);
+gulp.task('default', [
+    'babel',
+    'views', 'fonts', 'stylesheets',
+    'browserify', 'browserify-vendor'
+]);

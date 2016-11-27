@@ -5,12 +5,12 @@ class Header extends React.Component {
         return (
             <div>
                 <div>
-                    <p>Today in</p>
-                    <p>Destiny</p>
+                    <p className="headerLine1">Today in</p>
+                    <p className="headerLine2">Destiny</p>
                 </div>
                 <div>
-                    <p>{this.props.date.month}</p>
-                    <p>{this.props.date.day}</p>
+                    <p className="dateMonth">{this.props.date.month}</p>
+                    <p className="dateDay">{this.props.date.day}</p>
                 </div>
             </div>
         );

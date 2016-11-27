@@ -1,0 +1,58 @@
+@font-face {
+    font-family: 'bebas_neuebold';
+    src: url('../fonts/bebasneue_bold-webfont.woff2') format('woff2'),
+         url('../fonts/bebasneue_bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'bebas_neue_regularregular';
+    src: url('../fonts/bebasneue_regular-webfont.woff2') format('woff2'),
+         url('../fonts/bebasneue_regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'benderbold';
+    src: url('../fonts/bender_bold-webfont.woff2') format('woff2'),
+         url('../fonts/bender_bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.headerLine1 {
+    font-family: 'bebas_neue_regularregular';
+    font-size: 2.25em;
+}
+.headerLine2 {
+    font-family: 'bebas_neue_regularregular';
+    font-size: 5em;
+}
+.dateMonth {
+    font-family: 'benderbold';
+    font-size: 0.85em;
+}
+.dateDay {
+    font-family: 'bebas_neue_regularregular';
+    font-size: 3.375em;
+}
+.groupHeader {
+    font-family: 'bebas_neuebold';
+    font-size: 2.25em;
+}
+.advisorType {
+    font-family: 'benderbold';
+    font-size: 0.85em;
+}
+.advisorName {
+    font-family: 'bebas_neuebold';
+    font-size: 2.25em;
+}
+.advisorTimeRemaining {
+    font-family: 'benderbold';
+    font-size: 0.85em;
+}
+.advisorModifiers {
+    font-family: 'benderbold';
+    font-size: 0.85em;
+}
