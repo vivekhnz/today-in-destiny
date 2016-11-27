@@ -3,12 +3,12 @@ import React from 'react';
 class Header extends React.Component {
     render() {
         return (
-            <div>
+            <div className="headerContainer">
                 <div>
                     <p className="headerLine1">Today in</p>
                     <p className="headerLine2">Destiny</p>
                 </div>
-                <div>
+                <div className="dateContainer">
                     <p className="dateMonth">{this.props.date.month}</p>
                     <p className="dateDay">{this.props.date.day}</p>
                 </div>

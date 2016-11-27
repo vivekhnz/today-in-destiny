@@ -1,5 +1,11 @@
 // variables
 @fonts: '../fonts';
+@bg-color: #d6d6d9;
+@pri-fg-color: #273a41;
+@sec-fg-color: #486e7e;
+@ter-fg-color: #93a3ae;
+@accent-color: #ffc71a;
+@contrast-color: #f4f4f4;
 
 // fonts
 @font-face {
@@ -48,38 +54,62 @@
 }
 
 // component styles
+body {
+    background-color: @bg-color;
+    margin: 0px;
+    padding: 0px;
+}
+
+.headerContainer {
+    background-color: @contrast-color;
+}
 .headerLine1 {
     .bebasRegular;
     font-size: 2.25em;
+    color: @sec-fg-color;
 }
 .headerLine2 {
     .bebasRegular;
     font-size: 5em;
+    color: @pri-fg-color;
 }
 
+.dateContainer {
+    background-color: @accent-color;
+}
 .dateMonth {
     .subtitle;
     text-transform: uppercase;
+    color: @pri-fg-color;
 }
 .dateDay {
     .bebasRegular;
     font-size: 3.375em;
+    color: @pri-fg-color;
 }
 
 .groupHeader {
     .title;
+    color: @pri-fg-color;
 }
 
+.advisorContainer {
+    background-color: @pri-fg-color;
+}
 .advisorType {
     .subtitle;
     text-transform: uppercase;
+    color: @ter-fg-color;
 }
 .advisorName {
     .title;
+    color: @contrast-color;
 }
 .advisorTimeRemaining {
     .subtitle;
+    color: @accent-color;
 }
 .advisorModifiers {
     .subtitle;
+    color: @contrast-color;
 }

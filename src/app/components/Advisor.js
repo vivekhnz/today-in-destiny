@@ -3,7 +3,7 @@ import React from 'react';
 class Advisor extends React.Component {
     render() {
         return (
-            <div>
+            <div className="advisorContainer">
                 <p className="advisorType">{this.props.type}</p>
                 <p className="advisorName">{this.props.name}</p>
                 <p className="advisorTimeRemaining">{this.props.timeRemaining}</p>
