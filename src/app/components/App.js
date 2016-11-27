@@ -1,4 +1,5 @@
 import React from 'react';
+import alt from '../alt.js';
 
 class App extends React.Component {
     render() {

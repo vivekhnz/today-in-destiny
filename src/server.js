@@ -2,15 +2,28 @@ import Express from 'express';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
+import alt from './app/alt';
+import Iso from 'iso';
 import swig from 'swig';
 import path from 'path';
 
 import routes from './app/routes.js';
+import AdvisorsService from './app/services/AdvisorsService';
 
 var app = Express();
 const PORT = process.env.PORT || 3000;
 
 app.use(Express.static(path.join(__dirname, 'public')));
+
+function renderPage(renderProps, data) {
+    alt.bootstrap(JSON.stringify(data));
+    let markup = ReactDOM.renderToString(
+        <RouterContext {...renderProps} />);
+    let html = Iso.render(markup, alt.flush());
+
+    return swig.renderFile(
+        __dirname + '/views/index.html', { html: html });
+}
 
 function onNavigated(error, redirect, renderProps, response) {
     if (error) {
@@ -20,11 +33,17 @@ function onNavigated(error, redirect, renderProps, response) {
         response.redirect(302, redirect.pathname + redirect.search);
     }
     else if (renderProps) {
-        var html = ReactDOM.renderToString(
-            <RouterContext {...renderProps} />);
-        var page = swig.renderFile(
-            __dirname + '/views/index.html', { html: html });
-        response.status(200).send(page);
+        AdvisorsService.fetchAdvisors()
+            .then(advisors => {
+                let data = { AdvisorsStore: advisors };
+                response.status(200).send(
+                    renderPage(renderProps, data));
+            })
+            .catch(() => {
+                console.log("Couldn't load advisors.");
+                response.status(200).send(
+                    renderPage(renderProps, null));
+            });
     }
     else {
         response.status(404).send('Not found');
