@@ -53,29 +53,33 @@
     font-size: 0.95em;
 }
 
-// component styles
+// core styles
 body {
     background-color: @bg-color;
     margin: 0px;
     padding: 0px;
 }
+p {
+    margin: 0px;
+    padding: 0px;
+}
+ul {
+    margin: 0px;
+}
 
+// component styles
 .headerContainer {
     background-color: @contrast-color;
-}
-.headerLine1 {
-    .bebasRegular;
-    font-size: 2.25em;
-    color: @sec-fg-color;
-}
-.headerLine2 {
-    .bebasRegular;
-    font-size: 5em;
-    color: @pri-fg-color;
+    height: 180px;
+    padding: 0px 32px;
+    position: relative;
 }
 
 .dateContainer {
     background-color: @accent-color;
+    text-align: center;
+    float: right;
+    padding: 8px 8px 0px 8px;
 }
 .dateMonth {
     .subtitle;
@@ -88,13 +92,32 @@ body {
     color: @pri-fg-color;
 }
 
+.headerTextContainer {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.headerLine1 {
+    .bebasRegular;
+    font-size: 2.25em;
+    color: @sec-fg-color;
+}
+.headerLine2 {
+    .bebasRegular;
+    font-size: 5em;
+    color: @pri-fg-color;
+}
+
 .groupHeader {
     .title;
     color: @pri-fg-color;
+    margin: 32px 0px 0px 16px;
 }
 
 .advisorContainer {
     background-color: @pri-fg-color;
+    padding: 16px;
+    margin-top: 8px;
 }
 .advisorType {
     .subtitle;
