@@ -35,11 +35,7 @@ function onNavigated(error, redirect, renderProps, response) {
     else if (renderProps) {
         AdvisorsService.fetchAdvisors()
             .then(advisors => {
-                let data = {
-                    AdvisorsStore: {
-                        advisorGroups: advisors
-                    }
-                };
+                let data = { AdvisorsStore: advisors };
                 response.status(200).send(
                     renderPage(renderProps, data));
             })

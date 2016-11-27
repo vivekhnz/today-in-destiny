@@ -11,11 +11,12 @@ class Home extends React.Component {
     render() {
         return (
             <div>
-                <Header month="Nov" day="18" />
                 <AltContainer
                     store={AdvisorsStore}
-                    actions={AdvisorsActions}
-                    component={AdvisorGroups} />
+                    actions={AdvisorsActions}>
+                    <Header />
+                    <AdvisorGroups />
+                </AltContainer>
             </div>
         );
     };

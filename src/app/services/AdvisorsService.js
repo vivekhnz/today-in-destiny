@@ -60,11 +60,14 @@ const thisWeek = [
         modifiers: ["Warpriest Challenge"]
     }
 ];
-const mockData = [
-    { name: "Events", advisors: events },
-    { name: "Today", advisors: today },
-    { name: "This Week", advisors: thisWeek }
-];
+const mockData = {
+    date: { month: "Nov", day: 18 },
+    advisorGroups: [
+        { name: "Events", advisors: events },
+        { name: "Today", advisors: today },
+        { name: "This Week", advisors: thisWeek }
+    ]
+};
 
 class AdvisorsService {
     fetchAdvisors() {

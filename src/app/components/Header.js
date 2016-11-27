@@ -9,8 +9,8 @@ class Header extends React.Component {
                     <p>Destiny</p>
                 </div>
                 <div>
-                    <p>{this.props.month}</p>
-                    <p>{this.props.day}</p>
+                    <p>{this.props.date.month}</p>
+                    <p>{this.props.date.day}</p>
                 </div>
             </div>
         );

@@ -7,8 +7,9 @@ class AdvisorsStore {
         this.advisorGroups = [];
     };
 
-    onFetchAdvisorsSuccess(advisorGroups) {
-        this.advisorGroups = advisorGroups;
+    onFetchAdvisorsSuccess(advisors) {
+        this.date = advisors.date;
+        this.advisorGroups = advisors.advisorGroups;
     }
 }
 
