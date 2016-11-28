@@ -6,11 +6,11 @@ const events = [
         image: "https://www.bungie.net/img/theme/bungienet/bgs/bg_xuravailable.jpg",
         timeRemaining: "22h 23m",
         items: [
-            "Hard Light",
-            "An Insurmountable Skullfort",
-            "Young Ahamkara's Spine",
-            "Apotheosis Veil",
-            "Three of Coins"
+            "https://www.bungie.net/common/destiny_content/icons/5b503f30ffed95cb2bd52a101bfcb40c.jpg",
+            "https://www.bungie.net/common/destiny_content/icons/96a1d50529b001fbfc66430fabec3ae4.jpg",
+            "https://www.bungie.net/common/destiny_content/icons/a9fe5de19d226aae51477e85107a9dd4.jpg",
+            "https://www.bungie.net/common/destiny_content/icons/51019cde47738f13801725caed9fd43e.jpg",
+            "https://www.bungie.net/common/destiny_content/icons/8852eeb0093a6effba7f1c90022da0ef.jpg"
         ]
     },
     {

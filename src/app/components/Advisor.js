@@ -16,11 +16,11 @@ class Advisor extends React.Component {
                     <p className="advisorTimeRemaining">{this.props.timeRemaining}</p>
                     <p className="advisorType">{this.props.type}</p>
                     <p className="advisorName">{this.props.name}</p>
-                    <ul>
+                    <ul className="advisorItems">
                         {
                             this.props.items
                                 ? this.props.items.map((item, i) =>
-                                    <li key={i}>{item}</li>)
+                                    <li key={i}><img src={item} /></li>)
                                 : null
                         }
                     </ul>
