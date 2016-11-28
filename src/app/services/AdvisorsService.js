@@ -44,7 +44,9 @@ const thisWeek = [
         icon: "https://www.bungie.net/common/destiny_content/icons/08142310168ad6ade9a6e4252e8433fc.png",
         image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/wrath_of_the_machine.jpg",
         timeRemaining: "2d 22h 23m",
-        modifiers: ["Vosik Challenge"]
+        modifiers: [
+            { name: "Vosik Challenge", icon: "https://www.bungie.net/common/destiny_content/icons/d500171b589479f145964a2bc1d7036b.png" }
+        ]
     },
     {
         type: "Nightfall Strike",
@@ -52,7 +54,13 @@ const thisWeek = [
         icon: "https://www.bungie.net/img/theme/destiny/icons/node_strike_nightfall.png",
         image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/wretched_eye.jpg",
         timeRemaining: "2d 22h 23m",
-        modifiers: ["Epic", "Arc Burn", "Brawler", "Ironclad", "Exposure"]
+        modifiers: [
+            { name: "Epic", icon: "https://www.bungie.net/common/destiny_content/icons/1db70c6734dffce9ee6cb4792da26c81.png" },
+            { name: "Arc Burn", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_damage_boost_arc_000_001.v2.png" },
+            { name: "Brawler", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_brawler_000_001.v2.png" },
+            { name: "Ironclad", icon: "https://www.bungie.net/common/destiny_content/icons/fc7b47af0ec6acc1558fed7e46714fc2.png" },
+            { name: "Exposure", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_morbid_000_001.v2.png" }
+        ]
     },
     {
         type: "Heroic Strike Playlist",
@@ -60,7 +68,12 @@ const thisWeek = [
         icon: "https://www.bungie.net/img/theme/destiny/icons/node_strike_featured.png",
         image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/weekly_heroic.jpg",
         timeRemaining: "2d 22h 23m",
-        modifiers: ["Heroic", "Specialist", "Exposure", "Airborne"]
+        modifiers: [
+            { name: "Heroic", icon: "https://www.bungie.net/common/destiny_content/icons/b070b353fc2b3067a84dad54f20da48b.png" },
+            { name: "Specialist", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_specialist_000_001.v2.png" },
+            { name: "Exposure", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_morbid_000_001.v2.png" },
+            { name: "Airborne", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_airborne_000_001.v2.png" },
+        ]
     },
     {
         type: "Weekly Crucible Playlist",
@@ -75,7 +88,9 @@ const thisWeek = [
         icon: "https://www.bungie.net/common/destiny_content/icons/08142310168ad6ade9a6e4252e8433fc.png",
         image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/kings_fall.jpg",
         timeRemaining: "2d 22h 23m",
-        modifiers: ["Warpriest Challenge"]
+        modifiers: [
+            { name: "Warpriest Challenge", icon: "https://www.bungie.net/common/destiny_content/icons/9aa0b2f21752ff761c93c647aabf2bb9.png" },
+        ]
     }
 ];
 const mockData = {

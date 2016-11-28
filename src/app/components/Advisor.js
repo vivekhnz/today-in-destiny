@@ -24,11 +24,14 @@ class Advisor extends React.Component {
                                 : null
                         }
                     </ul>
-                    <ul>
+                    <ul className="advisorModifiers">
                         {
                             this.props.modifiers
                                 ? this.props.modifiers.map((modifier, i) =>
-                                    <li key={i} className="advisorModifiers">{modifier}</li>)
+                                    <li key={i} className="advisorModifiers">
+                                        <img src={modifier.icon} />
+                                        <p>{modifier.name}</p>
+                                    </li>)
                                 : null
                         }
                     </ul>
