@@ -6,6 +6,7 @@ class AdvisorGroup extends React.Component {
         return (
             <div>
                 <p className="groupHeader">{this.props.name}</p>
+                <div className="groupHeaderSeparator" />
                 {
                     this.props.advisors
                         ? this.props.advisors.map((advisor, i) =>

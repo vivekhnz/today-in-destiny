@@ -113,6 +113,15 @@ ul {
     color: @pri-fg-color;
     margin: 32px 0px 0px 16px;
 }
+.groupHeaderSeparator {
+    height: 4px;
+    background-image: linear-gradient(-45deg,
+        @sec-fg-color 25%, transparent 25%,
+        transparent 50%, @sec-fg-color 50%,
+        @sec-fg-color 75%, transparent 75%, transparent);
+    background-size: 4px 4px;
+    margin: 0px 16px 16px 16px;
+}
 
 .advisorContainer {
     padding: 24px 16px;
@@ -143,6 +152,16 @@ ul {
     .subtitle;
     color: @accent-color;
     float: right;
+}
+.advisorSeparator {
+    height: 4px;
+    background-image: linear-gradient(-45deg,
+        @ter-fg-color 25%, transparent 25%,
+        transparent 50%, @ter-fg-color 50%,
+        @ter-fg-color 75%, transparent 75%, transparent);
+    background-size: 4px 4px;
+    opacity: 0.5;
+    margin: 4px 0px;
 }
 
 .advisorModifiers {
