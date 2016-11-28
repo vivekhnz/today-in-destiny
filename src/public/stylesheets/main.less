@@ -69,8 +69,8 @@ ul {
 
 // component styles
 .headerContainer {
-    background-color: @contrast-color;
-    height: 180px;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAMAAABFaP0WAAAABlBMVEX////09PQtDxrOAAAAAXRSTlMAQObYZgAAAA5JREFUCNdjYGBkYGQEAAANAASMpCjAAAAAAElFTkSuQmCC);
+    height: 160px;
     padding: 0px 32px;
     position: relative;
 }
@@ -79,17 +79,35 @@ ul {
     background-color: @accent-color;
     text-align: center;
     float: right;
-    padding: 8px 8px 0px 8px;
+    width: 64px;
 }
 .dateMonth {
     .subtitle;
     text-transform: uppercase;
     color: @pri-fg-color;
+    margin: 8px 0px -4px 0px;
 }
 .dateDay {
     .bebasRegular;
     font-size: 3.375em;
     color: @pri-fg-color;
+}
+.dateEdge {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    margin-bottom: -10px;
+}
+.dateEdgeLeft {
+    .dateEdge;
+    border-width: 10px 32px 0 0;
+    border-color: @accent-color transparent transparent transparent;
+}
+.dateEdgeRight {
+    .dateEdge;
+    border-width: 0 32px 10px 0;
+    border-color: transparent @accent-color transparent transparent;
+    float: right;
 }
 
 .headerTextContainer {
@@ -105,6 +123,7 @@ ul {
 .headerLine2 {
     .bebasRegular;
     font-size: 5em;
+    line-height: 0.9em;
     color: @pri-fg-color;
 }
 

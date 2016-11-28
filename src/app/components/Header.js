@@ -7,6 +7,8 @@ class Header extends React.Component {
                 <div className="dateContainer">
                     <p className="dateMonth">{this.props.date.month}</p>
                     <p className="dateDay">{this.props.date.day}</p>
+                    <div className="dateEdgeLeft"/>
+                    <div className="dateEdgeRight"/>
                 </div>
                 <div className="headerTextContainer">
                     <p className="headerLine1">Today in</p>
