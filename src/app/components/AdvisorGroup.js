@@ -12,6 +12,8 @@ class AdvisorGroup extends React.Component {
                             <Advisor key={i}
                                 type={advisor.type}
                                 name={advisor.name}
+                                icon={advisor.icon}
+                                image={advisor.image}
                                 timeRemaining={advisor.timeRemaining}
                                 items={advisor.items}
                                 modifiers={advisor.modifiers} />)
