@@ -10,6 +10,35 @@ import uglify from 'gulp-uglify';
 import less from 'gulp-less';
 import cssmin from 'gulp-cssmin';
 
+// build functions
+function files(directory, extension) {
+    return path.join(directory, `/**/**.${extension}`);
+}
+
+function build(buildTask) {
+    return () => {
+        var {name, input, src, extension, dest, actions} = buildTask();
+        let stream = src && extension ? gulp.src(files(src, extension)) : input;
+        if (!stream) {
+            console.error("No input or source + extension provided.");
+        }
+        stream = stream.on('error', error => console.error(`${name}: ${error}`));
+        if (actions) {
+            actions.forEach(action => {
+                stream = stream.pipe(action);
+            }, this);
+        }
+        return stream.pipe(gulp.dest(dest));
+    };
+}
+
+function watch({directory, extension, tasks}) {
+    return () => gulp.watch(files(directory, extension), tasks);
+}
+
+// configuration
+var production = process.env.NODE_ENV === 'production';
+
 var config = {
     srcDir: 'src',
     outDir: 'build',
@@ -17,14 +46,11 @@ var config = {
         'react', 'react-dom', 'react-router',
         'alt', 'alt-container', 'iso'
     ],
-
     babel: {
         presets: ['es2015', 'react']
     },
     bundles: {}
 }
-
-var production = process.env.NODE_ENV === 'production';
 
 config.bundles.app = {
     entry: path.join(config.outDir, 'app/main.js'),
@@ -40,48 +66,75 @@ config.stylesheets = {
     outDir: path.join(config.outDir, 'public/stylesheets')
 };
 
-function files(directory, extension) {
-    return path.join(directory, `/**/**.${extension}`);
+// task definitions
+var tasks = {};
+tasks.babel = function () {
+    return {
+        name: 'babel',
+        src: config.srcDir,
+        extension: "js",
+        dest: config.outDir,
+        actions: [babel(config.babel)]
+    };
+}
+tasks.stylesheets = function () {
+    return {
+        name: 'stylesheets',
+        src: config.stylesheets.srcDir,
+        extension: "less",
+        dest: config.stylesheets.outDir,
+        actions: [
+            plumber(), less(),
+            gulpif(production, cssmin())
+        ]
+    };
+};
+tasks.copy = function (directoryName) {
+    return () => {
+        return {
+            name: `copy '${directoryName}'`,
+            src: path.join(config.srcDir, directoryName),
+            extension: "*",
+            dest: path.join(config.outDir, directoryName)
+        };
+    };
+};
+tasks.bundle = function bundle({ entry, require, external, output }) {
+    return () => {
+        var bundler = entry ? browserify(entry) : browserify();
+        if (require) bundler = bundler.require(require);
+        if (external) bundler = bundler.external(external);
+        return {
+            name: `bundle '${output}'`,
+            input: bundler.bundle(),
+            dest: config.outDir,
+            actions: [
+                source(output), buffer(),
+                gulpif(production, uglify({ mangle: false }))
+            ]
+        };
+    };
 }
 
-function copy(directoryName) {
-    gulp.src(files(path.join(config.srcDir, directoryName), "*"))
-        .on('error', error => console.error(error))
-        .pipe(gulp.dest(path.join(config.outDir, directoryName)));
-}
+// watchers
+var watchers = {
+    stylesheets: {
+        directory: config.stylesheets.srcDir,
+        extension: "less",
+        tasks: ['stylesheets']
+    }
+};
 
-function bundle({ entry, require, external, output }) {
-    var bundler = entry ? browserify(entry) : browserify();
-    if (require) bundler = bundler.require(require);
-    if (external) bundler = bundler.external(external);
-    return bundler.bundle()
-        .on('error', error => console.error(error))
-        .pipe(source(output))
-        .pipe(buffer())
-        .pipe(gulpif(production, uglify({ mangle: false })))
-        .pipe(gulp.dest(config.outDir));
-}
+// tasks
+gulp.task('babel', build(tasks.babel));
+gulp.task('views', build(tasks.copy('views')));
+gulp.task('fonts', build(tasks.copy('public/fonts')));
+gulp.task('stylesheets', build(tasks.stylesheets));
+gulp.task('browserify', ['babel'], build(tasks.bundle(config.bundles.app)));
+gulp.task('browserify-vendor', ['babel'], build(tasks.bundle(config.bundles.vendor)));
 
-gulp.task('babel', () => {
-    return gulp.src(files(config.srcDir, "js"))
-        .on('error', error => console.error(error))
-        .pipe(babel(config.babel))
-        .pipe(gulp.dest(config.outDir));
-});
-gulp.task('views', () => copy('views'));
-gulp.task('fonts', () => copy('public/fonts'));
-gulp.task('stylesheets', () => {
-    return gulp.src(files(config.stylesheets.srcDir, "less"))
-        .pipe(plumber())
-        .pipe(less())
-        .pipe(gulpif(production, cssmin()))
-        .pipe(gulp.dest(config.stylesheets.outDir));
-});
-gulp.task('browserify', ['babel'], () => bundle(config.bundles.app));
-gulp.task('browserify-vendor', ['babel'], () => bundle(config.bundles.vendor));
+gulp.task('stylesheets-watch', watch(watchers.stylesheets));
 
-gulp.task('default', [
-    'babel',
-    'views', 'fonts', 'stylesheets',
-    'browserify', 'browserify-vendor'
-]);
+gulp.task('core', ['babel', 'views', 'fonts', 'stylesheets']);
+gulp.task('build', ['core', 'browserify', 'browserify-vendor']);
+gulp.task('default', ['core', 'browserify', 'browserify-vendor', 'stylesheets-watch']);
