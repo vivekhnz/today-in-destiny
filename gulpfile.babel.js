@@ -9,6 +9,8 @@ import plumber from 'gulp-plumber';
 import uglify from 'gulp-uglify';
 import less from 'gulp-less';
 import cssmin from 'gulp-cssmin';
+import browserSync from 'browser-sync';
+let sync = browserSync.create();
 
 // build functions
 function files(directory, extension) {
@@ -33,7 +35,7 @@ function build(buildTask) {
 }
 
 function watch({directory, extension, tasks}) {
-    return () => gulp.watch(files(directory, extension), tasks);
+    return () => gulp.watch([files(directory, extension)], tasks);
 }
 
 // configuration
@@ -121,7 +123,7 @@ var watchers = {
     stylesheets: {
         directory: config.stylesheets.srcDir,
         extension: "less",
-        tasks: ['stylesheets']
+        tasks: ['stylesheets', 'reload']
     }
 };
 
@@ -133,8 +135,14 @@ gulp.task('stylesheets', build(tasks.stylesheets));
 gulp.task('browserify', ['babel'], build(tasks.bundle(config.bundles.app)));
 gulp.task('browserify-vendor', ['babel'], build(tasks.bundle(config.bundles.vendor)));
 
+gulp.task('sync', () => {
+    sync.init({
+        proxy: "localhost:3000"
+    });
+});
+gulp.task('reload', () => sync.reload());
 gulp.task('stylesheets-watch', watch(watchers.stylesheets));
 
-gulp.task('core', ['babel', 'views', 'fonts', 'stylesheets']);
+gulp.task('core', ['sync', 'babel', 'views', 'fonts', 'stylesheets']);
 gulp.task('build', ['core', 'browserify', 'browserify-vendor']);
 gulp.task('default', ['core', 'browserify', 'browserify-vendor', 'stylesheets-watch']);
