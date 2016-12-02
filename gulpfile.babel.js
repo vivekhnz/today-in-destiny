@@ -33,9 +33,8 @@ var config = {
         },
         nodemon: {
             script: 'build/server.js',
-            watch: 'build/**/**.js',
-            ext: 'js',
-            delay: 500
+            watch: ['build/**/**.js', '!build/**/**.bundle.js'],
+            ext: 'js'
         }
     },
     publicAssets: ['build/public/**/**.*'],
@@ -162,7 +161,7 @@ gulp.task('sync', () => {
 });
 
 // reload browser
-gulp.task('reload', () => setTimeout(() => sync.reload(), 1000));
+gulp.task('reload', () => setTimeout(() => sync.reload(), 500));
 
 // automatically recompile stylesheets
 gulp.task('stylesheets-watch', () => {
