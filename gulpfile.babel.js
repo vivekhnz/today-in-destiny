@@ -3,6 +3,7 @@ import gulpif from 'gulp-if';
 import path from 'path';
 import babel from 'gulp-babel';
 import browserify from 'browserify';
+import watchify from 'watchify';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import plumber from 'gulp-plumber';
@@ -16,17 +17,12 @@ let sync = browserSync.create();
 
 var production = process.env.NODE_ENV === 'production';
 
-function join(base, paths) {
-    return paths.map(fn => path.join(base, fn));
-}
-
 // configuration
 var config = {
     appDependencies: [
         'react', 'react-dom', 'react-router',
         'alt', 'alt-container', 'iso'
     ],
-    publicAssets: ['build/public/**/**.*'],
     utils: {
         babel: {
             presets: ['es2015', 'react']
@@ -34,31 +30,23 @@ var config = {
         browserSync: {
             proxy: 'localhost:3000',
             port: 4000,
+        },
+        nodemon: {
+            script: 'build/server.js',
+            watch: 'build/**/**.js',
+            ext: 'js',
+            delay: 500
         }
     },
+    publicAssets: ['build/public/**/**.*'],
+    js: 'src/**/**.js',
     copyToOutput: [
         'views', 'public/fonts'
     ],
     stylesheets: {
         src: 'src/public/stylesheets/**/**.less',
         outDir: 'build/public/stylesheets'
-    },
-    server: {
-        entry: 'build/server.js',
-        dependencies: [
-            'server.js', 'routes.js', 'services/**/**.js'
-        ]
     }
-}
-config.js = {
-    all: 'src/**/**.js',
-    server: join('src', config.server.dependencies)
-};
-config.server.nodemon = {
-    script: config.server.entry,
-    watch: join('build', config.server.dependencies),
-    ext: 'js',
-    delay: 2000
 };
 config.bundles = {
     vendor: {
@@ -90,15 +78,7 @@ function compileJS(src, dest = null) {
         .pipe(babel(config.utils.babel))
         .pipe(gulp.dest(dest || getDestination(src)));
 }
-gulp.task('babel-server', () => {
-    return es.merge(config.js.server.map(dep => compileJS(dep)));
-});
-gulp.task('babel-app', () => {
-    let sources = config.js.server.map(dep => `!${dep}`);
-    sources.splice(0, 0, config.js.all);
-    return compileJS(sources, 'build');
-});
-gulp.task('babel-all', ['babel-server', 'babel-app']);
+gulp.task('babel', () => compileJS(config.js, 'build'));
 
 // compile LESS stylesheets
 gulp.task('stylesheets', () => {
@@ -120,29 +100,58 @@ gulp.task('copy', () => {
 });
 
 // generate bundles
-function bundle({ entry, require, external, output }) {
-    var bundler = entry ? browserify(entry) : browserify();
+function createBundler({ entry, require, external, output },
+    isWatcher = false) {
+    let bundler = browserify({
+        entries: entry ? [entry] : null,
+        cache: {},
+        packageCache: {},
+        plugin: isWatcher ? [watchify] : null
+    });
+
     if (require) bundler = bundler.require(require);
     if (external) bundler = bundler.external(external);
+
+    let finalBundler = {
+        bundler: bundler,
+        output: output
+    };
+    if (isWatcher) {
+        // rebundle whenever source files are updated
+        bundler.on('update', () => bundle(finalBundler));
+    }
+
+    return finalBundler;
+}
+function bundle({bundler, output}) {
     return bundler.bundle()
         .on('error', error => console.error(error))
+        .on('end', () => console.log(`Finished bundling '${output}'.`))
         .pipe(source(output))
         .pipe(buffer())
         .pipe(gulpif(production, uglify({ mangle: false })))
         .pipe(gulp.dest('build'));
 }
-gulp.task('bundle-vendor', ['babel-app'], () => bundle(config.bundles.vendor));
-gulp.task('bundle-app', ['babel-app'], () => bundle(config.bundles.app));
+gulp.task('bundle-vendor', ['babel'],
+    () => bundle(createBundler(config.bundles.vendor)));
+gulp.task('bundle-app', ['babel'],
+    () => bundle(createBundler(config.bundles.app)));
 
 // launch server and auto-restart whenever server code is changed
 gulp.task('server', ['build'], callback => {
-    var started = false; 
-    return nodemon(config.server.nodemon)
+    var started = false;
+    return nodemon(config.utils.nodemon)
         .on('start', () => {
             if (!started) {
                 callback();
             }
             started = true;
+        })
+        .on('restart', files => {
+            if (files) {
+                let changed = files.map(f => path.basename(f));
+                console.log(`Detected changes in '${changed}'. Restarting...`)
+            }
         })
         .on('error', error => { throw error; });
 });
@@ -153,16 +162,25 @@ gulp.task('sync', () => {
 });
 
 // reload browser
-gulp.task('reload', () => sync.reload());
+gulp.task('reload', () => setTimeout(() => sync.reload(), 1000));
 
 // automatically recompile stylesheets
 gulp.task('stylesheets-watch', () => {
     gulp.watch([config.stylesheets.src], ['stylesheets']);
 });
 
-// automatically recompile server JS
-gulp.task('server-watch', () => {
-    gulp.watch(config.js.server, ['babel-server']);
+// automatically recompile JS
+gulp.task('babel-watch', () => {
+    gulp.watch(config.js).on('change', file => {
+        console.log(`recompiling '${file.path}'`);
+        compileJS(file.path);
+    });
+});
+
+// automatically bundle app JS
+gulp.task('app-watch', () => {
+    let bundler = createBundler(config.bundles.app, true);
+    return bundle(bundler);
 });
 
 // automatically reload browser whenever public assets change
@@ -172,7 +190,7 @@ gulp.task('reload-watch', () => {
 
 // execute all build tasks
 gulp.task('build', [
-    'babel-all', 'copy', 'stylesheets', 'bundle-vendor', 'bundle-app'
+    'babel', 'copy', 'stylesheets', 'bundle-vendor', 'bundle-app'
 ]);
 
 // build and start server
@@ -180,5 +198,5 @@ gulp.task('serve', ['build', 'server']);
 
 // start BrowserSync and watch for changes
 gulp.task('watch', [
-    'sync', 'stylesheets-watch', 'server-watch', 'reload-watch'
+    'sync', 'stylesheets-watch', 'babel-watch', 'app-watch', 'reload-watch'
 ]);
