@@ -1,4 +1,8 @@
 import React from 'react';
+import ElementQuery from 'react-element-query';
+
+var overlayColor = 'rgba(39, 58, 65, 0.75)';
+var wideViewWidth = 422;
 
 class Advisor extends React.Component {
     renderItems() {
@@ -43,8 +47,7 @@ class Advisor extends React.Component {
     }
 
     render() {
-        let overlayColor = 'rgba(39, 58, 65, 0.75)';
-        let containerStyle = {
+        let blockStyle = {
             background: `linear-gradient(${overlayColor}, ${overlayColor}),
                  url('${this.props.image}')`
         };
@@ -52,16 +55,20 @@ class Advisor extends React.Component {
         let modifiers = this.renderModifiers();
 
         return (
-            <div className="advisorContainer" style={containerStyle}>
-                <div className="advisorIcon" style={{ backgroundImage: 'url(' + this.props.icon + ')' }} />
-                <div className="advisorContentContainer">
-                    <p className="advisorTimeRemaining">{this.props.timeRemaining}</p>
-                    <p className="advisorType">{this.props.type}</p>
-                    <p className="advisorName">{this.props.name}</p>
-                    {items}
-                    {modifiers}
+            <ElementQuery sizes={[{ name: 'wide', width: wideViewWidth }]}>
+                <div className="advisorBlock" style={blockStyle}>
+                    <div className="advisorContainer">
+                        <div className="advisorIcon" style={{ backgroundImage: 'url(' + this.props.icon + ')' }} />
+                        <div className="advisorContent">
+                            <p className="advisorTimeRemaining">{this.props.timeRemaining}</p>
+                            <p className="advisorType">{this.props.type}</p>
+                            <p className="advisorName">{this.props.name}</p>
+                            {items}
+                            {modifiers}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </ElementQuery>
         );
     };
 }

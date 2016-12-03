@@ -10,6 +10,8 @@
     "iso": "^5.2.0",
     "react": "^15.4.0",
     "react-dom": "^15.4.0",
+    "react-element-query": "^3.0.2",
+    "react-masonry-component": "^4.4.0",
     "react-router": "^3.0.0",
     "swig": "^1.4.2"
   },

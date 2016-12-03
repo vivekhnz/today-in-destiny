@@ -7,8 +7,22 @@
 @accent-color: #ffc71a;
 @contrast-color: #f4f4f4;
 
+// proportions
+@masonryGutter: 16px;
+@columnWidth: 344;
+
+.calcItemWidth(@columns) {
+    width: ~"calc((100% - (@{masonryGutter} * (@{columns} - 1))) / @{columns})";
+}
+.calcItemWidthForColumns(@columns) {
+    @media (min-width: ((@columnWidth * @columns) + 32px)) {
+        .calcItemWidth(@columns);
+    }
+}
+
 // layouts
-@layout-narrow: ~"(max-width: 430px)";
+@layout-narrow: ~"(max-width: 438px)";
+@layout-twoColumn: ~"(min-width: 720px)";
 
 // fonts
 @font-face {
@@ -152,10 +166,19 @@ ul {
     color: @pri-fg-color;
 }
 
+.advisorGroupContainer {
+    @media @layout-twoColumn {
+        margin: 0px 16px;
+    }
+}
 .groupHeader {
     .title;
     color: @pri-fg-color;
-    margin: 32px 0px 0px 16px;
+    margin: 32px 16px 0px 16px;
+
+    @media @layout-twoColumn {
+        margin: 32px 0px 0px 0px;
+    }
 }
 .groupHeaderSeparator {
     height: 4px;
@@ -164,31 +187,60 @@ ul {
         transparent 50%, @sec-fg-color 50%,
         @sec-fg-color 75%, transparent 75%, transparent);
     background-size: 4px 4px;
-    margin: 0px 16px 16px 16px;
+    margin: 0px 16px 24px 16px;
+
+    @media @layout-twoColumn {
+        margin: 0px 0px 24px 0px;
+    }
+}
+.masonry {
+    margin-top: -@masonryGutter;
 }
 
-.advisorContainer {
-    padding: 24px 16px;
+.masonrySizer, .advisorBlock {
+    .calcItemWidth(1);
+    .calcItemWidthForColumns(2);
+    .calcItemWidthForColumns(3);
+    .calcItemWidthForColumns(4);
+    .calcItemWidthForColumns(5);
+    .calcItemWidthForColumns(6);
+}
+.advisorBlock {
+    display: flex;
+    flex-direction: row;
     margin-top: 8px;
     background-size: cover !important;
     background-position: center center !important;
+
+    @media @layout-twoColumn {
+        box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.25);
+        margin-top: @masonryGutter;
+        min-height: 180px;
+    }
+}
+.advisorContainer {
+    background: fade(@pri-fg-color, 0%);
+    padding: 24px 16px;
+    align-self: flex-end;
+    width: 100%;
 }
 .advisorIcon {
+    display: none;
     width: 64px;
     height: 64px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
 
-    @media @layout-narrow {
-        display: none;
+    .advisorBlock.wide & {
+        display: block;
     }
 }
-.advisorContentContainer {
-    margin: -64px 0px 0px 80px;
+.advisorContent {
+    margin: 0px;
 
-    @media @layout-narrow {
-        margin: 0px;
+    .advisorBlock.wide & {
+        margin: -64px 0px 0px 80px;
     }
 }
 .advisorType {
@@ -220,25 +272,25 @@ ul {
 }
 
 .advisorModifiers {
-    margin: 0px -16px 0px 0px;
     padding: 0px;
     list-style-type: none;
+    margin: 0px -8px 0px 0px;
     
-    @media @layout-narrow {
-        margin: 0px -8px 0px 0px;
+    .advisorBlock.wide & {
+        margin: 0px;
     }
 }
 .advisorModifiers li {
     .subtitle;
     display: inline-block;
-    width: 100px;
-    margin: 8px 32px 0px 0px;
+    width: 20.5px;
+    margin: 8px 8px 0px 0px;
     vertical-align: top;
     color: @contrast-color;
     
-    @media @layout-narrow {
-        width: 20.5px;
-        margin: 8px 8px 0px 0px;
+    .advisorBlock.wide & {
+        width: 100px;
+        margin: 8px 32px 0px 0px;
     }
 }
 .advisorModifiers li img {
@@ -247,38 +299,38 @@ ul {
     margin-right: 8px;
 }
 .advisorModifiers li p {
+    display: none;
     margin: -24px 0px 0px 28px;
     
-    @media @layout-narrow {
-        display: none;
+    .advisorBlock.wide & {
+        display: block;
     }
 }
 
 .advisorItems {
-    margin: 0px -8px 0px 0px;
     padding: 0px;
     list-style-type: none;
 }
 .advisorItems li {
     display: inline-block;
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
+    border: 2px @contrast-color solid;
     margin: 8px 8px 0px 0px;
-    border: 3px @contrast-color solid;
     color: @contrast-color;
     
-    @media @layout-narrow {
-        width: 32px;
-        height: 32px;
-        border: 2px @contrast-color solid;
+    .advisorBlock.wide & {
+        width: 48px;
+        height: 48px;
+        border: 3px @contrast-color solid;
     }
 }
 .advisorItems li img {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
     
-    @media @layout-narrow {
-        width: 32px;
-        height: 32px;
+    .advisorBlock.wide & {
+        width: 48px;
+        height: 48px;
     }
 }
