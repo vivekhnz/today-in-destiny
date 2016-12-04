@@ -107,6 +107,17 @@ ul {
     @media @layout-narrow {
         padding: 8px 0px 2px 0px;
     }
+    @media @layout-twoColumn {
+        position: absolute;
+        right: 0px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: auto;
+        padding: 0px 32px 0px 16px;
+        height: 64px;
+        line-height: 64px;
+        text-align: right;
+    }
 }
 .dateMonth {
     .subtitle;
@@ -118,6 +129,12 @@ ul {
         margin: 0px 4px 0px 0px;
         display: inline-block;
     }
+    @media @layout-twoColumn {
+        .bebasRegular;
+        font-size: 3.375em;
+        display: inline-block;
+        margin: 0px 8px 0px 0px;
+    }
 }
 .dateDay {
     .bebasRegular;
@@ -126,6 +143,9 @@ ul {
 
     @media @layout-narrow {
         .subtitle;
+        display: inline-block;
+    }
+    @media @layout-twoColumn {
         display: inline-block;
     }
 }
@@ -138,17 +158,34 @@ ul {
     @media @layout-narrow {
         display: none;
     }
+    @media @layout-twoColumn {
+        position: absolute;
+        left: -10px;
+        margin: 0px;
+    }
 }
 .dateEdgeLeft {
     .dateEdge;
     border-width: 10px 32px 0 0;
     border-color: @accent-color transparent transparent transparent;
+    
+    @media @layout-twoColumn {
+        top: 0px;
+        border-width: 0 10px 32px 0;
+        border-color: transparent @accent-color transparent transparent;
+    }
 }
 .dateEdgeRight {
     .dateEdge;
     border-width: 0 32px 10px 0;
     border-color: transparent @accent-color transparent transparent;
     float: right;
+
+    @media @layout-twoColumn {
+        bottom: 0px;
+        border-width: 0 0 32px 10px;
+        border-color: transparent transparent @accent-color transparent;
+    }
 }
 
 .headerTextContainer {
@@ -221,7 +258,6 @@ ul {
     }
 }
 .advisorContainer {
-    background: fade(@pri-fg-color, 0%);
     padding: 24px 16px;
     align-self: flex-end;
     width: 100%;
