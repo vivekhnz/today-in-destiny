@@ -116,8 +116,24 @@ function groupByCategory(advisors) {
     return categories;
 };
 
+function getDate() {
+    // calculate time in UTC-9 (where reset is at midnight)
+    var date = new Date();
+    date.setHours(date.getUTCHours() - 9);
+
+    let months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return {
+        month: months[date.getMonth()],
+        day: date.getDate(),
+        year: date.getFullYear()
+    };
+}
+
 const mockData = {
-    date: { month: "Nov", day: 18, year: 2016 },
+    date: getDate(),
     advisorGroups: groupByCategory(advisors)
 };
 
