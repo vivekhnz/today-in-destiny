@@ -1,5 +1,5 @@
 import alt from '../alt';
-import AdvisorsService from '../services/AdvisorsService';
+import AdvisorsService from '../../services/AdvisorsService';
 
 class AdvisorsActions {
     constructor() {

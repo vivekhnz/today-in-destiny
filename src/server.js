@@ -7,8 +7,8 @@ import Iso from 'iso';
 import swig from 'swig';
 import path from 'path';
 
-import routes from './app/routes.js';
-import AdvisorsService from './app/services/AdvisorsService';
+import routes from './routes.js';
+import AdvisorsService from './services/AdvisorsService';
 
 var app = Express();
 const PORT = process.env.PORT || 3000;

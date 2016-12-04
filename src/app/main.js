@@ -4,7 +4,7 @@ import { Router, browserHistory } from 'react-router';
 import alt from './alt';
 import Iso from 'iso';
 
-import routes from './routes';
+import routes from '../routes';
 
 Iso.bootstrap((state, meta, container) => {
     alt.bootstrap(state);
