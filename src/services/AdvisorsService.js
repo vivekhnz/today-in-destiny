@@ -1,5 +1,6 @@
-const events = [
+const advisors = [
     {
+        category: "Events",
         type: "Agent of the Nine",
         name: "Xûr has arrived...",
         icon: "https://www.bungie.net/img/destiny_content/events/xur_icon.png",
@@ -14,15 +15,15 @@ const events = [
         ]
     },
     {
+        category: "Events",
         type: "Trials of Osiris",
         name: "The Burning Shrine",
         icon: "https://www.bungie.net/img/theme/destiny/icons/osiris_diamond.png",
         image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/crucible_the_burning_shrine.jpg",
         timeRemaining: "2d 22h 23m"
-    }
-];
-const today = [
+    },
     {
+        category: "Today",
         type: "Daily Story Mission",
         name: "Enemy of My Enemy",
         icon: "https://www.bungie.net/img/theme/destiny/icons/node_story_featured.png",
@@ -30,15 +31,15 @@ const today = [
         timeRemaining: "22h 23m"
     },
     {
+        category: "Today",
         type: "Daily Crucible Playlist",
         name: "Control",
         icon: "https://www.bungie.net/img/destiny_content/advisors/pvp_Control.png",
         image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/daily_crucible.jpg",
         timeRemaining: "22h 23m"
-    }
-];
-const thisWeek = [
+    },
     {
+        category: "This Week",
         type: "Raid",
         name: "Wrath of the Machine",
         icon: "https://www.bungie.net/common/destiny_content/icons/08142310168ad6ade9a6e4252e8433fc.png",
@@ -49,6 +50,7 @@ const thisWeek = [
         ]
     },
     {
+        category: "This Week",
         type: "Nightfall Strike",
         name: "The Wretched Eye",
         icon: "https://www.bungie.net/img/theme/destiny/icons/node_strike_nightfall.png",
@@ -63,6 +65,7 @@ const thisWeek = [
         ]
     },
     {
+        category: "This Week",
         type: "Heroic Strike Playlist",
         name: "SIVA Crisis Heroic",
         icon: "https://www.bungie.net/img/theme/destiny/icons/node_strike_featured.png",
@@ -76,6 +79,7 @@ const thisWeek = [
         ]
     },
     {
+        category: "This Week",
         type: "Weekly Crucible Playlist",
         name: "Inferno Supremacy",
         icon: "https://www.bungie.net/common/destiny_content/icons/203b106719909523844384cb4e2cae1f.png",
@@ -83,6 +87,7 @@ const thisWeek = [
         timeRemaining: "2d 22h 23m"
     },
     {
+        category: "This Week",
         type: "Raid",
         name: "King's Fall",
         icon: "https://www.bungie.net/common/destiny_content/icons/08142310168ad6ade9a6e4252e8433fc.png",
@@ -93,13 +98,27 @@ const thisWeek = [
         ]
     }
 ];
+
+function groupByCategory(advisors) {
+    let categories = [];
+    advisors.forEach(advisor => {
+        let category = categories.find(p => p.name == advisor.category);
+        if (category) {
+            category.advisors.push(advisor);
+        }
+        else {
+            categories.push({
+                name: advisor.category,
+                advisors: [advisor]
+            });
+        }
+    }, this);
+    return categories;
+};
+
 const mockData = {
     date: { month: "Nov", day: 18, year: 2016 },
-    advisorGroups: [
-        { name: "Events", advisors: events },
-        { name: "Today", advisors: today },
-        { name: "This Week", advisors: thisWeek }
-    ]
+    advisorGroups: groupByCategory(advisors)
 };
 
 class AdvisorsService {
