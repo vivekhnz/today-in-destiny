@@ -48,15 +48,17 @@
 }
 
 .bebasRegular {
-    font-family: 'bebas';
+    font-family: 'bebas', 'Segoe UI', 'Helvetica', sans-serif;
     font-weight: normal;
+    text-transform: uppercase;
 }
 .bebasBold {
-    font-family: 'bebas';
+    font-family: 'bebas', 'Segoe UI', 'Helvetica', sans-serif;
     font-weight: bold;
+    text-transform: uppercase;
 }
 .benderBold {
-    font-family: 'bender';
+    font-family: 'bender', 'Segoe UI', 'Helvetica', sans-serif;
     font-weight: bold;
 }
 
@@ -333,4 +335,27 @@ ul {
         width: 48px;
         height: 48px;
     }
+}
+
+.footerContainer {
+    position: relative;
+    margin: 32px 0px 24px 0px;
+
+    @media @layout-twoColumn {
+        margin: 32px 16px 24px 16px;
+    }
+}
+.copyrightLine1, .copyrightLine2 {
+    .subtitle;
+    margin: 0px 16px;
+
+    @media @layout-twoColumn {
+        margin: 0px;
+    }
+}
+.copyrightLine1 {
+    color: @pri-fg-color;
+}
+.copyrightLine2 {
+    color: @sec-fg-color;
 }

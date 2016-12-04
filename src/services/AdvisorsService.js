@@ -94,7 +94,7 @@ const thisWeek = [
     }
 ];
 const mockData = {
-    date: { month: "Nov", day: 18 },
+    date: { month: "Nov", day: 18, year: 2016 },
     advisorGroups: [
         { name: "Events", advisors: events },
         { name: "Today", advisors: today },
