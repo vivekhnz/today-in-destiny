@@ -14,7 +14,7 @@ class Advisor extends React.Component {
                         {
                             this.props.items
                                 ? this.props.items.map((item, i) =>
-                                    <li key={i}><img src={item} /></li>)
+                                    <li key={i}><img src={item.icon} title={item.name} /></li>)
                                 : null
                         }
                     </ul>
@@ -34,7 +34,7 @@ class Advisor extends React.Component {
                             this.props.modifiers
                                 ? this.props.modifiers.map((modifier, i) =>
                                     <li key={i} className="advisorModifiers">
-                                        <img src={modifier.icon} />
+                                        <img src={modifier.icon} title={modifier.name} />
                                         <p>{modifier.name}</p>
                                     </li>)
                                 : null
