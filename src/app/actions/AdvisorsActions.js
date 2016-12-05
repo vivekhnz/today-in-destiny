@@ -1,17 +1,18 @@
 import alt from '../alt';
-import {default as api} from '../../services/api';
+import {default as api} from '../../services/apiClient';
 
 class AdvisorsActions {
     constructor() {
         this.generateActions(
-            'fetchAdvisorsSuccess'
+            'fetchAdvisorsSuccess',
+            'fetchAdvisorsFail'
         );
     }
 
     fetchAdvisors() {
         api.getAdvisors()
             .then(data => this.fetchAdvisorsSuccess(data))
-            .catch(() => console.log("Couldn't load advisors."));
+            .catch(error => this.fetchAdvisorsFail(error));
     }
 }
 

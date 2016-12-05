@@ -1,16 +1,41 @@
-import {default as time} from './time';
+import { default as time } from './time';
+import { endpoints } from '../routes';
 
 class APIService {
+    get(promise) {
+        return (req, res) => {
+            promise.bind(this)()
+                .then(result => res.send({
+                    response: result,
+                    status: 'Success'
+                }))
+                .catch(error => res.status(500).send({
+                    response: null,
+                    status: error.message
+                }));
+        };
+    }
+
+    registerEndpoints(app) {
+        app.get(endpoints.advisors, this.get(this.getAdvisors));
+    }
+
     getAdvisors() {
         return new Promise((resolve, reject) => {
-            setTimeout(() => {
+            try {
                 let advisors = this.fetchAdvisors();
+                if (!advisors) {
+                    throw new Error('No advisors returned.');
+                }
                 let categories = this.groupByCategory(advisors);
                 resolve({
                     date: time.getCurrentDate(),
                     advisorGroups: categories
                 });
-            }, 750);
+            } catch (error) {
+                console.log(error);
+                reject(new Error("An error occurred while fetching advisors."));
+            }
         });
     }
 

@@ -7,11 +7,13 @@ import Iso from 'iso';
 import swig from 'swig';
 import path from 'path';
 
-import routes from './routes.js';
-import {default as api} from './services/api';
+import { routes } from './routes.js';
+import { default as api } from './services/api';
 
 var app = Express();
 const PORT = process.env.PORT || 3000;
+
+api.registerEndpoints(app);
 
 app.use(Express.static(path.join(__dirname, 'public')));
 
@@ -39,8 +41,8 @@ function onNavigated(error, redirect, renderProps, response) {
                 response.status(200).send(
                     renderPage(renderProps, data));
             })
-            .catch(() => {
-                console.log("Couldn't load advisors.");
+            .catch(error => {
+                console.log(error);
                 response.status(200).send(
                     renderPage(renderProps, null));
             });

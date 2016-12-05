@@ -8,11 +8,11 @@ class AdvisorGroups extends React.Component {
 
     render() {
         if (this.props.errorMessage) {
-            return <div>{this.props.errorMessage}</div>;
+            return <div className="errorMessage">{this.props.errorMessage}</div>;
         }
         if (!this.props.advisorGroups
             || !this.props.advisorGroups.length) {
-            return <div>Loading...</div>;
+            return <div className="errorMessage">Loading...</div>;
         }
 
         return (
