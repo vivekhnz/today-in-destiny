@@ -8,7 +8,7 @@ import swig from 'swig';
 import path from 'path';
 
 import routes from './routes.js';
-import AdvisorsService from './services/AdvisorsService';
+import {default as api} from './services/api';
 
 var app = Express();
 const PORT = process.env.PORT || 3000;
@@ -33,7 +33,7 @@ function onNavigated(error, redirect, renderProps, response) {
         response.redirect(302, redirect.pathname + redirect.search);
     }
     else if (renderProps) {
-        AdvisorsService.fetchAdvisors()
+        api.getAdvisors()
             .then(advisors => {
                 let data = { AdvisorsStore: advisors };
                 response.status(200).send(
