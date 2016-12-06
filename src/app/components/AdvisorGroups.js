@@ -8,22 +8,26 @@ class AdvisorGroups extends React.Component {
 
     render() {
         if (this.props.errorMessage) {
-            return <div>{this.props.errorMessage}</div>;
+            return <div className="errorMessage">{this.props.errorMessage}</div>;
         }
-        if (!this.props.advisorGroups
-            || !this.props.advisorGroups.length) {
-            return <div>Loading...</div>;
+        if (!this.props.advisorGroups) {
+            return <div className="errorMessage">Loading...</div>;
         }
-
-        return (
-            <div>
-                {
-                    this.props.advisorGroups.map((group, i) =>
-                        <AdvisorGroup key={i}
-                            name={group.name}
-                            advisors={group.advisors} />)
-                }
-            </div>);
+        if (this.props.advisorGroups.length > 0) {
+            return (
+                <div>
+                    {
+                        this.props.advisorGroups.map((group, i) =>
+                            <AdvisorGroup key={i}
+                                name={group.name}
+                                advisors={group.advisors} />)
+                    }
+                </div>
+            );
+        }
+        else {
+            return <div className="errorMessage">We couldn't find any current activities.</div>;
+        }
     };
 };
 

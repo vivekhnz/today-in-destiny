@@ -37,3 +37,6 @@ typings
 # Compiled files
 build
 public/js
+
+# Environment variables
+.env

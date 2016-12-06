@@ -11,6 +11,10 @@ class AdvisorsStore {
         this.date = advisors.date;
         this.advisorGroups = advisors.advisorGroups;
     }
+
+    onFetchAdvisorsFail(error) {
+        this.errorMessage = error.message;
+    }
 }
 
 export default alt.createStore(AdvisorsStore, 'AdvisorsStore');

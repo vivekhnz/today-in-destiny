@@ -1,3 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
+if (!process.env.BUNGIE_API_KEY) {
+    console.error("The 'BUNGIE_API_KEY' environment variable has not been set.");
+    process.exit(1);
+}
+
 import Express from 'express';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
@@ -7,11 +14,13 @@ import Iso from 'iso';
 import swig from 'swig';
 import path from 'path';
 
-import routes from './routes.js';
-import AdvisorsService from './services/AdvisorsService';
+import { routes } from './routes.js';
+import { default as api } from './services/api';
 
 var app = Express();
 const PORT = process.env.PORT || 3000;
+
+api.registerEndpoints(app);
 
 app.use(Express.static(path.join(__dirname, 'public')));
 
@@ -33,14 +42,14 @@ function onNavigated(error, redirect, renderProps, response) {
         response.redirect(302, redirect.pathname + redirect.search);
     }
     else if (renderProps) {
-        AdvisorsService.fetchAdvisors()
+        api.getAdvisors()
             .then(advisors => {
                 let data = { AdvisorsStore: advisors };
                 response.status(200).send(
                     renderPage(renderProps, data));
             })
-            .catch(() => {
-                console.log("Couldn't load advisors.");
+            .catch(error => {
+                console.log(error);
                 response.status(200).send(
                     renderPage(renderProps, null));
             });
