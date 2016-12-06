@@ -1,6 +1,7 @@
 export default class AdvisorsService {
-    constructor(activities) {
+    constructor(activities, manifest) {
         this.activities = activities;
+        this.manifest = manifest;
         this.parsers = {
             'xur': this.parseXur,
             'trials': this.parseTrials,
@@ -68,7 +69,14 @@ export default class AdvisorsService {
 
     parseDailyStory(data) {
         if (!data.display) return null;
+        
+        // get mission name
         let mission = 'Unknown Mission';
+        let activity = this.manifest.getActivity(data.display.activityHash);
+        if (activity && activity.activityName) {
+            mission = activity.activityName;
+        }
+
         let image = null;
         if (data.display.image) {
             image = `https://www.bungie.net${data.display.image}`;
@@ -84,8 +92,16 @@ export default class AdvisorsService {
 
     parseDailyCrucible(data) {
         if (!data.display) return null;
+
+        // get playlist name and icon
         let playlist = 'Unknown Playlist';
         let icon = data.display.icon || '/img/theme/destiny/icons/node_pvp_featured.png';
+        let activity = this.manifest.getActivity(data.display.activityHash);
+        if (activity) {
+            playlist = activity.activityName || playlist;
+            icon = activity.icon || icon;
+        }
+
         return {
             category: "Today",
             type: "Daily Crucible Playlist",
@@ -135,7 +151,14 @@ export default class AdvisorsService {
 
     parseNightfall(data) {
         if (!data.display) return null;
+        
+        // get mission name
         let mission = 'Unknown Mission';
+        let activity = this.manifest.getActivity(data.display.activityHash);
+        if (activity && activity.activityName) {
+            mission = activity.activityName;
+        }
+
         let image = null;
         if (data.display.image) {
             image = `https://www.bungie.net${data.display.image}`;
@@ -175,8 +198,16 @@ export default class AdvisorsService {
 
     parseWeeklyCrucible(data) {
         if (!data.display) return null;
+        
+        // get playlist name and icon
         let playlist = 'Unknown Playlist';
         let icon = data.display.icon || '/img/destiny_content/advisors/pvp_Weekly_PvP.png';
+        let activity = this.manifest.getActivity(data.display.activityHash);
+        if (activity) {
+            playlist = activity.activityName || playlist;
+            icon = activity.icon || icon;
+        }
+
         return {
             category: "This Week",
             type: "Weekly Crucible Playlist",

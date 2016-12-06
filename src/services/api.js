@@ -1,6 +1,7 @@
 import { default as time } from './time';
 import { endpoints } from '../routes';
 import { default as bungie } from './bungie';
+import ManifestService from './manifest';
 import AdvisorsService from './advisors';
 
 class APIService {
@@ -28,7 +29,10 @@ class APIService {
                 .then(response => {
                     if (response && response.data && response.data.activities) {
                         try {
-                            let service = new AdvisorsService(response.data.activities);
+                            let manifest = new ManifestService(
+                                response.definitions);
+                            let service = new AdvisorsService(
+                                response.data.activities, manifest);
                             let advisors = service.getAdvisors();
                             let categories = this.groupByCategory(advisors);
                             resolve({
