@@ -13,14 +13,7 @@ class AdvisorGroup extends React.Component {
     render() {
         let childElements = this.props.advisors
             ? this.props.advisors.map((advisor, i) =>
-                <Advisor key={i}
-                    type={advisor.type}
-                    name={advisor.name}
-                    icon={advisor.icon}
-                    image={advisor.image}
-                    timeRemaining={advisor.timeRemaining}
-                    items={advisor.items}
-                    modifiers={advisor.modifiers} />)
+                <Advisor key={i} {...advisor} />)
             : null;
 
         return (

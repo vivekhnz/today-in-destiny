@@ -17,6 +17,28 @@ class TimeService {
             year: date.getFullYear()
         };
     }
+
+    getRemainingTime(utcTime) {
+        let currentTime = new Date();
+        let endTime = Date.parse(utcTime);
+        let totalMs = endTime - currentTime.getTime();
+        return this.getTimespanString(totalMs);
+    }
+
+    getTimespanString(totalMs) {
+        let totalSeconds = totalMs / 1000;
+        let totalMinutes = totalSeconds / 60;
+        let totalHours = totalMinutes / 60;
+        let totalDays = totalHours / 24;
+
+        let hours = Math.floor(totalHours % 24);
+        let minutes = Math.floor(totalMinutes % 60);
+
+        if (totalDays >= 1) {
+            return `${Math.floor(totalDays)}d ${hours}h`;
+        }
+        return `${Math.floor(totalHours)}h ${minutes}m`;
+    }
 };
 
 export default new TimeService();
