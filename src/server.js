@@ -1,3 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
+if (!process.env.BUNGIE_API_KEY) {
+    console.error("The 'BUNGIE_API_KEY' environment variable has not been set.");
+    process.exit(1);
+}
+
 import Express from 'express';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
