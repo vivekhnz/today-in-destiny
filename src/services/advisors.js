@@ -19,7 +19,7 @@ export default class AdvisorsService {
         for (let activity in this.parsers) {
             let parser = this.parsers[activity];
             let result = this.parseActivity(
-                this.activities[activity], parser);
+                this.activities[activity], parser.bind(this));
             if (result) {
                 advisors.push(result);
             }
@@ -67,91 +67,134 @@ export default class AdvisorsService {
     }
 
     parseDailyStory(data) {
+        if (!data.display) return null;
+        let mission = 'Unknown Mission';
+        let image = null;
+        if (data.display.image) {
+            image = `https://www.bungie.net${data.display.image}`;
+        }
         return {
             category: "Today",
             type: "Daily Story Mission",
-            name: "Enemy of My Enemy",
+            name: mission,
             icon: "https://www.bungie.net/img/theme/destiny/icons/node_story_featured.png",
-            image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/enemy_of_my_enemy.jpg"
+            image: image
         };
     }
 
     parseDailyCrucible(data) {
+        if (!data.display) return null;
+        let playlist = 'Unknown Playlist';
+        let icon = data.display.icon || '/img/theme/destiny/icons/node_pvp_featured.png';
         return {
             category: "Today",
             type: "Daily Crucible Playlist",
-            name: "Control",
-            icon: "https://www.bungie.net/img/destiny_content/advisors/pvp_Control.png",
+            name: playlist,
+            icon: `https://www.bungie.net${icon}`,
             image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/daily_crucible.jpg"
         };
     }
 
+    parseModifiers(category) {
+        if (category && category.skulls) {
+            return category.skulls.map(skull => {
+                return {
+                    name: skull.displayName,
+                    icon: `https://www.bungie.net${skull.icon}`
+                };
+            });
+        }
+        return null;
+    }
+
+    parseChallengeModes(tiers) {
+        if (tiers) {
+            // use Normal mode so we don't get the Heroic modifier
+            let normalTier = tiers.find(
+                t => t.tierDisplayName === "Normal");
+            if (normalTier && normalTier.skullCategories) {
+                let category = normalTier.skullCategories.find(
+                    c => c.title === "Modifiers");
+                return this.parseModifiers(category);
+            }
+        }
+        return null;
+    }
+
     parseWrathOfTheMachine(data) {
+        let modifiers = this.parseChallengeModes(data.activityTiers);
         return {
             category: "This Week",
             type: "Raid",
             name: "Wrath of the Machine",
             icon: "https://www.bungie.net/common/destiny_content/icons/08142310168ad6ade9a6e4252e8433fc.png",
             image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/wrath_of_the_machine.jpg",
-            modifiers: [
-                { name: "Vosik Challenge", icon: "https://www.bungie.net/common/destiny_content/icons/d500171b589479f145964a2bc1d7036b.png" }
-            ]
+            modifiers: modifiers
         };
     }
 
     parseNightfall(data) {
+        if (!data.display) return null;
+        let mission = 'Unknown Mission';
+        let image = null;
+        if (data.display.image) {
+            image = `https://www.bungie.net${data.display.image}`;
+        }
+        let modifiers = null;
+        if (data.extended && data.extended.skullCategories) {
+            let category = data.extended.skullCategories.find(
+                c => c.title === "Modifiers");
+            modifiers = this.parseModifiers(category);
+        }
         return {
             category: "This Week",
             type: "Nightfall Strike",
-            name: "The Wretched Eye",
+            name: mission,
             icon: "https://www.bungie.net/img/theme/destiny/icons/node_strike_nightfall.png",
-            image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/wretched_eye.jpg",
-            modifiers: [
-                { name: "Epic", icon: "https://www.bungie.net/common/destiny_content/icons/1db70c6734dffce9ee6cb4792da26c81.png" },
-                { name: "Arc Burn", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_damage_boost_arc_000_001.v2.png" },
-                { name: "Brawler", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_brawler_000_001.v2.png" },
-                { name: "Ironclad", icon: "https://www.bungie.net/common/destiny_content/icons/fc7b47af0ec6acc1558fed7e46714fc2.png" },
-                { name: "Exposure", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_morbid_000_001.v2.png" }
-            ]
+            image: image,
+            modifiers: modifiers
         };
     }
 
     parseHeroicStrikes(data) {
+        let modifiers = null;
+        if (data.extended && data.extended.skullCategories) {
+            let category = data.extended.skullCategories.find(
+                c => c.title === "Modifiers");
+            modifiers = this.parseModifiers(category);
+        }
         return {
             category: "This Week",
             type: "Heroic Strike Playlist",
             name: "SIVA Crisis Heroic",
             icon: "https://www.bungie.net/img/theme/destiny/icons/node_strike_featured.png",
             image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/weekly_heroic.jpg",
-            modifiers: [
-                { name: "Heroic", icon: "https://www.bungie.net/common/destiny_content/icons/b070b353fc2b3067a84dad54f20da48b.png" },
-                { name: "Specialist", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_specialist_000_001.v2.png" },
-                { name: "Exposure", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_morbid_000_001.v2.png" },
-                { name: "Airborne", icon: "https://www.bungie.net/img/destiny_content/scripted_skulls/skull_airborne_000_001.v2.png" },
-            ]
+            modifiers: modifiers
         };
     }
 
     parseWeeklyCrucible(data) {
+        if (!data.display) return null;
+        let playlist = 'Unknown Playlist';
+        let icon = data.display.icon || '/img/destiny_content/advisors/pvp_Weekly_PvP.png';
         return {
             category: "This Week",
             type: "Weekly Crucible Playlist",
-            name: "Inferno Supremacy",
-            icon: "https://www.bungie.net/common/destiny_content/icons/203b106719909523844384cb4e2cae1f.png",
+            name: playlist,
+            icon: `https://www.bungie.net${icon}`,
             image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/weekly_crucible.jpg"
         };
     }
 
     parseKingsFall(data) {
+        let modifiers = this.parseChallengeModes(data.activityTiers);
         return {
             category: "This Week",
             type: "Raid",
             name: "King's Fall",
             icon: "https://www.bungie.net/common/destiny_content/icons/08142310168ad6ade9a6e4252e8433fc.png",
             image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/kings_fall.jpg",
-            modifiers: [
-                { name: "Warpriest Challenge", icon: "https://www.bungie.net/common/destiny_content/icons/9aa0b2f21752ff761c93c647aabf2bb9.png" },
-            ]
+            modifiers: modifiers
         };
     }
 };
