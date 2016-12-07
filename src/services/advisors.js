@@ -15,49 +15,81 @@ export default class AdvisorsService {
             },
             'trials': {
                 defaults: {
-
+                    'category': 'Events',
+                    'type': 'Trials of Osiris',
+                    'name': 'Trials of Osiris',
+                    'image': "/images/advisors/backgrounds/trials.jpg",
+                    'icon': "/images/advisors/icons/trials.png"
                 },
                 parser: this.parseTrials
             },
             'dailychapter': {
                 defaults: {
-
+                    'category': 'Today',
+                    'type': 'Daily Story Mission',
+                    'name': 'Unknown Mission',
+                    'image': "/images/advisors/backgrounds/default.jpg",
+                    'icon': "/images/advisors/icons/dailyStory.png"
                 },
                 parser: this.parseDailyStory
             },
             'dailycrucible': {
                 defaults: {
-
+                    'category': 'Today',
+                    'type': 'Daily Crucible Playlist',
+                    'name': 'Unknown Playlist',
+                    'image': "/images/advisors/backgrounds/dailyCrucible.jpg",
+                    'icon': "/images/advisors/icons/dailyCrucible.png"
                 },
                 parser: this.parseDailyCrucible
             },
             'wrathofthemachine': {
                 defaults: {
-
+                    'category': 'This Week',
+                    'type': 'Raid',
+                    'name': 'Wrath of the Machine',
+                    'image': "/images/advisors/backgrounds/raid-wotm.jpg",
+                    'icon': "/images/advisors/icons/raid-wotm.png"
                 },
                 parser: this.parseRaid
             },
             'nightfall': {
                 defaults: {
-
+                    'category': 'This Week',
+                    'type': 'Nightfall Strike',
+                    'name': 'Unknown Mission',
+                    'image': "/images/advisors/backgrounds/nightfall.jpg",
+                    'icon': "/images/advisors/icons/nightfall.png"
                 },
                 parser: this.parseNightfall
             },
             'heroicstrike': {
                 defaults: {
-
+                    'category': 'This Week',
+                    'type': 'Heroic Strike Playlist',
+                    'name': 'SIVA Crisis Heroic',
+                    'image': "/images/advisors/backgrounds/heroicStrikes.jpg",
+                    'icon': "/images/advisors/icons/heroicStrikes.png"
                 },
                 parser: this.parseHeroicStrikes
             },
             'weeklycrucible': {
                 defaults: {
-
+                    'category': 'This Week',
+                    'type': 'Weekly Crucible Playlist',
+                    'name': 'Unknown Playlist',
+                    'image': "/images/advisors/backgrounds/weeklyCrucible.jpg",
+                    'icon': "/images/advisors/icons/weeklyCrucible.png"
                 },
                 parser: this.parseWeeklyCrucible
             },
             'kingsfall': {
                 defaults: {
-
+                    'category': 'This Week',
+                    'type': 'Raid',
+                    'name': "King's Fall",
+                    'image': "/images/advisors/backgrounds/raid-kf.jpg",
+                    'icon': "/images/advisors/icons/raid-kf.png"
                 },
                 parser: this.parseRaid
             }
