@@ -43,16 +43,8 @@ export default class AdvisorsService {
                 },
                 parser: this.parseDailyCrucible
             },
-            'wrathofthemachine': {
-                defaults: {
-                    'category': 'This Week',
-                    'type': 'Raid',
-                    'name': 'Wrath of the Machine',
-                    'image': "/images/advisors/backgrounds/raid-wotm.jpg",
-                    'icon': "/images/advisors/icons/raid-wotm.png"
-                },
-                parser: this.parseRaid
-            },
+            'wrathofthemachine': this.createRaidParser(
+                'Wrath of the Machine', 'wotm'),
             'nightfall': {
                 defaults: {
                     'category': 'This Week',
@@ -83,16 +75,7 @@ export default class AdvisorsService {
                 },
                 parser: this.parseWeeklyCrucible
             },
-            'kingsfall': {
-                defaults: {
-                    'category': 'This Week',
-                    'type': 'Raid',
-                    'name': "King's Fall",
-                    'image': "/images/advisors/backgrounds/raid-kf.jpg",
-                    'icon': "/images/advisors/icons/raid-kf.png"
-                },
-                parser: this.parseRaid
-            }
+            'kingsfall': this.createRaidParser("King's Fall", 'kf')
         };
         this.defaults = {
             'category': 'Activities',
@@ -129,7 +112,7 @@ export default class AdvisorsService {
         let expiresAt = null;
         if (data && data.status) {
             let status = data.status;
-            //if (!status.active) return null;
+            if (!status.active) return null;
             if (status.expirationKnown) {
                 expiresAt = status.expirationDate;
             }
@@ -210,9 +193,30 @@ export default class AdvisorsService {
         return null;
     }
 
-    parseRaid(data) {
+    createRaidParser(name, identifier) {
         return {
-            modifiers: this.parseChallengeModes(data.activityTiers)
+            defaults: {
+                'category': 'This Week',
+                'type': 'Raid',
+                'name': name,
+                'image': `/images/advisors/backgrounds/raid-${identifier}.jpg`,
+                'icon': `/images/advisors/icons/raid-${identifier}.png`
+            },
+            parser: data => {
+                let modifiers = this.parseChallengeModes(data.activityTiers);
+                let advisorName = null;
+                let advisorType = null;
+                if (modifiers && modifiers.length === 1) {
+                    advisorName = modifiers[0].name;
+                    advisorType = name;
+                    modifiers = null;
+                }
+                return {
+                    name: advisorName,
+                    type: advisorType,
+                    modifiers: modifiers
+                };
+            }
         };
     }
 
