@@ -3,22 +3,76 @@ export default class AdvisorsService {
         this.activities = activities;
         this.manifest = manifest;
         this.parsers = {
-            'xur': this.parseXur,
-            'trials': this.parseTrials,
-            'dailychapter': this.parseDailyStory,
-            'dailycrucible': this.parseDailyCrucible,
-            'wrathofthemachine': this.parseRaid,
-            'nightfall': this.parseNightfall,
-            'heroicstrike': this.parseHeroicStrikes,
-            'weeklycrucible': this.parseWeeklyCrucible,
-            'kingsfall': this.parseRaid
+            'xur': {
+                defaults: {
+                    'category': 'Events',
+                    'type': 'Agent of the Nine',
+                    'name': 'Xûr has arrived...',
+                    'image': "/images/advisors/backgrounds/xur.jpg",
+                    'icon': "/images/advisors/icons/xur.png"
+                },
+                parser: this.parseXur
+            },
+            'trials': {
+                defaults: {
+
+                },
+                parser: this.parseTrials
+            },
+            'dailychapter': {
+                defaults: {
+
+                },
+                parser: this.parseDailyStory
+            },
+            'dailycrucible': {
+                defaults: {
+
+                },
+                parser: this.parseDailyCrucible
+            },
+            'wrathofthemachine': {
+                defaults: {
+
+                },
+                parser: this.parseRaid
+            },
+            'nightfall': {
+                defaults: {
+
+                },
+                parser: this.parseNightfall
+            },
+            'heroicstrike': {
+                defaults: {
+
+                },
+                parser: this.parseHeroicStrikes
+            },
+            'weeklycrucible': {
+                defaults: {
+
+                },
+                parser: this.parseWeeklyCrucible
+            },
+            'kingsfall': {
+                defaults: {
+
+                },
+                parser: this.parseRaid
+            }
+        };
+        this.defaults = {
+            'category': 'Activities',
+            'type': 'Featured Activity',
+            'name': 'Unknown Activity',
+            'image': '/images/advisors/backgrounds/default.jpg',
+            'icon': '/images/advisors/icons/default.png'
         };
     }
 
     bnet(relative) {
-        if (relative) {
-            return `https://www.bungie.net${relative}`;
-        }
+        if (relative) return `https://www.bungie.net${relative}`;
         return null;
     }
 
@@ -27,7 +81,7 @@ export default class AdvisorsService {
         for (let activity in this.parsers) {
             let parser = this.parsers[activity];
             let result = this.parseActivity(
-                this.activities[activity], parser.bind(this));
+                this.activities[activity], parser);
             if (result) {
                 advisors.push(result);
             }
@@ -50,20 +104,25 @@ export default class AdvisorsService {
         }
 
         // parse result
-        let result = parser(data);
+        let result = parser.parser.bind(this)(data);
         if (result) {
             result.expiresAt = expiresAt;
-            result.category = result.category || 'Activities';
-            result.type = result.type || 'Featured Activity';
-            result.name = result.name || 'Unknown Activity';
-            result.image = result.image || '/images/advisors/backgrounds/default.jpg';
-            result.icon = result.icon || '/images/advisors/icons/default.png';
+
+            // set any empty properties to default values for parser
+            for (let prop in parser.defaults) {
+                result[prop] = result[prop] || parser.defaults[prop];
+            }
+
+            // set any empty properties to default values
+            for (let prop in this.defaults) {
+                result[prop] = result[prop] || this.defaults[prop];
+            }
         }
         return result;
     }
 
     parseXur(data) {
-        return null;
+        return {};
     }
 
     parseTrials(data) {
