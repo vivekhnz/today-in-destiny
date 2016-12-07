@@ -6,6 +6,25 @@ var overlayColor = 'rgba(39, 58, 65, 0.75)';
 var wideViewWidth = 422;
 
 class Advisor extends React.Component {
+    renderIcon() {
+        if (this.props.icon) {
+            return (
+                <div className="advisorIcon" style={{ backgroundImage: 'url(' + this.props.icon + ')' }} />
+            );
+        }
+        return null;
+    }
+
+    renderTimeRemaining() {
+        if (this.props.expiresAt) {
+            let timeRemaining = time.getRemainingTime(this.props.expiresAt);
+            return (
+                <p className="advisorTimeRemaining">{timeRemaining}</p>
+            );
+        }
+        return null;
+    }
+
     renderItems() {
         if (this.props.items) {
             return (
@@ -47,30 +66,22 @@ class Advisor extends React.Component {
         return null;
     }
 
-    renderTimeRemaining() {
-        if (this.props.expiresAt) {
-            let timeRemaining = time.getRemainingTime(this.props.expiresAt);
-            return (
-                <p className="advisorTimeRemaining">{timeRemaining}</p>
-            );
-        }
-        return null;
-    }
-
     render() {
         let blockStyle = {
-            background: `linear-gradient(${overlayColor}, ${overlayColor}),
-                 url('${this.props.image}')`
+            background: this.props.image
+                ? `linear-gradient(${overlayColor}, ${overlayColor}), url('${this.props.image}')`
+                : overlayColor
         };
+        let icon = this.renderIcon();
+        let timeRemaining = this.renderTimeRemaining();
         let items = this.renderItems();
         let modifiers = this.renderModifiers();
-        let timeRemaining = this.renderTimeRemaining();
 
         return (
             <ElementQuery sizes={[{ name: 'wide', width: wideViewWidth }]}>
                 <div className="advisorBlock" style={blockStyle}>
                     <div className="advisorContainer">
-                        <div className="advisorIcon" style={{ backgroundImage: 'url(' + this.props.icon + ')' }} />
+                        {icon}
                         <div className="advisorContent">
                             {timeRemaining}
                             <p className="advisorType">{this.props.type}</p>
