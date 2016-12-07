@@ -13,16 +13,8 @@ export default class AdvisorsService {
                 },
                 parser: this.parseXur
             },
-            'trials': {
-                defaults: {
-                    'category': 'Events',
-                    'type': 'Trials of Osiris',
-                    'name': 'Trials of Osiris',
-                    'image': "/images/advisors/backgrounds/trials.jpg",
-                    'icon': "/images/advisors/icons/trials.png"
-                },
-                parser: this.parseTrials
-            },
+            'trials': this.createEventParser('Trials of Osiris', 'trials', this.parseTrials),
+            'ironbanner': this.createEventParser('Iron Banner', 'ironBanner', this.parseIronBanner),
             'dailychapter': {
                 defaults: {
                     'category': 'Today',
@@ -140,11 +132,49 @@ export default class AdvisorsService {
         return {};
     }
 
+    createEventParser(name, identifier, parser) {
+        return {
+            defaults: {
+                'category': 'Events',
+                'type': name,
+                'name': name,
+                'image': `/images/advisors/backgrounds/${identifier}.jpg`,
+                'icon': `/images/advisors/icons/${identifier}.png`
+            },
+            parser: data => {
+                let parsed = parser.bind(this)(data);
+                if (!parsed.name) {
+                    parsed.name = name;
+                    parsed.type = 'Limited Time Event';
+                }
+                return parsed;
+            }
+        };
+    }
+
     parseTrials(data) {
         if (!data.display) return null;
         return {
             name: data.display.flavor,
             image: this.bnet(data.display.image)
+        };
+    }
+
+    parseIronBanner(data) {
+        let weeklyCrucible = this.activities.weeklycrucible;
+        let playlist = null;
+
+        // obtain playlist from Weekly Crucible Playlist
+        if (weeklyCrucible && weeklyCrucible.display) {
+            let activity = this.manifest.getActivity(
+                weeklyCrucible.display.activityHash);
+            if (activity) {
+                playlist = activity.activityName.replace(
+                    "Iron Banner", "").trim();                
+            }
+        }
+        return {
+            name: playlist
         };
     }
 
@@ -254,8 +284,14 @@ export default class AdvisorsService {
         if (!data.display) return null;
 
         let activity = this.manifest.getActivity(data.display.activityHash);
+        let playlist = activity ? activity.activityName : null;
+        
+        // hide the weekly Crucible playlist if Iron Banner is active
+        if (playlist && playlist.startsWith("Iron Banner")) {
+            return null;
+        }
         return {
-            name: activity ? activity.activityName : null,
+            name: playlist,
         };
     }
 };
