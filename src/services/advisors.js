@@ -54,7 +54,10 @@ export default class AdvisorsService {
         if (result) {
             result.expiresAt = expiresAt;
             result.category = result.category || 'Activities';
+            result.type = result.type || 'Featured Activity';
             result.name = result.name || 'Unknown Activity';
+            result.image = result.image || '/images/advisors/backgrounds/default.jpg';
+            result.icon = result.icon || '/images/advisors/icons/default.png';
         }
         return result;
     }

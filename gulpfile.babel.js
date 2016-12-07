@@ -10,6 +10,7 @@ import plumber from 'gulp-plumber';
 import uglify from 'gulp-uglify';
 import less from 'gulp-less';
 import cssmin from 'gulp-cssmin';
+import imagemin from 'gulp-imagemin';
 import es from 'event-stream';
 import nodemon from 'gulp-nodemon';
 import browserSync from 'browser-sync';
@@ -27,6 +28,9 @@ var config = {
     utils: {
         babel: {
             presets: ['es2015', 'react']
+        },
+        imagemin: {
+            progressive: true
         },
         browserSync: {
             proxy: 'localhost:3000',
@@ -46,6 +50,10 @@ var config = {
     stylesheets: {
         src: 'src/public/stylesheets/**/**.less',
         outDir: 'build/public/stylesheets'
+    },
+    images: {
+        src: 'src/public/images/**/**.{jpg,png,gif,svg}',
+        outDir: 'build/public/images'
     }
 };
 config.bundles = {
@@ -87,6 +95,13 @@ gulp.task('stylesheets', () => {
         .pipe(less())
         .pipe(gulpif(production, cssmin()))
         .pipe(gulp.dest(config.stylesheets.outDir));
+});
+
+// minify images
+gulp.task('images', () => {
+    return gulp.src(config.images.src)
+        .pipe(imagemin(config.utils.imagemin))
+        .pipe(gulp.dest(config.images.outDir));
 });
 
 // copy files that don't require compilation
@@ -169,6 +184,11 @@ gulp.task('stylesheets-watch', () => {
     gulp.watch([config.stylesheets.src], ['stylesheets']);
 });
 
+// automatically minify images
+gulp.task('images-watch', () => {
+    gulp.watch([config.images.src], ['images']);
+});
+
 // automatically recompile JS
 gulp.task('babel-watch', () => {
     gulp.watch(config.js).on('change', file => {
@@ -190,7 +210,7 @@ gulp.task('reload-watch', () => {
 
 // execute all build tasks
 gulp.task('build', [
-    'babel', 'copy', 'stylesheets', 'bundle-vendor', 'bundle-app'
+    'babel', 'copy', 'stylesheets', 'images', 'bundle-vendor', 'bundle-app'
 ]);
 
 // build and start server
@@ -198,5 +218,8 @@ gulp.task('serve', ['build', 'server']);
 
 // start BrowserSync and watch for changes
 gulp.task('watch', [
-    'sync', 'stylesheets-watch', 'babel-watch', 'app-watch', 'reload-watch'
+    'sync',
+    'stylesheets-watch', 'images-watch',
+    'babel-watch', 'app-watch',
+    'reload-watch'
 ]);
