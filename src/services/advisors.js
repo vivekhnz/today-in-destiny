@@ -2,6 +2,12 @@ export default class AdvisorsService {
     constructor(activities, manifest) {
         this.activities = activities;
         this.manifest = manifest;
+        this.challengeModeBackgrounds = {
+            'Golgoroth Challenge': 'golgoroth',
+            'Oryx Challenge': 'oryx',
+            'Vosik Challenge': 'vosik',
+            'Aksis Challenge': 'aksis',
+        };
         this.parsers = {
             'xur': {
                 defaults: {
@@ -170,7 +176,7 @@ export default class AdvisorsService {
                 weeklyCrucible.display.activityHash);
             if (activity) {
                 playlist = activity.activityName.replace(
-                    "Iron Banner", "").trim();                
+                    "Iron Banner", "").trim();
             }
         }
         return {
@@ -236,15 +242,21 @@ export default class AdvisorsService {
                 let modifiers = this.parseChallengeModes(data.activityTiers);
                 let advisorName = null;
                 let advisorType = null;
+                let image = null;
                 if (modifiers && modifiers.length === 1) {
                     advisorName = modifiers[0].name;
                     advisorType = name;
                     modifiers = null;
+                    let bossID = this.challengeModeBackgrounds[advisorName];
+                    if (bossID) {
+                        image = `/images/advisors/backgrounds/raid-${identifier}-${bossID}.jpg`;
+                    }
                 }
                 return {
                     name: advisorName,
                     type: advisorType,
-                    modifiers: modifiers
+                    modifiers: modifiers,
+                    image: image
                 };
             }
         };
@@ -285,7 +297,7 @@ export default class AdvisorsService {
 
         let activity = this.manifest.getActivity(data.display.activityHash);
         let playlist = activity ? activity.activityName : null;
-        
+
         // hide the weekly Crucible playlist if Iron Banner is active
         if (playlist && playlist.startsWith("Iron Banner")) {
             return null;
