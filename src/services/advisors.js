@@ -8,6 +8,26 @@ export default class AdvisorsService {
             'Vosik Challenge': 'vosik',
             'Aksis Challenge': 'aksis',
         };
+        this.crucibleModes = {
+            '6v6': [
+                'Classic 6v6', 'Freelance 6v6', 'Iron Banner Clash',
+                'Inferno Clash', 'Clash', 'Control', 'Inferno Control',
+                'Iron Banner Control', 'Zone Control'
+            ],
+            '3v3': [
+                'Freelance 3v3', 'Classic 3v3', 'Skirmish', 'Inferno 3v3',
+                'Inferno Skirmish', 'Elimination', 'Inferno Elimination'
+            ],
+            'doubles': ['Inferno Doubles', 'Doubles'],
+            'mayhem': ['Mayhem Rumble', 'Mayhem Clash', 'Mayhem Supremacy'],
+            'rift': ['Rift', 'Iron Banner Rift'],
+            'combinedArms': ['Combined Arms'],
+            'salvage': ['Salvage', 'Inferno Salvage'],
+            'supremacy': [
+                'Supremacy', 'Inferno Supremacy', 'Rumble Supremacy',
+                'Iron Banner Supremacy'
+            ]
+        };
         this.parsers = {
             'xur': {
                 defaults: {
@@ -31,16 +51,10 @@ export default class AdvisorsService {
                 },
                 parser: this.parseDailyStory
             },
-            'dailycrucible': {
-                defaults: {
-                    'category': 'Today',
-                    'type': 'Daily Crucible Playlist',
-                    'name': 'Unknown Playlist',
-                    'image': "/images/advisors/backgrounds/dailyCrucible.jpg",
-                    'icon': "/images/advisors/icons/dailyCrucible.png"
-                },
-                parser: this.parseDailyCrucible
-            },
+            'dailycrucible': this.createCrucibleParser('Today',
+                'Daily Crucible Playlist',
+                '/images/advisors/icons/dailyCrucible.png',
+                this.parseDailyCrucible),
             'wrathofthemachine': this.createRaidParser(
                 'Wrath of the Machine', 'wotm'),
             'nightfall': {
@@ -63,16 +77,10 @@ export default class AdvisorsService {
                 },
                 parser: this.parseHeroicStrikes
             },
-            'weeklycrucible': {
-                defaults: {
-                    'category': 'This Week',
-                    'type': 'Weekly Crucible Playlist',
-                    'name': 'Unknown Playlist',
-                    'image': "/images/advisors/backgrounds/weeklyCrucible.jpg",
-                    'icon': "/images/advisors/icons/weeklyCrucible.png"
-                },
-                parser: this.parseWeeklyCrucible
-            },
+            'weeklycrucible': this.createCrucibleParser('This Week',
+                'Weekly Crucible Playlist',
+                '/images/advisors/icons/weeklyCrucible.png',
+                this.parseWeeklyCrucible),
             'kingsfall': this.createRaidParser("King's Fall", 'kf')
         };
         this.defaults = {
@@ -149,6 +157,7 @@ export default class AdvisorsService {
             },
             parser: data => {
                 let parsed = parser.bind(this)(data);
+                if (!parser) return null;
                 if (!parsed.name) {
                     parsed.name = name;
                     parsed.type = 'Limited Time Event';
@@ -194,12 +203,54 @@ export default class AdvisorsService {
         };
     }
 
-    parseDailyCrucible(data) {
-        if (!data.display) return null;
+    getCrucibleModeImage(playlistName) {
+        for (let id in this.crucibleModes) {
+            let playlists = this.crucibleModes[id];
+            if (playlists.includes(playlistName)) {
+                return `/images/advisors/backgrounds/crucible-${id}.jpg`;
+            }
+        }
+    }
 
-        let activity = this.manifest.getActivity(data.display.activityHash);
+    createCrucibleParser(category, type, defaultIcon, parser) {
+        return {
+            defaults: {
+                'category': category,
+                'type': type,
+                'name': 'Unknown Playlist',
+                'image': "/images/advisors/backgrounds/featuredCrucible.jpg",
+                'icon': defaultIcon
+            },
+            parser: data => {
+                if (!data.display) return null;
+                let activity = this.manifest.getActivity(data.display.activityHash);
+
+                let parsed = parser.bind(this)(activity);
+                if (!parsed) return null;
+                if (parsed.name) {
+                    parsed.image = this.getCrucibleModeImage(parsed.name);
+                }
+
+                return parsed;
+            }
+        };
+    }
+
+    parseDailyCrucible(activity) {
         return {
             name: activity ? activity.activityName : null,
+        };
+    }
+
+    parseWeeklyCrucible(activity) {
+        let playlist = activity ? activity.activityName : null;
+
+        // hide the weekly Crucible playlist if Iron Banner is active
+        if (playlist && playlist.startsWith("Iron Banner")) {
+            return null;
+        }
+        return {
+            name: playlist,
         };
     }
 
@@ -289,21 +340,6 @@ export default class AdvisorsService {
         }
         return {
             modifiers: modifiers
-        };
-    }
-
-    parseWeeklyCrucible(data) {
-        if (!data.display) return null;
-
-        let activity = this.manifest.getActivity(data.display.activityHash);
-        let playlist = activity ? activity.activityName : null;
-
-        // hide the weekly Crucible playlist if Iron Banner is active
-        if (playlist && playlist.startsWith("Iron Banner")) {
-            return null;
-        }
-        return {
-            name: playlist,
         };
     }
 };
