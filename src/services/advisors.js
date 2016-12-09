@@ -1,7 +1,9 @@
 export default class AdvisorsService {
-    constructor(activities, manifest) {
+    constructor(activities, xur, manifest) {
         this.activities = activities;
+        this.xur = xur;
         this.manifest = manifest;
+
         this.challengeModeBackgrounds = {
             'Golgoroth Challenge': 'golgoroth',
             'Oryx Challenge': 'oryx',
@@ -143,7 +145,25 @@ export default class AdvisorsService {
     }
 
     parseXur(data) {
-        return {};
+        let items = null;
+        if (this.xur) {
+            let exotics = this.xur['Exotic Gear'];
+            if (exotics) {
+                items = [];
+                exotics.forEach(item => {
+                    let definition = this.manifest.getItem(item.itemHash);
+                    if (definition) {
+                        items.push({
+                            name: definition.itemName,
+                            icon: this.bnet(definition.icon)
+                        });
+                    }
+                }, this);
+            }
+        }
+        return {
+            items: items
+        };
     }
 
     createEventParser(name, identifier, parser) {

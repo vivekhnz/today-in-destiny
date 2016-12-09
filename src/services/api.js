@@ -28,29 +28,105 @@ class APIService {
             bungie.getPublicAdvisorsV2()
                 .then(response => {
                     if (response && response.data && response.data.activities) {
-                        try {
-                            let manifest = new ManifestService(
-                                response.definitions);
-                            let service = new AdvisorsService(
-                                response.data.activities, manifest);
-                            let advisors = service.getAdvisors();
-                            let categories = this.groupByCategory(advisors);
-                            resolve({
-                                date: time.getCurrentDate(),
-                                advisorGroups: categories
-                            });
-                        } catch (error) {
-                            throw error;
-                        }
+                        return {
+                            activities: response.data.activities,
+                            definitions: [response.definitions]
+                        };
                     }
                     else {
                         throw new Error('No advisors returned.');
+                    }
+                })
+                .then(response => {
+                    let xur = response.activities.xur;
+                    if (xur && xur.status && xur.status.active) {
+                        return this.getXur(response);
+                    }
+                    return response;
+                })
+                .then(response => {
+                    try {
+                        resolve(this.parseAdvisors(response));
+                    } catch (error) {
+                        throw error;
                     }
                 }).catch(error => {
                     console.log(error);
                     reject(new Error("An error occurred while fetching advisors."));
                 });
         });
+    }
+
+    getXur(response) {
+        return new Promise((resolve, reject) => {
+            bungie.getXur()
+                .then(xur => {
+                    if (xur && xur.data && xur.data.saleItemCategories) {
+                        response.definitions.push(xur.definitions);
+                        response.xur = this.parseXurStock(
+                            xur.data.saleItemCategories);
+                        resolve(response);
+                    }
+                    else {
+                        throw new Error('No Xur data returned.');
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    reject(new Error("An error occurred while fetching Xur's stock."));
+                });
+        });
+    }
+
+    parseXurStock(data) {
+        let stock = {};
+        data.forEach(category => {
+            stock[category.categoryTitle] =
+                category.saleItems.map(sale => {
+                    return {
+                        itemHash: sale.item.itemHash,
+                        quantity: sale.item.stackSize,
+                        costs: sale.costs
+                    };
+                })
+        }, this);
+        return stock;
+    }
+
+    parseAdvisors(response) {
+        let definitions = this.combineDefinitions(response.definitions);
+        let manifest = new ManifestService(definitions);
+        let service = new AdvisorsService(
+            response.activities, response.xur, manifest);
+        let advisors = service.getAdvisors();
+        let categories = this.groupByCategory(advisors);
+        return {
+            date: time.getCurrentDate(),
+            advisorGroups: categories
+        };
+    }
+
+    combineDefinitions(collection) {
+        let output = {};
+        collection.forEach(definitions => {
+            for (let type in definitions) {
+                let existing = output[type];
+                let defs = definitions[type];
+                if (existing) {
+                    output[type] = this.merge(existing, defs);
+                }
+                else {
+                    output[type] = defs;
+                }
+            }
+        }, this);
+        return output;
+    }
+
+    merge(a, b) {
+        for (let key in b) {
+            a[key] = b[key];
+        }
+        return a;
     }
 
     groupByCategory(advisors) {

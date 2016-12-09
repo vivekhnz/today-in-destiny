@@ -31,6 +31,10 @@ class BungiePlatformService {
     getPublicAdvisorsV2() {
         return this.get('/Destiny/Advisors/V2/?definitions=true');
     }
+
+    getXur() {
+        return this.get('/Destiny/Advisors/Xur/?definitions=true');
+    }
 };
 
 export default new BungiePlatformService();
