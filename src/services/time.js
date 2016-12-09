@@ -5,7 +5,7 @@ class TimeService {
     getCurrentDate() {
         // calculate time in UTC-9 (where reset is at midnight)
         var date = new Date();
-        date.setHours(date.getUTCHours() - 9);
+        date.setUTCHours(date.getUTCHours() - 9);
 
         let months = [
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
