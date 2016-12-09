@@ -2,17 +2,99 @@ export default class AdvisorsService {
     constructor(activities, manifest) {
         this.activities = activities;
         this.manifest = manifest;
-        this.parsers = {
-            'xur': this.parseXur,
-            'trials': this.parseTrials,
-            'dailychapter': this.parseDailyStory,
-            'dailycrucible': this.parseDailyCrucible,
-            'wrathofthemachine': this.parseWrathOfTheMachine,
-            'nightfall': this.parseNightfall,
-            'heroicstrike': this.parseHeroicStrikes,
-            'weeklycrucible': this.parseWeeklyCrucible,
-            'kingsfall': this.parseKingsFall
+        this.challengeModeBackgrounds = {
+            'Golgoroth Challenge': 'golgoroth',
+            'Oryx Challenge': 'oryx',
+            'Vosik Challenge': 'vosik',
+            'Aksis Challenge': 'aksis',
         };
+        this.crucibleModes = {
+            '6v6': [
+                'Classic 6v6', 'Freelance 6v6', 'Iron Banner Clash',
+                'Inferno Clash', 'Clash', 'Control', 'Inferno Control',
+                'Iron Banner Control', 'Zone Control'
+            ],
+            '3v3': [
+                'Freelance 3v3', 'Classic 3v3', 'Skirmish', 'Inferno 3v3',
+                'Inferno Skirmish', 'Elimination', 'Inferno Elimination'
+            ],
+            'doubles': ['Inferno Doubles', 'Doubles'],
+            'mayhem': ['Mayhem Rumble', 'Mayhem Clash', 'Mayhem Supremacy'],
+            'rift': ['Rift', 'Iron Banner Rift'],
+            'combinedArms': ['Combined Arms'],
+            'salvage': ['Salvage', 'Inferno Salvage'],
+            'supremacy': [
+                'Supremacy', 'Inferno Supremacy', 'Rumble Supremacy',
+                'Iron Banner Supremacy'
+            ]
+        };
+        this.parsers = {
+            'xur': {
+                defaults: {
+                    'category': 'Events',
+                    'type': 'Agent of the Nine',
+                    'name': 'Xûr has arrived...',
+                    'image': "/images/advisors/backgrounds/xur.jpg",
+                    'icon': "/images/advisors/icons/xur.png"
+                },
+                parser: this.parseXur
+            },
+            'trials': this.createEventParser('Trials of Osiris', 'trials', this.parseTrials),
+            'ironbanner': this.createEventParser('Iron Banner', 'ironBanner', this.parseIronBanner),
+            'dailychapter': {
+                defaults: {
+                    'category': 'Today',
+                    'type': 'Daily Story Mission',
+                    'name': 'Unknown Mission',
+                    'image': "/images/advisors/backgrounds/default.jpg",
+                    'icon': "/images/advisors/icons/dailyStory.png"
+                },
+                parser: this.parseDailyStory
+            },
+            'dailycrucible': this.createCrucibleParser('Today',
+                'Daily Crucible Playlist',
+                '/images/advisors/icons/dailyCrucible.png',
+                this.parseDailyCrucible),
+            'wrathofthemachine': this.createRaidParser(
+                'Wrath of the Machine', 'wotm'),
+            'nightfall': {
+                defaults: {
+                    'category': 'This Week',
+                    'type': 'Nightfall Strike',
+                    'name': 'Unknown Mission',
+                    'image': "/images/advisors/backgrounds/nightfall.jpg",
+                    'icon': "/images/advisors/icons/nightfall.png"
+                },
+                parser: this.parseNightfall
+            },
+            'heroicstrike': {
+                defaults: {
+                    'category': 'This Week',
+                    'type': 'Heroic Strike Playlist',
+                    'name': 'SIVA Crisis Heroic',
+                    'image': "/images/advisors/backgrounds/heroicStrikes.jpg",
+                    'icon': "/images/advisors/icons/heroicStrikes.png"
+                },
+                parser: this.parseHeroicStrikes
+            },
+            'weeklycrucible': this.createCrucibleParser('This Week',
+                'Weekly Crucible Playlist',
+                '/images/advisors/icons/weeklyCrucible.png',
+                this.parseWeeklyCrucible),
+            'kingsfall': this.createRaidParser("King's Fall", 'kf')
+        };
+        this.defaults = {
+            'category': 'Activities',
+            'type': 'Featured Activity',
+            'name': 'Unknown Activity',
+            'image': '/images/advisors/backgrounds/default.jpg',
+            'icon': '/images/advisors/icons/default.png'
+        };
+    }
+
+    bnet(relative) {
+        if (relative) return `https://www.bungie.net${relative}`;
+        return null;
     }
 
     getAdvisors() {
@@ -20,7 +102,7 @@ export default class AdvisorsService {
         for (let activity in this.parsers) {
             let parser = this.parsers[activity];
             let result = this.parseActivity(
-                this.activities[activity], parser.bind(this));
+                this.activities[activity], parser);
             if (result) {
                 advisors.push(result);
             }
@@ -43,71 +125,132 @@ export default class AdvisorsService {
         }
 
         // parse result
-        let result = parser(data);
+        let result = parser.parser.bind(this)(data);
         if (result) {
             result.expiresAt = expiresAt;
+
+            // set any empty properties to default values for parser
+            for (let prop in parser.defaults) {
+                result[prop] = result[prop] || parser.defaults[prop];
+            }
+
+            // set any empty properties to default values
+            for (let prop in this.defaults) {
+                result[prop] = result[prop] || this.defaults[prop];
+            }
         }
         return result;
     }
 
     parseXur(data) {
-        return null;
+        return {};
+    }
+
+    createEventParser(name, identifier, parser) {
+        return {
+            defaults: {
+                'category': 'Events',
+                'type': name,
+                'name': name,
+                'image': `/images/advisors/backgrounds/${identifier}.jpg`,
+                'icon': `/images/advisors/icons/${identifier}.png`
+            },
+            parser: data => {
+                let parsed = parser.bind(this)(data);
+                if (!parser) return null;
+                if (!parsed.name) {
+                    parsed.name = name;
+                    parsed.type = 'Limited Time Event';
+                }
+                return parsed;
+            }
+        };
     }
 
     parseTrials(data) {
         if (!data.display) return null;
-        let map = data.display.flavor || "Unknown Map";
-        let mapImage = data.display.image || "/img/theme/destiny/bgs/pgcrs/TrialsDefault.jpg";
         return {
-            category: "Events",
-            type: "Trials of Osiris",
-            name: data.display.flavor || "Unknown Map",
-            icon: "https://www.bungie.net/img/theme/destiny/icons/osiris_diamond.png",
-            image: `https://www.bungie.net${mapImage}`
+            name: data.display.flavor,
+            image: this.bnet(data.display.image)
+        };
+    }
+
+    parseIronBanner(data) {
+        let weeklyCrucible = this.activities.weeklycrucible;
+        let playlist = null;
+
+        // obtain playlist from Weekly Crucible Playlist
+        if (weeklyCrucible && weeklyCrucible.display) {
+            let activity = this.manifest.getActivity(
+                weeklyCrucible.display.activityHash);
+            if (activity) {
+                playlist = activity.activityName.replace(
+                    "Iron Banner", "").trim();
+            }
+        }
+        return {
+            name: playlist
         };
     }
 
     parseDailyStory(data) {
         if (!data.display) return null;
-        
-        // get mission name
-        let mission = 'Unknown Mission';
-        let activity = this.manifest.getActivity(data.display.activityHash);
-        if (activity && activity.activityName) {
-            mission = activity.activityName;
-        }
 
-        let image = null;
-        if (data.display.image) {
-            image = `https://www.bungie.net${data.display.image}`;
-        }
+        let activity = this.manifest.getActivity(data.display.activityHash);
         return {
-            category: "Today",
-            type: "Daily Story Mission",
-            name: mission,
-            icon: "https://www.bungie.net/img/theme/destiny/icons/node_story_featured.png",
-            image: image
+            name: activity ? activity.activityName : null,
+            image: this.bnet(data.display.image)
         };
     }
 
-    parseDailyCrucible(data) {
-        if (!data.display) return null;
-
-        // get playlist name and icon
-        let playlist = 'Unknown Playlist';
-        let icon = data.display.icon || '/img/theme/destiny/icons/node_pvp_featured.png';
-        let activity = this.manifest.getActivity(data.display.activityHash);
-        if (activity) {
-            playlist = activity.activityName || playlist;
-            icon = activity.icon || icon;
+    getCrucibleModeImage(playlistName) {
+        for (let id in this.crucibleModes) {
+            let playlists = this.crucibleModes[id];
+            if (playlists.includes(playlistName)) {
+                return `/images/advisors/backgrounds/crucible-${id}.jpg`;
+            }
         }
+    }
 
+    createCrucibleParser(category, type, defaultIcon, parser) {
         return {
-            category: "Today",
-            type: "Daily Crucible Playlist",
+            defaults: {
+                'category': category,
+                'type': type,
+                'name': 'Unknown Playlist',
+                'image': "/images/advisors/backgrounds/featuredCrucible.jpg",
+                'icon': defaultIcon
+            },
+            parser: data => {
+                if (!data.display) return null;
+                let activity = this.manifest.getActivity(data.display.activityHash);
+
+                let parsed = parser.bind(this)(activity);
+                if (!parsed) return null;
+                if (parsed.name) {
+                    parsed.image = this.getCrucibleModeImage(parsed.name);
+                }
+
+                return parsed;
+            }
+        };
+    }
+
+    parseDailyCrucible(activity) {
+        return {
+            name: activity ? activity.activityName : null,
+        };
+    }
+
+    parseWeeklyCrucible(activity) {
+        let playlist = activity ? activity.activityName : null;
+
+        // hide the weekly Crucible playlist if Iron Banner is active
+        if (playlist && playlist.startsWith("Iron Banner")) {
+            return null;
+        }
+        return {
             name: playlist,
-            icon: `https://www.bungie.net${icon}`,
-            image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/daily_crucible.jpg"
         };
     }
 
@@ -116,7 +259,7 @@ export default class AdvisorsService {
             return category.skulls.map(skull => {
                 return {
                     name: skull.displayName,
-                    icon: `https://www.bungie.net${skull.icon}`
+                    icon: this.bnet(skull.icon)
                 };
             });
         }
@@ -137,44 +280,53 @@ export default class AdvisorsService {
         return null;
     }
 
-    parseWrathOfTheMachine(data) {
-        let modifiers = this.parseChallengeModes(data.activityTiers);
+    createRaidParser(name, identifier) {
         return {
-            category: "This Week",
-            type: "Raid",
-            name: "Wrath of the Machine",
-            icon: "https://www.bungie.net/common/destiny_content/icons/08142310168ad6ade9a6e4252e8433fc.png",
-            image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/wrath_of_the_machine.jpg",
-            modifiers: modifiers
+            defaults: {
+                'category': 'This Week',
+                'type': 'Raid',
+                'name': name,
+                'image': `/images/advisors/backgrounds/raid-${identifier}.jpg`,
+                'icon': `/images/advisors/icons/raid-${identifier}.png`
+            },
+            parser: data => {
+                let modifiers = this.parseChallengeModes(data.activityTiers);
+                let advisorName = null;
+                let advisorType = null;
+                let image = null;
+                if (modifiers && modifiers.length === 1) {
+                    advisorName = modifiers[0].name;
+                    advisorType = name;
+                    modifiers = null;
+                    let bossID = this.challengeModeBackgrounds[advisorName];
+                    if (bossID) {
+                        image = `/images/advisors/backgrounds/raid-${identifier}-${bossID}.jpg`;
+                    }
+                }
+                return {
+                    name: advisorName,
+                    type: advisorType,
+                    modifiers: modifiers,
+                    image: image
+                };
+            }
         };
     }
 
     parseNightfall(data) {
         if (!data.display) return null;
-        
-        // get mission name
-        let mission = 'Unknown Mission';
-        let activity = this.manifest.getActivity(data.display.activityHash);
-        if (activity && activity.activityName) {
-            mission = activity.activityName;
-        }
 
-        let image = null;
-        if (data.display.image) {
-            image = `https://www.bungie.net${data.display.image}`;
-        }
+        let activity = this.manifest.getActivity(data.display.activityHash);
         let modifiers = null;
         if (data.extended && data.extended.skullCategories) {
             let category = data.extended.skullCategories.find(
                 c => c.title === "Modifiers");
             modifiers = this.parseModifiers(category);
         }
+
         return {
-            category: "This Week",
-            type: "Nightfall Strike",
-            name: mission,
-            icon: "https://www.bungie.net/img/theme/destiny/icons/node_strike_nightfall.png",
-            image: image,
+            name: activity ? activity.activityName : null,
+            image: this.bnet(data.display.image),
             modifiers: modifiers
         };
     }
@@ -187,44 +339,6 @@ export default class AdvisorsService {
             modifiers = this.parseModifiers(category);
         }
         return {
-            category: "This Week",
-            type: "Heroic Strike Playlist",
-            name: "SIVA Crisis Heroic",
-            icon: "https://www.bungie.net/img/theme/destiny/icons/node_strike_featured.png",
-            image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/weekly_heroic.jpg",
-            modifiers: modifiers
-        };
-    }
-
-    parseWeeklyCrucible(data) {
-        if (!data.display) return null;
-        
-        // get playlist name and icon
-        let playlist = 'Unknown Playlist';
-        let icon = data.display.icon || '/img/destiny_content/advisors/pvp_Weekly_PvP.png';
-        let activity = this.manifest.getActivity(data.display.activityHash);
-        if (activity) {
-            playlist = activity.activityName || playlist;
-            icon = activity.icon || icon;
-        }
-
-        return {
-            category: "This Week",
-            type: "Weekly Crucible Playlist",
-            name: playlist,
-            icon: `https://www.bungie.net${icon}`,
-            image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/weekly_crucible.jpg"
-        };
-    }
-
-    parseKingsFall(data) {
-        let modifiers = this.parseChallengeModes(data.activityTiers);
-        return {
-            category: "This Week",
-            type: "Raid",
-            name: "King's Fall",
-            icon: "https://www.bungie.net/common/destiny_content/icons/08142310168ad6ade9a6e4252e8433fc.png",
-            image: "https://www.bungie.net/img/theme/destiny/bgs/pgcrs/kings_fall.jpg",
             modifiers: modifiers
         };
     }
