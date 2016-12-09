@@ -35,6 +35,10 @@ class BungiePlatformService {
     getXur() {
         return this.get('/Destiny/Advisors/Xur/?definitions=true');
     }
+
+    getVendor(vendorHash) {
+        return this.get(`/Destiny/Vendors/${vendorHash}/?definitions=true`);
+    }
 };
 
 export default new BungiePlatformService();

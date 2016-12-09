@@ -1,7 +1,8 @@
 export default class AdvisorsService {
-    constructor(activities, xur, manifest) {
+    constructor(activities, xur, ironBanner, manifest) {
         this.activities = activities;
         this.xur = xur;
+        this.ironBanner = ironBanner;
         this.manifest = manifest;
 
         this.challengeModeBackgrounds = {
@@ -144,13 +145,15 @@ export default class AdvisorsService {
         return result;
     }
 
-    parseXur(data) {
-        let items = null;
-        if (this.xur) {
-            let exotics = this.xur['Exotic Gear'];
-            if (exotics) {
-                items = [];
-                exotics.forEach(item => {
+    parseItems(category) {
+        if (category) {
+            let items = [];
+            let hashes = [];
+
+            category.forEach(item => {
+                // don't show the same item more than once
+                if (!hashes.includes(item.itemHash)) {
+                    hashes.push(item.itemHash);
                     let definition = this.manifest.getItem(item.itemHash);
                     if (definition) {
                         items.push({
@@ -158,8 +161,17 @@ export default class AdvisorsService {
                             icon: this.bnet(definition.icon)
                         });
                     }
-                }, this);
-            }
+                }
+            }, this);
+            return items;
+        }
+        return null;
+    }
+
+    parseXur(data) {
+        let items = null;
+        if (this.xur) {
+            items = this.parseItems(this.xur['Exotic Gear']);
         }
         return {
             items: items
@@ -198,6 +210,7 @@ export default class AdvisorsService {
     parseIronBanner(data) {
         let weeklyCrucible = this.activities.weeklycrucible;
         let playlist = null;
+        let items = null;
 
         // obtain playlist from Weekly Crucible Playlist
         if (weeklyCrucible && weeklyCrucible.display) {
@@ -208,8 +221,15 @@ export default class AdvisorsService {
                     "Iron Banner", "").trim();
             }
         }
+
+        // obtain vendor stock
+        if (this.ironBanner) {
+            items = this.parseItems(this.ironBanner['Event Rewards']);
+        }
+
         return {
-            name: playlist
+            name: playlist,
+            items: items
         };
     }
 

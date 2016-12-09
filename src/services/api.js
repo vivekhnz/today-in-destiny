@@ -4,6 +4,8 @@ import { default as bungie } from './bungie';
 import ManifestService from './manifest';
 import AdvisorsService from './advisors';
 
+const IRON_BANNER_VENDOR = 2610555297;
+
 class APIService {
     get(promise) {
         return (req, res) => {
@@ -38,9 +40,20 @@ class APIService {
                     }
                 })
                 .then(response => {
+                    let promises = [];
+                    
                     let xur = response.activities.xur;
+                    let ironBanner = response.activities.ironbanner;
+
                     if (xur && xur.status && xur.status.active) {
-                        return this.getXur(response);
+                        promises.push(this.getXur(response));
+                    }
+                    if (ironBanner && ironBanner.status && ironBanner.status.active) {
+                        promises.push(this.getIronBannerVendor(response));
+                    }
+                    
+                    if (promises.length > 0) {
+                        return Promise.all(promises).then(values => values[0]);
                     }
                     return response;
                 })
@@ -63,7 +76,7 @@ class APIService {
                 .then(xur => {
                     if (xur && xur.data && xur.data.saleItemCategories) {
                         response.definitions.push(xur.definitions);
-                        response.xur = this.parseXurStock(
+                        response.xur = this.parseVendorStock(
                             xur.data.saleItemCategories);
                         resolve(response);
                     }
@@ -77,7 +90,27 @@ class APIService {
         });
     }
 
-    parseXurStock(data) {
+    getIronBannerVendor(response) {
+        return new Promise((resolve, reject) => {
+            bungie.getVendor(IRON_BANNER_VENDOR)
+                .then(vendor => {
+                    if (vendor && vendor.data && vendor.data.saleItemCategories) {
+                        response.definitions.push(vendor.definitions);
+                        response.ironBanner = this.parseVendorStock(
+                            vendor.data.saleItemCategories);
+                        resolve(response);
+                    }
+                    else {
+                        throw new Error('No Iron Banner vendor data returned.');
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    reject(new Error("An error occurred while fetching Iron Banner vendor's stock."));
+                });
+        });
+    }
+
+    parseVendorStock(data) {
         let stock = {};
         data.forEach(category => {
             stock[category.categoryTitle] =
@@ -96,12 +129,12 @@ class APIService {
         let definitions = this.combineDefinitions(response.definitions);
         let manifest = new ManifestService(definitions);
         let service = new AdvisorsService(
-            response.activities, response.xur, manifest);
+            response.activities, response.xur, response.ironBanner, manifest);
         let advisors = service.getAdvisors();
         let categories = this.groupByCategory(advisors);
         return {
             date: time.getCurrentDate(),
-            advisorGroups: categories
+            advisorGroups: categories,
         };
     }
 
