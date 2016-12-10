@@ -1,8 +1,7 @@
 export default class AdvisorsService {
-    constructor(activities, xur, ironBanner, manifest) {
+    constructor(activities, vendors, manifest) {
         this.activities = activities;
-        this.xur = xur;
-        this.ironBanner = ironBanner;
+        this.vendors = vendors || {};
         this.manifest = manifest;
 
         this.challengeModeBackgrounds = {
@@ -170,8 +169,8 @@ export default class AdvisorsService {
 
     parseXur(data) {
         let items = null;
-        if (this.xur) {
-            items = this.parseItems(this.xur['Exotic Gear']);
+        if (this.vendors.xur) {
+            items = this.parseItems(this.vendors.xur['Exotic Gear']);
         }
         return {
             items: items
@@ -223,8 +222,8 @@ export default class AdvisorsService {
         }
 
         // obtain vendor stock
-        if (this.ironBanner) {
-            items = this.parseItems(this.ironBanner['Event Rewards']);
+        if (this.vendors.ironbanner) {
+            items = this.parseItems(this.vendors.ironbanner['Event Rewards']);
         }
 
         return {

@@ -4,7 +4,10 @@ import { default as bungie } from './bungie';
 import ManifestService from './manifest';
 import AdvisorsService from './advisors';
 
-const IRON_BANNER_VENDOR = 2610555297;
+let VENDORS = {
+    xur: 2796397637,
+    ironBanner: 2610555297
+}
 
 class APIService {
     get(promise) {
@@ -27,86 +30,69 @@ class APIService {
 
     getAdvisors() {
         return new Promise((resolve, reject) => {
-            bungie.getPublicAdvisorsV2()
-                .then(response => {
-                    if (response && response.data && response.data.activities) {
-                        return {
-                            activities: response.data.activities,
-                            definitions: [response.definitions]
-                        };
-                    }
-                    else {
-                        throw new Error('No advisors returned.');
-                    }
-                })
-                .then(response => {
-                    let promises = [];
-                    
-                    let xur = response.activities.xur;
-                    let ironBanner = response.activities.ironbanner;
+            let definitions = [];
+            let activities = null;
+            let vendors = {};
 
-                    if (xur && xur.status && xur.status.active) {
-                        promises.push(this.getXur(response));
-                    }
-                    if (ironBanner && ironBanner.status && ironBanner.status.active) {
-                        promises.push(this.getIronBannerVendor(response));
-                    }
-                    
-                    if (promises.length > 0) {
-                        return Promise.all(promises).then(values => values[0]);
-                    }
-                    return response;
-                })
-                .then(response => {
-                    try {
-                        resolve(this.parseAdvisors(response));
-                    } catch (error) {
-                        throw error;
-                    }
-                }).catch(error => {
-                    console.log(error);
-                    reject(new Error("An error occurred while fetching advisors."));
-                });
-        });
-    }
+            let loadAdvisors = () => {
+                return bungie.getPublicAdvisorsV2()
+                    .then(response => {
+                        if (response && response.data && response.data.activities) {
+                            definitions.push(response.definitions);
+                            activities = response.data.activities;
+                            return response.data.activities;
+                        }
+                        else {
+                            console.log('No advisors returned.');
+                            throw new Error("An error occurred while fetching advisors.");
+                        }
+                    })
+            };
+            let loadVendor = (vendorID, vendorHash) => {
+                return bungie.getVendor(vendorHash)
+                    .then(vendor => {
+                        if (vendor && vendor.data && vendor.data.saleItemCategories) {
+                            definitions.push(vendor.definitions);
+                            vendors[vendorID] = this.parseVendorStock(
+                                vendor.data.saleItemCategories);
+                        }
+                        else {
+                            console.log(`No vendor data returned from ${vendorID}.`);
+                        }
+                    });
+            };
+            let loadEventVendors = activities => {
+                let promises = [];
 
-    getXur(response) {
-        return new Promise((resolve, reject) => {
-            bungie.getXur()
-                .then(xur => {
-                    if (xur && xur.data && xur.data.saleItemCategories) {
-                        response.definitions.push(xur.definitions);
-                        response.xur = this.parseVendorStock(
-                            xur.data.saleItemCategories);
-                        resolve(response);
+                let eventVendors = {
+                    'xur': VENDORS.xur,
+                    'ironbanner': VENDORS.ironBanner
+                };
+                for (let id in eventVendors) {
+                    let advisor = activities[id];
+                    if (advisor && advisor.status && advisor.status.active) {
+                        promises.push(loadVendor(id, eventVendors[id]));
                     }
-                    else {
-                        throw new Error('No Xur data returned.');
-                    }
-                }).catch(error => {
-                    console.log(error);
-                    reject(new Error("An error occurred while fetching Xur's stock."));
-                });
-        });
-    }
+                }
 
-    getIronBannerVendor(response) {
-        return new Promise((resolve, reject) => {
-            bungie.getVendor(IRON_BANNER_VENDOR)
-                .then(vendor => {
-                    if (vendor && vendor.data && vendor.data.saleItemCategories) {
-                        response.definitions.push(vendor.definitions);
-                        response.ironBanner = this.parseVendorStock(
-                            vendor.data.saleItemCategories);
-                        resolve(response);
-                    }
-                    else {
-                        throw new Error('No Iron Banner vendor data returned.');
-                    }
-                }).catch(error => {
-                    console.log(error);
-                    reject(new Error("An error occurred while fetching Iron Banner vendor's stock."));
+                return Promise.all(promises);
+            };
+            let parseAdvisors = () => {
+                let manifest = new ManifestService(
+                    this.combineDefinitions(definitions));
+                let service = new AdvisorsService(
+                    activities, vendors, manifest);
+                let advisors = service.getAdvisors();
+                let categories = this.groupByCategory(advisors);
+                resolve({
+                    date: time.getCurrentDate(),
+                    advisorGroups: categories,
                 });
+            }
+            loadAdvisors()
+                .then(loadEventVendors)
+                .then(parseAdvisors)
+                .catch(error => reject(error));
         });
     }
 
@@ -125,19 +111,6 @@ class APIService {
         return stock;
     }
 
-    parseAdvisors(response) {
-        let definitions = this.combineDefinitions(response.definitions);
-        let manifest = new ManifestService(definitions);
-        let service = new AdvisorsService(
-            response.activities, response.xur, response.ironBanner, manifest);
-        let advisors = service.getAdvisors();
-        let categories = this.groupByCategory(advisors);
-        return {
-            date: time.getCurrentDate(),
-            advisorGroups: categories,
-        };
-    }
-
     combineDefinitions(collection) {
         let output = {};
         collection.forEach(definitions => {
@@ -145,7 +118,9 @@ class APIService {
                 let existing = output[type];
                 let defs = definitions[type];
                 if (existing) {
-                    output[type] = this.merge(existing, defs);
+                    for (let key in defs) {
+                        output[type][key] = defs[key];
+                    }
                 }
                 else {
                     output[type] = defs;
@@ -153,13 +128,6 @@ class APIService {
             }
         }, this);
         return output;
-    }
-
-    merge(a, b) {
-        for (let key in b) {
-            a[key] = b[key];
-        }
-        return a;
     }
 
     groupByCategory(advisors) {
