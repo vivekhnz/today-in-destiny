@@ -7,7 +7,8 @@ import AdvisorsService from './advisors';
 let VENDORS = {
     xur: 2796397637,
     ironBanner: 2610555297,
-    cryptarchIronTemple: 2190824863
+    cryptarchIronTemple: 2190824863,
+    vanguardIronTemple: 2190824860
 }
 
 class APIService {
@@ -66,7 +67,9 @@ class APIService {
                     });
             };
             let loadVendors = () => {
-                let advisorVendors = ['cryptarchIronTemple'];
+                let advisorVendors = [
+                    'cryptarchIronTemple', 'vanguardIronTemple'
+                ];
                 return Promise.all(
                     advisorVendors.map(id => loadVendor(id, VENDORS[id])));
             };

@@ -97,6 +97,16 @@ export default class AdvisorsService {
                     'icon': '/images/advisors/icons/cryptarch.png'
                 },
                 parser: this.parseIronLordArtifacts
+            },
+            'vanguardIronTemple': {
+                defaults: {
+                    'category': 'This Week',
+                    'type': 'Shiro-4',
+                    'name': 'Vanguard Scout',
+                    'image': '/images/advisors/backgrounds/felwinterPeak.jpg',
+                    'icon': '/images/advisors/icons/vanguard.png'
+                },
+                parser: this.parseShiro
             }
         };
         this.defaults = {
@@ -430,6 +440,13 @@ export default class AdvisorsService {
         if (!vendor || !vendor.stock) return null;
         return {
             items: this.parseItems(vendor.stock['Iron Lord Artifacts'])
+        }
+    }
+
+    parseShiro(vendor) {
+        if (!vendor || !vendor.stock) return null;
+        return {
+            items: this.parseItems(vendor.stock['Armor'])
         }
     }
 };
