@@ -12,9 +12,9 @@ class TimeService {
             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
         ];
         return {
-            month: months[date.getMonth()],
-            day: date.getDate(),
-            year: date.getFullYear()
+            month: months[date.getUTCMonth()],
+            day: date.getUTCDate(),
+            year: date.getUTCFullYear()
         };
     }
 
