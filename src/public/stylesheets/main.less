@@ -325,7 +325,6 @@ ul {
 .advisorModifiers li {
     .subtitle;
     display: inline-block;
-    width: 20.5px;
     margin: 8px 8px 0px 0px;
     vertical-align: top;
     color: @contrast-color;
@@ -336,16 +335,27 @@ ul {
     }
 }
 .advisorModifiers li img {
+    display: none;
     width: 20.5px;
     height: 20.5px;
     margin-right: 8px;
+
+    .advisorBlock.wide & {
+        display: inline-block;
+    }
 }
 .advisorModifiers li p {
-    display: none;
-    margin: -24px 0px 0px 28px;
-    
+    padding: 0px 4px;
+    text-transform: uppercase;
+    border: 1px solid @contrast-color;
+    font-size: 0.75em;
+
     .advisorBlock.wide & {
-        display: block;
+        margin: -24px 0px 0px 28px;
+        padding: 0px;
+        text-transform: none;
+        border: none;
+        font-size: 1em;
     }
 }
 
