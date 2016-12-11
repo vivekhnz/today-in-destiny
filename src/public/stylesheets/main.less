@@ -310,7 +310,7 @@ ul {
         @ter-fg-color 75%, transparent 75%, transparent);
     background-size: 4px 4px;
     opacity: 0.5;
-    margin: 4px 0px;
+    margin: 8px 0px 4px 0px;
 }
 
 .advisorModifiers {
@@ -375,6 +375,28 @@ ul {
         width: 48px;
         height: 48px;
     }
+}
+
+.advisorBounties {
+    padding: 0px;
+    list-style-type: none;
+    margin: 8px 0px 0px 0px;
+}
+.advisorBounties li {
+    min-height: 32px;
+    margin: 8px 0px 0px 0px;
+    vertical-align: top;
+    color: @contrast-color;
+}
+.advisorBounties li img {
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+    border: 1px @contrast-color solid;
+}
+.advisorBounties li p {
+    .subtitle;
+    margin: -32px 0px 0px 40px;
 }
 
 .footerContainer {

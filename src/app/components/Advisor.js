@@ -53,9 +53,31 @@ class Advisor extends React.Component {
                         {
                             this.props.modifiers
                                 ? this.props.modifiers.map((modifier, i) =>
-                                    <li key={i} className="advisorModifiers">
+                                    <li key={i}>
                                         <img src={modifier.icon} title={modifier.name} />
                                         <p>{modifier.name}</p>
+                                    </li>)
+                                : null
+                        }
+                    </ul>
+                </div>
+            );
+        }
+        return null;
+    }
+
+    renderBounties() {
+        if (this.props.bounties) {
+            return (
+                <div>
+                    <div className="advisorSeparator" />
+                    <ul className="advisorBounties">
+                        {
+                            this.props.bounties
+                                ? this.props.bounties.map((bounty, i) =>
+                                    <li key={i}>
+                                        <img src={bounty.icon} title={bounty.name} />
+                                        <p>{bounty.description}</p>
                                     </li>)
                                 : null
                         }
@@ -76,6 +98,7 @@ class Advisor extends React.Component {
         let timeRemaining = this.renderTimeRemaining();
         let items = this.renderItems();
         let modifiers = this.renderModifiers();
+        let bounties = this.renderBounties();
 
         return (
             <ElementQuery sizes={[{ name: 'wide', width: wideViewWidth }]}>
@@ -88,6 +111,7 @@ class Advisor extends React.Component {
                             <p className="advisorName">{this.props.name}</p>
                             {items}
                             {modifiers}
+                            {bounties}
                         </div>
                     </div>
                 </div>

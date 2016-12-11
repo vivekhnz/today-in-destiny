@@ -211,7 +211,8 @@ export default class AdvisorsService {
                     if (definition) {
                         items.push({
                             name: definition.itemName,
-                            icon: this.bnet(definition.icon)
+                            icon: this.bnet(definition.icon),
+                            description: definition.itemDescription
                         });
                     }
                 }
@@ -446,7 +447,8 @@ export default class AdvisorsService {
     parseShiro(vendor) {
         if (!vendor || !vendor.stock) return null;
         return {
-            items: this.parseItems(vendor.stock['Armor'])
+            items: this.parseItems(vendor.stock['Armor']),
+            bounties: this.parseItems(vendor.stock['Iron Lord Bounties'])
         }
     }
 };
