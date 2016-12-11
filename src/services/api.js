@@ -6,7 +6,8 @@ import AdvisorsService from './advisors';
 
 let VENDORS = {
     xur: 2796397637,
-    ironBanner: 2610555297
+    ironBanner: 2610555297,
+    cryptarchIronTemple: 2190824863
 }
 
 class APIService {
@@ -53,13 +54,21 @@ class APIService {
                     .then(vendor => {
                         if (vendor && vendor.data && vendor.data.saleItemCategories) {
                             definitions.push(vendor.definitions);
-                            vendors[vendorID] = this.parseVendorStock(
-                                vendor.data.saleItemCategories);
+                            vendors[vendorID] = {
+                                refreshesAt: vendor.data.nextRefreshDate,
+                                stock: this.parseVendorStock(
+                                    vendor.data.saleItemCategories)
+                            };
                         }
                         else {
                             console.log(`No vendor data returned from ${vendorID}.`);
                         }
                     });
+            };
+            let loadVendors = () => {
+                let advisorVendors = ['cryptarchIronTemple'];
+                return Promise.all(
+                    advisorVendors.map(id => loadVendor(id, VENDORS[id])));
             };
             let loadEventVendors = activities => {
                 let promises = [];
@@ -86,11 +95,14 @@ class APIService {
                 let categories = this.groupByCategory(advisors);
                 resolve({
                     date: time.getCurrentDate(),
-                    advisorGroups: categories,
+                    advisorGroups: categories
                 });
-            }
-            loadAdvisors()
-                .then(loadEventVendors)
+            };
+
+            Promise.all([
+                loadAdvisors().then(loadEventVendors),
+                loadVendors()
+            ])
                 .then(parseAdvisors)
                 .catch(error => reject(error));
         });

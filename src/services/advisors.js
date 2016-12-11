@@ -1,3 +1,5 @@
+import time from './time';
+
 export default class AdvisorsService {
     constructor(activities, vendors, manifest) {
         this.activities = activities;
@@ -85,6 +87,18 @@ export default class AdvisorsService {
                 this.parseWeeklyCrucible),
             'kingsfall': this.createRaidParser("King's Fall", 'kf')
         };
+        this.vendorParsers = {
+            'cryptarchIronTemple': {
+                defaults: {
+                    'category': 'This Week',
+                    'type': 'Tyra Karn',
+                    'name': 'Iron Lord Artifacts',
+                    'image': '/images/advisors/backgrounds/ironTemple.jpg',
+                    'icon': '/images/advisors/icons/cryptarch.png'
+                },
+                parser: this.parseIronLordArtifacts
+            }
+        };
         this.defaults = {
             'category': 'Activities',
             'type': 'Featured Activity',
@@ -105,6 +119,14 @@ export default class AdvisorsService {
             let parser = this.parsers[activity];
             let result = this.parseActivity(
                 this.activities[activity], parser);
+            if (result) {
+                advisors.push(result);
+            }
+        }
+        for (let vendor in this.vendorParsers) {
+            let parser = this.vendorParsers[vendor];
+            let result = this.parseVendor(
+                this.vendors[vendor], parser);
             if (result) {
                 advisors.push(result);
             }
@@ -144,6 +166,28 @@ export default class AdvisorsService {
         return result;
     }
 
+    parseVendor(data, parser) {
+        // is the data empty?
+        if (!data) return null;
+
+        // parse result
+        let result = parser.parser.bind(this)(data);
+        if (result) {
+            result.expiresAt = data.refreshesAt;
+
+            // set any empty properties to default values for parser
+            for (let prop in parser.defaults) {
+                result[prop] = result[prop] || parser.defaults[prop];
+            }
+
+            // set any empty properties to default values
+            for (let prop in this.defaults) {
+                result[prop] = result[prop] || this.defaults[prop];
+            }
+        }
+        return result;
+    }
+
     parseItems(category) {
         if (category) {
             let items = [];
@@ -169,8 +213,8 @@ export default class AdvisorsService {
 
     parseXur(data) {
         let items = null;
-        if (this.vendors.xur) {
-            items = this.parseItems(this.vendors.xur['Exotic Gear']);
+        if (this.vendors.xur && this.vendors.xur.stock) {
+            items = this.parseItems(this.vendors.xur.stock['Exotic Gear']);
         }
         return {
             items: items
@@ -222,8 +266,8 @@ export default class AdvisorsService {
         }
 
         // obtain vendor stock
-        if (this.vendors.ironbanner) {
-            items = this.parseItems(this.vendors.ironbanner['Event Rewards']);
+        if (this.vendors.ironbanner && this.vendors.ironbanner.stock) {
+            items = this.parseItems(this.vendors.ironbanner.stock['Event Rewards']);
         }
 
         return {
@@ -380,5 +424,12 @@ export default class AdvisorsService {
         return {
             modifiers: modifiers
         };
+    }
+
+    parseIronLordArtifacts(vendor) {
+        if (!vendor || !vendor.stock) return null;
+        return {
+            items: this.parseItems(vendor.stock['Iron Lord Artifacts'])
+        }
     }
 };
