@@ -447,8 +447,7 @@ export default class AdvisorsService {
     parseShiro(vendor) {
         if (!vendor || !vendor.stock) return null;
         return {
-            items: this.parseItems(vendor.stock['Armor']),
-            bounties: this.parseItems(vendor.stock['Iron Lord Bounties'])
+            items: this.parseItems(vendor.stock['Armor'])
         }
     }
 };
