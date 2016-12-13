@@ -258,7 +258,7 @@ ul {
     @media @layout-twoColumn {
         box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.25);
         margin-top: @masonryGutter;
-        min-height: 180px;
+        min-height: 210px;
     }
 }
 .advisorContainer {
@@ -310,7 +310,7 @@ ul {
         @ter-fg-color 75%, transparent 75%, transparent);
     background-size: 4px 4px;
     opacity: 0.5;
-    margin: 4px 0px;
+    margin: 8px 0px 4px 0px;
 }
 
 .advisorModifiers {
@@ -325,7 +325,6 @@ ul {
 .advisorModifiers li {
     .subtitle;
     display: inline-block;
-    width: 20.5px;
     margin: 8px 8px 0px 0px;
     vertical-align: top;
     color: @contrast-color;
@@ -336,16 +335,27 @@ ul {
     }
 }
 .advisorModifiers li img {
+    display: none;
     width: 20.5px;
     height: 20.5px;
     margin-right: 8px;
+
+    .advisorBlock.wide & {
+        display: inline-block;
+    }
 }
 .advisorModifiers li p {
-    display: none;
-    margin: -24px 0px 0px 28px;
-    
+    padding: 0px 4px;
+    text-transform: uppercase;
+    border: 1px solid @contrast-color;
+    font-size: 0.75em;
+
     .advisorBlock.wide & {
-        display: block;
+        margin: -24px 0px 0px 28px;
+        padding: 0px;
+        text-transform: none;
+        border: none;
+        font-size: 1em;
     }
 }
 
@@ -375,6 +385,28 @@ ul {
         width: 48px;
         height: 48px;
     }
+}
+
+.advisorBounties {
+    padding: 0px;
+    list-style-type: none;
+    margin: 8px 0px 0px 0px;
+}
+.advisorBounties li {
+    min-height: 32px;
+    margin: 8px 0px 0px 0px;
+    vertical-align: top;
+    color: @contrast-color;
+}
+.advisorBounties li img {
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+    border: 1px @contrast-color solid;
+}
+.advisorBounties li p {
+    .subtitle;
+    margin: -32px 0px 0px 40px;
 }
 
 .footerContainer {
