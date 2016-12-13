@@ -98,6 +98,33 @@ ul {
     }
 }
 
+.logoContainer {
+    width: 54px;
+    background-color: @accent-color;
+    height: 50%;
+
+    @media @layout-narrow {
+        display: none;
+    }
+    @media @layout-twoColumn {
+        width: 72px;
+    }
+}
+.logo {
+    background-image: url('../images/ui/logo-s.png');
+    width: 54px;
+    height: 87px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    @media @layout-twoColumn {
+        background-image: url('../images/ui/logo-m.png');
+        width: 72px;
+        height: 112px;
+    }
+}
+
 .dateContainer {
     background-color: @accent-color;
     text-align: center;
@@ -192,6 +219,14 @@ ul {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    margin-left: 80px;
+
+    @media @layout-narrow {
+        margin-left: 0px;
+    }
+    @media @layout-twoColumn {
+        margin-left: 96px;
+    }
 }
 .headerLine1 {
     .bebasRegular;
@@ -330,7 +365,7 @@ ul {
     color: @contrast-color;
     
     .advisorBlock.wide & {
-        width: 120px;
+        width: 122px;
         margin: 8px 32px 0px 0px;
     }
 }
