@@ -119,7 +119,10 @@ export default class AdvisorsService {
     }
 
     bnet(relative) {
-        if (relative) return `https://www.bungie.net${relative}`;
+        if (relative
+            && relative !== '/img/theme/destiny/bgs/pgcrs/placeholder.jpg') {
+            return `https://www.bungie.net${relative}`
+        };
         return null;
     }
 
