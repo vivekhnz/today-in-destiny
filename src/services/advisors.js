@@ -133,6 +133,7 @@ export default class AdvisorsService {
             let result = this.parseActivity(
                 this.activities[activity], parser);
             if (result) {
+                result.activityID = activity;
                 advisors.push(result);
             }
         }
@@ -141,6 +142,7 @@ export default class AdvisorsService {
             let result = this.parseVendor(
                 this.vendors[vendor], parser);
             if (result) {
+                result.activityID = vendor;
                 advisors.push(result);
             }
         }
