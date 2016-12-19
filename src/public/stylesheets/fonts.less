@@ -1,0 +1,50 @@
+// variables
+@fonts: '../fonts';
+
+// fonts
+@font-face {
+    font-family: 'bebas';
+    src: url('@{fonts}/bebasneue_regular-webfont.woff2') format('woff2'),
+         url('@{fonts}/bebasneue_regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'bebas';
+    src: url('@{fonts}/bebasneue_bold-webfont.woff2') format('woff2'),
+         url('@{fonts}/bebasneue_bold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'bender';
+    src: url('@{fonts}/bender_bold-webfont.woff2') format('woff2'),
+         url('@{fonts}/bender_bold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+.bebasRegular() {
+    font-family: 'bebas', 'Segoe UI', 'Helvetica', sans-serif;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+.bebasBold() {
+    font-family: 'bebas', 'Segoe UI', 'Helvetica', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.benderBold() {
+    font-family: 'bender', 'Segoe UI', 'Helvetica', sans-serif;
+    font-weight: bold;
+}
+
+// text styles
+.title() {
+    .bebasBold();
+    font-size: 2.25em;
+}
+.subtitle() {
+    .benderBold();
+    font-size: 0.95em;
+}

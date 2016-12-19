@@ -1,0 +1,37 @@
+@import "common.less";
+
+.smallHeaderContainer {
+    padding: 0px 32px;
+    position: relative;
+}
+.smallDateContainer {
+    background-color: @accent-color;
+    text-align: center;
+    float: right;
+    width: 64px;
+    padding: 8px 0px 2px 0px;
+}
+.smallDate {
+    .subtitle();
+    text-transform: uppercase;
+    color: @pri-fg-color;
+}
+.smallLogo {
+    background-image: url('../images/ui/logo-xs.png');
+    width: 36px;
+    height: 59px;
+}
+.smallHeaderText {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 52px;
+    
+    .bebasRegular();
+    font-size: 2.25em;
+    color: @sec-fg-color;
+
+    @media @layout-narrow {
+        display: none;
+    }
+}

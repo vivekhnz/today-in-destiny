@@ -49,6 +49,7 @@ var config = {
     ],
     stylesheets: {
         src: 'src/public/stylesheets/**/**.less',
+        entry: 'src/public/stylesheets/main.less',
         outDir: 'build/public/stylesheets'
     },
     images: {
@@ -90,7 +91,7 @@ gulp.task('babel', () => compileJS(config.js, 'build'));
 
 // compile LESS stylesheets
 gulp.task('stylesheets', () => {
-    return gulp.src(config.stylesheets.src)
+    return gulp.src(config.stylesheets.entry)
         .pipe(plumber())
         .pipe(less())
         .pipe(gulpif(production, cssmin()))
