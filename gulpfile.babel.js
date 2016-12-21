@@ -1,5 +1,6 @@
 import gulp from 'gulp';
 import gulpif from 'gulp-if';
+import changed from 'gulp-changed';
 import path from 'path';
 import babel from 'gulp-babel';
 import browserify from 'browserify';
@@ -101,6 +102,7 @@ gulp.task('stylesheets', () => {
 // minify images
 gulp.task('images', () => {
     return gulp.src(config.images.src)
+        .pipe(changed(config.images.outDir))
         .pipe(imagemin(config.utils.imagemin))
         .pipe(gulp.dest(config.images.outDir));
 });
