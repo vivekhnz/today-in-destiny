@@ -1,13 +1,74 @@
 @import "common.less";
 
 .activityHeroImage {
-    height: 320px;
-    background: linear-gradient(rgba(39, 58, 65, 0.74902), rgba(39, 58, 65, 0.74902)), url("../images/advisors/backgrounds/default.jpg");
-    background-size: cover;
-    background-position: center center;
+    height: 260px;
+    background-size: cover !important;
+    background-position: center center !important;
+    
+    @media @layout-twoColumn {
+        height: 320px;
+    }
+    @media @layout-narrow {
+        height: 180px;
+    }
 }
-.activityHeroContent {
+.activityHeroWrapper {
     display: flex;
     flex-direction: row;
-    height: 260px;
+    height: 200px;
+    
+    @media @layout-twoColumn {
+        height: 260px;
+    }
+    @media @layout-narrow {
+        height: 120px;
+    }
+}
+.activityHeroContainer {
+    position: relative;
+    align-self: flex-end;
+    margin: 16px;
+    width: 100%;
+}
+.activityIcon {
+    display: none;
+    width: 96px;
+    height: 96px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+    @media @layout-twoColumn {
+        display: block;
+    }
+}
+.activityHeroContent {
+    margin: 0px 0px 8px 0px;
+
+    @media @layout-twoColumn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: 0px 0px 0px 104px;
+    }
+    @media @layout-narrow {
+        margin: 0px;
+    }
+}
+.activityType {
+    .subheader();
+    text-transform: uppercase;
+    color: @ter-fg-color;
+    
+    @media @layout-narrow {
+        .subtitle();
+    }
+}
+.activityName {
+    .header();
+    color: @contrast-color;
+
+    @media @layout-narrow {
+        .title();
+    }
 }
