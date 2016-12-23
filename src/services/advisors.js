@@ -142,7 +142,6 @@ export default class AdvisorsService {
             let result = this.parseVendor(
                 this.vendors[vendor], parser);
             if (result) {
-                result.activityID = vendor;
                 advisors.push(result);
             }
         }

@@ -5,7 +5,8 @@ import Home from './app/components/Home';
 import Activity from './app/components/Activity';
 
 let endpoints = {
-    advisors: '/api/advisors'
+    advisors: '/api/advisors',
+    activity: '/api/activity/:id'
 };
 let routes = (
     <Route component={App}>

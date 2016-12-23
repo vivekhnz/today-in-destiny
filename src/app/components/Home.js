@@ -1,6 +1,4 @@
 import React from 'react';
-import AltContainer from 'alt-container';
-import wrap from './AltWrapper';
 
 import Header from './Header';
 import AdvisorGroup from './AdvisorGroup';
@@ -8,19 +6,37 @@ import AdvisorGroup from './AdvisorGroup';
 import AdvisorsStore from '../stores/AdvisorsStore';
 import AdvisorsActions from '../actions/AdvisorsActions';
 
-class Home extends React.Component {
+export default class Home extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = AdvisorsStore.getState();
+        this.onChange = this.onChange.bind(this);
+    }
+
+    componentDidMount() {
+        AdvisorsStore.listen(this.onChange);
+    }
+
+    componentWillUnmount() {
+        AdvisorsStore.unlisten(this.onChange);
+    }
+
+    onChange(state) {
+        this.setState(state);
+    }
+
     renderAdvisorGroups() {
-        if (this.props.errorMessage) {
-            return <div className="errorMessage">{this.props.errorMessage}</div>;
+        if (this.state.errorMessage) {
+            return <div className="errorMessage">{this.state.errorMessage}</div>;
         }
-        if (!this.props.advisorGroups) {
+        if (!this.state.advisorGroups) {
             return <div className="errorMessage">Loading...</div>;
         }
-        if (this.props.advisorGroups.length > 0) {
+        if (this.state.advisorGroups.length > 0) {
             return (
                 <div>
                     {
-                        this.props.advisorGroups.map((group, i) =>
+                        this.state.advisorGroups.map((group, i) =>
                             <AdvisorGroup key={i}
                                 name={group.name}
                                 advisors={group.advisors} />)
@@ -37,11 +53,9 @@ class Home extends React.Component {
         let advisorGroups = this.renderAdvisorGroups();
         return (
             <div>
-                <Header date={this.props.date} />
+                <Header date={this.state.date} />
                 {advisorGroups}
             </div>
         );
     };
 }
-
-export default wrap(Home, AdvisorsStore, AdvisorsActions);

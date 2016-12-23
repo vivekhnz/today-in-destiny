@@ -14,7 +14,7 @@ let VENDORS = {
 class APIService {
     get(promise) {
         return (req, res) => {
-            promise.bind(this)()
+            promise.bind(this)(req.params)
                 .then(result => res.send({
                     response: result,
                     status: 'Success'
@@ -28,6 +28,7 @@ class APIService {
 
     registerEndpoints(app) {
         app.get(endpoints.advisors, this.get(this.getAdvisors));
+        app.get(endpoints.activity, this.get(this.getActivity));
     }
 
     getAdvisors() {
@@ -90,15 +91,11 @@ class APIService {
                 return Promise.all(promises);
             };
             let parseAdvisors = () => {
-                let manifest = new ManifestService(
-                    this.combineDefinitions(definitions));
-                let service = new AdvisorsService(
-                    activities, vendors, manifest);
-                let advisors = service.getAdvisors();
-                let categories = this.groupByCategory(advisors);
+                let advisors = this.parseAdvisors(
+                    activities, vendors, definitions);
                 resolve({
                     date: time.getCurrentDate(),
-                    advisorGroups: categories
+                    advisorGroups: this.groupByCategory(advisors)
                 });
             };
 
@@ -128,20 +125,22 @@ class APIService {
 
     combineDefinitions(collection) {
         let output = {};
-        collection.forEach(definitions => {
-            for (let type in definitions) {
-                let existing = output[type];
-                let defs = definitions[type];
-                if (existing) {
-                    for (let key in defs) {
-                        output[type][key] = defs[key];
+        if (collection) {
+            collection.forEach(definitions => {
+                for (let type in definitions) {
+                    let existing = output[type];
+                    let defs = definitions[type];
+                    if (existing) {
+                        for (let key in defs) {
+                            output[type][key] = defs[key];
+                        }
+                    }
+                    else {
+                        output[type] = defs;
                     }
                 }
-                else {
-                    output[type] = defs;
-                }
-            }
-        }, this);
+            }, this);
+        }
         return output;
     }
 
@@ -164,6 +163,58 @@ class APIService {
             }, this);
         }
         return categories;
+    }
+
+    parseAdvisors(activities, vendors, definitions) {
+        let manifest = new ManifestService(
+            this.combineDefinitions(definitions));
+        let service = new AdvisorsService(
+            activities, vendors, manifest);
+        return service.getAdvisors();
+    }
+
+    getActivity(params) {
+        return new Promise((resolve, reject) => {
+            let loadActivity = () => {
+                if (params && params.id) {
+                    return bungie.getPublicAdvisorsV2()
+                        .then(response => {
+                            if (response && response.data && response.data.activities) {
+                                let activity = response.data.activities[params.id];
+                                if (activity) {
+                                    let activities = {};
+                                    activities[params.id] = activity;
+                                    return {
+                                        activities: activities,
+                                        definitions: response.definitions
+                                    }
+                                }
+                            }
+                            console.log('No advisors returned.');
+                            throw new Error("An error occurred while fetching advisors.");
+                        });
+                }
+                else {
+                    throw new Error('No activity identifier was provided.');
+                }
+            };
+            let parseActivity = response => {
+                let advisors = this.parseAdvisors(
+                    response.activities, null, [response.definitions]);
+                if (advisors && advisors.length > 0) {
+                    resolve({
+                        date: time.getCurrentDate(),
+                        activity: advisors[0]
+                    });
+                }
+                else {
+                    throw new Error('Could not parse any advisors.');
+                }
+            }
+            loadActivity()
+                .then(parseActivity)
+                .catch(error => reject(error))
+        });
     }
 };
 

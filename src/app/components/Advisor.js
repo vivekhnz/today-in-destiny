@@ -2,6 +2,7 @@ import React from 'react';
 import { browserHistory } from 'react-router';
 import ElementQuery from 'react-element-query';
 import { default as time } from '../../services/time';
+import ActivityActions from '../actions/ActivityActions';
 
 var overlayColor = 'rgba(39, 58, 65, 0.75)';
 var wideViewWidth = 422;
@@ -16,6 +17,7 @@ class Advisor extends React.Component {
         e.preventDefault();
         if (this.props.activityID) {
             browserHistory.push(`/activities/${this.props.activityID}`);
+            ActivityActions.setAdvisor(this.props);
         }
     }
 

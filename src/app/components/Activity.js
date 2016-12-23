@@ -1,6 +1,4 @@
 import React from 'react';
-import AltContainer from 'alt-container';
-import wrap from './AltWrapper';
 
 import SmallHeader from './SmallHeader';
 
@@ -9,35 +7,82 @@ import ActivityActions from '../actions/ActivityActions';
 
 var overlayColor = 'rgba(39, 58, 65, 0.75)';
 
-class Activity extends React.Component {
-    render() {
-        let heroImage = '/images/advisors/backgrounds/default.jpg';
+export default class Activity extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = ActivityStore.getState();
+        this.onChange = this.onChange.bind(this);
+    }
+
+    componentDidMount() {
+        ActivityStore.listen(this.onChange);
+        if (!this.state.activity) {
+            ActivityActions.fetchActivity(this.props.params.id);
+        }
+    }
+
+    componentWillUnmount() {
+        ActivityStore.unlisten(this.onChange);
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.params.id !== this.props.params.id) {
+            ActivityActions.fetchActivity(this.props.params.id);
+        }
+    }
+
+    onChange(state) {
+        this.setState(state);
+    }
+
+    renderIcon() {
+        if (this.state.activity && this.state.activity.icon) {
+            let iconStyle = {
+                backgroundImage: `url('${this.state.activity.icon}')`
+            };
+            return (
+                <div className="activityIcon" style={iconStyle}></div>
+            );
+        }
+        return null;
+    }
+
+    renderHeroImage() {
+        let activity = this.state.activity || {
+            name: null,
+            type: null,
+            image: null
+        };
+
         let heroImageStyle = {
-            background: heroImage
-                ? `linear-gradient(${overlayColor}, ${overlayColor}), url('${heroImage}')`
+            background: activity.image
+                ? `linear-gradient(${overlayColor}, ${overlayColor}), url('${activity.image}')`
                 : overlayColor
         };
-        let iconStyle = {
-            backgroundImage: "url('/images/advisors/icons/default.png')"
-        };
+        let icon = this.renderIcon();
         return (
-            <div>
-                <div className="activityHeroImage" style={heroImageStyle}>
-                    <SmallHeader date={this.props.date} />
-                    <div className="activityHeroWrapper">
-                        <div className="activityHeroContainer">
-                            <div className="activityIcon" style={iconStyle}></div>
-                            <div className="activityHeroContent">
-                                <p className="activityType">{this.props.params.id}</p>
-                                <p className="activityName">{this.props.params.id}</p>
-                            </div>
+            <div className="activityHeroImage" style={heroImageStyle}>
+                <SmallHeader date={this.state.date} />
+                <div className="activityHeroWrapper">
+                    <div className="activityHeroContainer">
+                        {icon}
+                        <div className="activityHeroContent">
+                            <p className="activityType">{activity.type}</p>
+                            <p className="activityName">{activity.name}</p>
                         </div>
                     </div>
                 </div>
+            </div>
+        );
+    }
+
+    render() {
+        let hero = this.renderHeroImage();
+        return (
+            <div>
+                {hero}
                 <div className="errorMessage">{this.props.params.id}</div>
             </div>
         );
     };
 }
-
-export default wrap(Activity, ActivityStore, ActivityActions);

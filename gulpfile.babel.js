@@ -23,7 +23,7 @@ var production = process.env.NODE_ENV === 'production';
 var config = {
     appDependencies: [
         'react', 'react-dom', 'react-router',
-        'alt', 'alt-container', 'iso',
+        'alt', 'iso',
         'react-masonry-component', 'react-element-query'
     ],
     utils: {
