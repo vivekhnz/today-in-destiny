@@ -81,28 +81,6 @@ class Advisor extends React.Component {
         return null;
     }
 
-    renderBounties() {
-        if (this.props.bounties) {
-            return (
-                <div>
-                    <div className="advisorSeparator" />
-                    <ul className="advisorBounties">
-                        {
-                            this.props.bounties
-                                ? this.props.bounties.map((bounty, i) =>
-                                    <li key={i}>
-                                        <img src={bounty.icon} title={bounty.name} />
-                                        <p>{bounty.description}</p>
-                                    </li>)
-                                : null
-                        }
-                    </ul>
-                </div>
-            );
-        }
-        return null;
-    }
-
     render() {
         let blockStyle = {
             background: this.props.image
@@ -113,7 +91,6 @@ class Advisor extends React.Component {
         let timeRemaining = this.renderTimeRemaining();
         let items = this.renderItems();
         let modifiers = this.renderModifiers();
-        let bounties = this.renderBounties();
         let hasTarget = this.props.activityID ? 'hasTarget' : '';
 
         return (
@@ -129,7 +106,6 @@ class Advisor extends React.Component {
                             <p className="advisorName">{this.props.name}</p>
                             {items}
                             {modifiers}
-                            {bounties}
                         </div>
                     </div>
                 </div>
