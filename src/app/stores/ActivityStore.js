@@ -9,16 +9,12 @@ class ActivityStore {
         this.activity = null;
     };
 
-    onSetAdvisorSuccess(advisor) {
-        this.activity = advisor;
-    }
-
-    onFetchActivitySuccess(response) {
+    onFetchAdvisorSuccess(response) {
         this.date = response.date;
-        this.activity = response.activity;
+        this.activity = response.advisor;
     }
 
-    onFetchActivityFail(error) {
+    onFetchAdvisorFail(error) {
         this.errorMessage = error.message;
     }
 }

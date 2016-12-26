@@ -10,15 +10,13 @@ var overlayColor = 'rgba(39, 58, 65, 0.75)';
 export default class Activity extends React.Component {
     constructor(props) {
         super(props);
-        this.state = ActivityStore.getState();
+        this.state = {};
         this.onChange = this.onChange.bind(this);
     }
 
     componentDidMount() {
         ActivityStore.listen(this.onChange);
-        if (!this.state.activity) {
-            ActivityActions.fetchActivity(this.props.params.id);
-        }
+        ActivityActions.fetchAdvisor(this.props.params.id);
     }
 
     componentWillUnmount() {
@@ -27,7 +25,7 @@ export default class Activity extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (prevProps.params.id !== this.props.params.id) {
-            ActivityActions.fetchActivity(this.props.params.id);
+            ActivityActions.fetchAdvisor(this.props.params.id);
         }
     }
 

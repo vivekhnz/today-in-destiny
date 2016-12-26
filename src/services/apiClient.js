@@ -35,7 +35,7 @@ class APIClient {
     }
 
     getAdvisors() { return this.endpoint(endpoints.advisors); }
-    getActivity(id) { return this.endpoint(endpoints.activity, { id: id }); }
+    getSingleAdvisor(id) { return this.endpoint(endpoints.singleAdvisor, { id: id }); }
 };
 
 export default new APIClient();

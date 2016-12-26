@@ -6,7 +6,7 @@ import Activity from './app/components/Activity';
 
 let endpoints = {
     advisors: '/api/advisors',
-    activity: '/api/activity/:id'
+    singleAdvisor: '/api/advisors/:id'
 };
 let routes = (
     <Route component={App}>

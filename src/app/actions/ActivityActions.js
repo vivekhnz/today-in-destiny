@@ -4,20 +4,15 @@ import {default as api} from '../../services/apiClient';
 class ActivityActions {
     constructor() {
         this.generateActions(
-            'setAdvisorSuccess',
-            'fetchActivitySuccess',
-            'fetchActivityFail'
+            'fetchAdvisorSuccess',
+            'fetchAdvisorFail'
         );
     }
 
-    setAdvisor(advisor) {
-        this.setAdvisorSuccess(advisor);
-    }
-
-    fetchActivity(id) {
-        api.getActivity(id)
-            .then(data => this.fetchActivitySuccess(data))
-            .catch(error => this.fetchActivityFail(error));
+    fetchAdvisor(id) {
+        api.getSingleAdvisor(id)
+            .then(data => this.fetchAdvisorSuccess(data))
+            .catch(error => this.fetchAdvisorFail(error));
     }
 }
 

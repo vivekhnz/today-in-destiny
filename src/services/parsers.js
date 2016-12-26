@@ -1,4 +1,5 @@
 import time from './time';
+import { bnet } from './parsers/utils';
 import { default as parseXur } from './parsers/xur';
 import { default as parseTrials } from './parsers/trials';
 import { default as parseIronBanner } from './parsers/ironBanner';
@@ -86,19 +87,19 @@ export function getOptionalVendorDependencies(activities) {
 }
 
 export function parse(activities, vendors, manifest) {
-    let advisors = [];
+    let advisors = {};
     for (let identifier in ADVISOR_PARSERS) {
         let parser = ADVISOR_PARSERS[identifier];
         let advisor = parseAdvisor(
-            identifier, parser, activities, vendors, manifest);
+            parser, activities, vendors, manifest);
         if (advisor) {
-            advisors.push(advisor);
+            advisors[identifier] = advisor;
         }
     }
     return advisors;
 }
 
-function parseAdvisor(id, parser, activities, vendors, manifest) {
+function parseAdvisor(parser, activities, vendors, manifest) {
     if (!parser) return null;
 
     let expiresAt = null;
@@ -147,8 +148,33 @@ function parseAdvisor(id, parser, activities, vendors, manifest) {
     });
     if (!advisor) return null;
 
+    // attach vendor stock
+    if (vendors) {
+        let vendorIDs = [];
+        if (parser.vendors) {
+            vendorIDs.push(...parser.vendors);
+        }
+        if (parser.optionalVendors) {
+            vendorIDs.push(...parser.optionalVendors);
+        }
+
+        // load vendor stock
+        let hasVendors = false;
+        let advisorVendors = {};
+        vendorIDs.forEach(vendorID => {
+            let vendor = vendors[vendorID];
+            if (vendor && vendor.stock) {
+                hasVendors = true;
+                advisorVendors[vendorID] = parseVendor(
+                    vendors[vendorID], manifest);
+            }
+        }, this);
+        if (hasVendors) {
+            advisor.vendors = advisorVendors;
+        }
+    }
+
     // attach metadata
-    advisor.id = id;
     advisor.expiresAt = expiresAt;
 
     // set any empty properties to default values
@@ -157,4 +183,98 @@ function parseAdvisor(id, parser, activities, vendors, manifest) {
     }
 
     return advisor;
+}
+
+function parseVendor(vendor, manifest) {
+    let stock = {};
+    for (let categoryID in vendor.stock) {
+        let category = vendor.stock[categoryID];
+        if (category) {
+            stock[categoryID] = parseItems(category, manifest);
+        }
+    }
+
+    return {
+        refreshesAt: vendor.refreshesAt,
+        stock: stock
+    };
+}
+
+function parseItems(category, manifest) {
+    if (category) {
+        let items = [];
+        let hashes = [];
+
+        category.forEach(item => {
+            // don't show the same item more than once
+            if (!hashes.includes(item.itemHash)) {
+                hashes.push(item.itemHash);
+                let definition = manifest.getItem(item.itemHash);
+                if (definition) {
+                    let output = {
+                        name: definition.itemName,
+                        icon: bnet(definition.icon),
+                        type: definition.itemTypeName,
+                        description: definition.itemDescription,
+                        quantity: item.quantity
+                    };
+                    
+                    // get costs
+                    let costs = [];
+                    item.costs.forEach(cost => {
+                        let parsedCost = parseCost(cost, manifest);
+                        if (parsedCost) {
+                            costs.push(parsedCost);
+                        }
+                    }, this);
+                    if (costs.length > 0) {
+                        output.costs = costs;
+                    }
+
+                    items.push(output);
+                }
+            }
+        }, this);
+        return items;
+    }
+    return null;
+}
+
+function parseCost(cost, manifest) {
+    // ignore if there is no cost
+    if (cost.value === 0) {
+        return null;
+    }
+
+    let definition = manifest.getItem(cost.itemHash);
+    return {
+        name: definition.itemName,
+        icon: bnet(definition.icon),
+        quantity: cost.value
+    }
+}
+
+export function getFeaturedItems(id, vendors) {
+    let parser = ADVISOR_PARSERS[id];
+    if (parser) {
+        let featured = parser.featuredItems;
+        if (featured && featured.vendor && featured.category) {
+            let vendor = vendors[featured.vendor];
+            if (vendor && vendor.stock) {
+                let category = vendor.stock[featured.category];
+                return reduceItems(category);
+            }
+        }
+    }
+    return undefined;
+}
+
+function reduceItems(items) {
+    if (!items) return undefined;
+    return items.map(item => {
+        return {
+            name: item.name,
+            icon: item.icon
+        };
+    });
 }
