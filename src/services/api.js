@@ -2,13 +2,20 @@ import { default as time } from './time';
 import { endpoints } from '../routes';
 import { default as bungie } from './bungie';
 import ManifestService from './manifest';
-import AdvisorsService from './advisors';
+import parse from './parsers';
 
 let VENDORS = {
     xur: 2796397637,
     ironBanner: 2610555297,
     cryptarchIronTemple: 2190824863,
     vanguardIronTemple: 2190824860
+}
+
+let CATEGORIES = {
+    activities: 'Activities',
+    events: 'Events',
+    daily: 'Today',
+    weekly: 'This Week'
 }
 
 class APIService {
@@ -149,13 +156,14 @@ class APIService {
         if (advisors) {
             advisors.forEach(advisor => {
                 if (advisor && advisor.category) {
-                    let category = categories.find(p => p.name == advisor.category);
+                    let category = categories.find(p => p.id == advisor.category);
                     if (category) {
                         category.advisors.push(advisor);
                     }
                     else {
                         categories.push({
-                            name: advisor.category,
+                            id: advisor.category,
+                            name: CATEGORIES[advisor.category] || advisor.category,
                             advisors: [advisor]
                         });
                     }
@@ -168,9 +176,7 @@ class APIService {
     parseAdvisors(activities, vendors, definitions) {
         let manifest = new ManifestService(
             this.combineDefinitions(definitions));
-        let service = new AdvisorsService(
-            activities, vendors, manifest);
-        return service.getAdvisors();
+        return parse(activities, vendors, manifest);
     }
 
     getActivity(params) {

@@ -15,8 +15,8 @@ class Advisor extends React.Component {
 
     onClick(e) {
         e.preventDefault();
-        if (this.props.activityID) {
-            browserHistory.push(`/activities/${this.props.activityID}`);
+        if (this.props.id) {
+            browserHistory.push(`/activities/${this.props.id}`);
             ActivityActions.setAdvisor(this.props);
         }
     }
@@ -91,7 +91,7 @@ class Advisor extends React.Component {
         let timeRemaining = this.renderTimeRemaining();
         let items = this.renderItems();
         let modifiers = this.renderModifiers();
-        let hasTarget = this.props.activityID ? 'hasTarget' : '';
+        let hasTarget = this.props.id ? 'hasTarget' : '';
 
         return (
             <ElementQuery sizes={[{ name: 'wide', width: wideViewWidth }]}>
