@@ -2,6 +2,7 @@ import {bnet, parseItems} from './utils';
 
 export default {
     activities: ['ironbanner'],
+    optionalVendors: ['efrideet'],
     parser: ({activities, vendors, manifest}) => {
         let output = {
             category: 'events',
@@ -23,9 +24,9 @@ export default {
         }
 
         // obtain vendor stock
-        if (vendors.ironBanner && vendors.ironBanner.stock) {
+        if (vendors.efrideet && vendors.efrideet.stock) {
             output.items = parseItems(
-                vendors.ironBanner.stock['Event Rewards'], manifest);
+                vendors.efrideet.stock['Event Rewards'], manifest);
         }
 
         return output;

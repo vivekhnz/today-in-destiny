@@ -1,9 +1,9 @@
 import {parseItems} from './utils';
 
 export let parseIronLordArtifacts = {
-    vendors: ['cryptarchIronTemple'],
+    vendors: ['tyra'],
     parser: ({vendors, manifest}) => {
-        let artifacts = vendors.cryptarchIronTemple.stock['Iron Lord Artifacts'];
+        let artifacts = vendors.tyra.stock['Iron Lord Artifacts'];
         return {
             category: 'weekly',
             type: 'Tyra Karn',
@@ -16,9 +16,9 @@ export let parseIronLordArtifacts = {
 };
 
 export let parseShiro = {
-    vendors: ['vanguardIronTemple'],
+    vendors: ['shiro'],
     parser: ({vendors, manifest}) => {
-        let classItems = vendors.vanguardIronTemple.stock['Armor'];
+        let classItems = vendors.shiro.stock['Armor'];
         return {
             category: 'weekly',
             type: 'Shiro-4',

@@ -55,7 +55,12 @@ function createCrucibleParser({activity, category, type, icon}) {
                     }
                     else {
                         output.name = activity.activityName;
-                        output.image = getCrucibleModeImage(activity.activityName);
+
+                        // get playlist image
+                        let playlistImage = getCrucibleModeImage(activity.activityName);
+                        if (playlistImage) {
+                            output.image = playlistImage;
+                        }
                     }
                 }
             }

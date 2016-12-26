@@ -2,6 +2,7 @@ import {parseItems} from './utils';
 
 export default {
     activities: ['xur'],
+    optionalVendors: ['xur'],
     parser: ({activities, vendors, manifest}) => {
         // obtain Xur's stock 
         let items = null;

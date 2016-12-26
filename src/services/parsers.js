@@ -29,7 +29,63 @@ let DEFAULTS = {
     'icon': '/images/advisors/icons/default.png'
 };
 
-function parse(activities, vendors, manifest) {
+export function getVendorDependencies() {
+    let dependencies = [];
+    for (let identifier in ADVISOR_PARSERS) {
+        let parser = ADVISOR_PARSERS[identifier];
+        // does this advisor require any vendors?
+        if (parser.vendors) {
+            let activities = parser.activities;
+            // is this advisor not linked to any activities?
+            if (!activities || activities.length === 0) {
+                parser.vendors.forEach(vendor => {
+                    // ensure we don't load the same vendor twice
+                    if (!dependencies.includes(vendor)) {
+                        dependencies.push(vendor);
+                    }
+                }, this);
+            }
+        }
+    }
+    return dependencies;
+}
+
+export function getOptionalVendorDependencies(activities) {
+    let dependencies = [];
+    for (let identifier in ADVISOR_PARSERS) {
+        let parser = ADVISOR_PARSERS[identifier];
+        // does this advisor have any optional vendors?
+        if (parser.optionalVendors) {
+            let addVendors = false;
+            if (parser.activities && activities) {
+                // only add vendors if all linked activities are active
+                addVendors = true;
+                for (let i = 0; i < parser.activities.length; i++) {
+                    let activity = activities[parser.activities[i]];
+                    if (!activity || !activity.status || !activity.status.active) {
+                        addVendors = false;
+                        break;
+                    }
+                }
+            }
+            else {
+                // this advisor is not linked to any activities
+                addVendors = true;
+            }
+            if (addVendors) {
+                parser.optionalVendors.forEach(vendor => {
+                    // ensure we don't load the same vendor twice
+                    if (!dependencies.includes(vendor)) {
+                        dependencies.push(vendor);
+                    }
+                }, this);
+            }
+        }
+    }
+    return dependencies;
+}
+
+export function parse(activities, vendors, manifest) {
     let advisors = [];
     for (let identifier in ADVISOR_PARSERS) {
         let parser = ADVISOR_PARSERS[identifier];
@@ -75,7 +131,7 @@ function parseAdvisor(id, parser, activities, vendors, manifest) {
             let vendorID = parser.vendors[i];
             let vendor = vendors[vendorID];
             if (!vendor || !vendor.stock) return null;
-            
+
             // get vendor refresh date
             if (!expiresAt) {
                 expiresAt = vendor.refreshesAt;
@@ -102,5 +158,3 @@ function parseAdvisor(id, parser, activities, vendors, manifest) {
 
     return advisor;
 }
-
-export default parse;
