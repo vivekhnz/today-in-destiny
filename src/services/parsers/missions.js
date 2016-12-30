@@ -63,7 +63,7 @@ function createParser(activity, defaults) {
                 if (activity) {
                     output.name = activity.activityName;
                 }
-                output.image = bnet(advisor.display.image);
+                output.image = bnet(advisor.display.image) || output.image;
             }
 
             return output;

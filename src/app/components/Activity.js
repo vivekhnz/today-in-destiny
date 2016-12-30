@@ -60,7 +60,7 @@ export default class Activity extends React.Component {
         let icon = this.renderIcon();
         return (
             <div className="activityHeroImage" style={heroImageStyle}>
-                <SmallHeader date={this.state.date} />
+                <SmallHeader />
                 <div className="activityHeroWrapper">
                     <div className="activityHeroContainer">
                         {icon}

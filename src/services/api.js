@@ -1,9 +1,7 @@
 import { default as time } from './time';
 import { endpoints } from '../routes';
 import buildCache from './cache';
-import { default as bungie } from './bungie';
-import ManifestService from './manifest';
-import { parse, getFeaturedItems } from './parsers';
+import { getFeaturedItems } from './parsers';
 
 let CATEGORIES = {
     activities: 'Activities',

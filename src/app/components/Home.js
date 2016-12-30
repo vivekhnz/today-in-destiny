@@ -53,7 +53,7 @@ export default class Home extends React.Component {
         let advisorGroups = this.renderAdvisorGroups();
         return (
             <div>
-                <Header date={this.state.date} />
+                <Header />
                 {advisorGroups}
             </div>
         );
