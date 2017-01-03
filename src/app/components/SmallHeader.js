@@ -1,4 +1,6 @@
 import React from 'react';
+import { browserHistory } from 'react-router';
+
 import DateStore from '../stores/DateStore';
 
 class SmallHeader extends React.Component {
@@ -6,6 +8,12 @@ class SmallHeader extends React.Component {
         super(props);
         this.state = DateStore.getState();
         this.onChange = this.onChange.bind(this);
+        this.onLogoClicked = this.onLogoClicked.bind(this);
+    }
+
+    onLogoClicked(e) {
+        e.preventDefault();
+        browserHistory.push('/');
     }
 
     componentDidMount() {
@@ -35,7 +43,7 @@ class SmallHeader extends React.Component {
         return (
             <div className="smallHeaderContainer">
                 {dateContainer}
-                <div className="smallLogo" />
+                <div className="smallLogo" onClick={this.onLogoClicked} />
                 <p className="smallHeaderText">Today in Destiny</p>
             </div>
         );

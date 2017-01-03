@@ -35,7 +35,7 @@ class APIService {
             buildCache().then(advisors => {
                 resolve({
                     date: time.getCurrentDate(),
-                    advisorGroups: groupByCategory(advisors)
+                    advisors: summariseAdvisors(advisors)
                 });
             }).catch(error => reject(error));
         });
@@ -49,8 +49,8 @@ class APIService {
                         let advisor = advisors[params.id];
                         if (advisor) {
                             return {
-                                date: time.getCurrentDate(),
-                                advisor: advisor
+                                id: params.id,
+                                details: getAdvisorDetails(advisor)
                             };
                         }
                         else {
@@ -69,13 +69,14 @@ class APIService {
     }
 };
 
-function groupByCategory(advisors) {
+function summariseAdvisors(advisors) {
+    let summaries = {};
     let categories = [];
     if (advisors) {
         for (let id in advisors) {
             let advisor = advisors[id];
             if (advisor && advisor.category) {
-                let output = {
+                summaries[id] = {
                     id: id,
                     name: advisor.name,
                     type: advisor.type,
@@ -88,19 +89,22 @@ function groupByCategory(advisors) {
 
                 let category = categories.find(p => p.id == advisor.category);
                 if (category) {
-                    category.advisors.push(output);
+                    category.advisors.push(id);
                 }
                 else {
                     categories.push({
                         id: advisor.category,
                         name: CATEGORIES[advisor.category] || advisor.category,
-                        advisors: [output]
+                        advisors: [id]
                     });
                 }
             }
         }
     }
-    return categories;
+    return {
+        summaries: summaries,
+        categories: categories
+    };
 }
 
 function reduceModifiers(modifiers) {
@@ -111,6 +115,15 @@ function reduceModifiers(modifiers) {
             icon: modifier.icon
         };
     });
+}
+
+function getAdvisorDetails(advisor) {
+    return [
+        { name: 'Time Remaining' },
+        { name: 'Objective' },
+        { name: 'Modifiers' },
+        { name: 'Rewards' }
+    ];
 }
 
 export default new APIService();

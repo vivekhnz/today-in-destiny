@@ -93,7 +93,7 @@ class Advisor extends React.Component {
 
         return (
             <ElementQuery sizes={[{ name: 'wide', width: wideViewWidth }]}>
-                <div className={`advisorBlock ${hasTarget}`}
+                <div className={`masonryItem advisorBlock ${hasTarget}`}
                     style={blockStyle}
                     onClick={this.onClick}>
                     <div className="advisorContainer">

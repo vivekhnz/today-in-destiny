@@ -46,7 +46,8 @@ function onNavigated(error, redirect, renderProps, response) {
             .then(advisors => {
                 let data = {
                     AdvisorsStore: {
-                        advisorGroups: advisors.advisorGroups
+                        summaries: advisors.advisors.summaries,
+                        categories: advisors.advisors.categories
                     },
                     DateStore: {
                         date: advisors.date

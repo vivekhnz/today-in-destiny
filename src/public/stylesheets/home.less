@@ -49,8 +49,7 @@
 .masonry {
     margin-top: -@masonryGutter;
 }
-
-.masonrySizer, .advisorBlock {
+.masonrySizer, .masonryItem {
     .calcItemWidth(1);
     .calcItemWidthForColumns(2);
     .calcItemWidthForColumns(3);
@@ -58,10 +57,18 @@
     .calcItemWidthForColumns(5);
     .calcItemWidthForColumns(6);
 }
+.masonryItem {
+    margin-top: 8px;
+
+    @media @layout-twoColumn {
+        box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.25);
+        margin-top: @masonryGutter;
+    }
+}
+
 .advisorBlock {
     display: flex;
     flex-direction: row;
-    margin-top: 8px;
     background-size: cover !important;
     background-position: center center !important;
 
@@ -70,8 +77,6 @@
     }
 
     @media @layout-twoColumn {
-        box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.25);
-        margin-top: @masonryGutter;
         min-height: 210px;
     }
 }

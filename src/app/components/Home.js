@@ -25,21 +25,36 @@ export default class Home extends React.Component {
         this.setState(state);
     }
 
+    getAdvisorsSummaries(identifiers) {
+        let summaries = [];
+        if (identifiers) {
+            identifiers.forEach(id => {
+                let summary = this.state.summaries[id];
+                if (summary) {
+                    summaries.push(summary);
+                }
+            }, this);
+        }
+        return summaries;
+    }
+
     renderAdvisorGroups() {
         if (this.state.errorMessage) {
             return <div className="errorMessage">{this.state.errorMessage}</div>;
         }
-        if (!this.state.advisorGroups) {
+        if (!this.state.categories || !this.state.summaries) {
             return <div className="errorMessage">Loading...</div>;
         }
-        if (this.state.advisorGroups.length > 0) {
+        if (this.state.categories.length > 0) {
             return (
                 <div>
                     {
-                        this.state.advisorGroups.map((group, i) =>
-                            <AdvisorGroup key={i}
+                        this.state.categories.map((group, i) => {
+                            let advisors = this.getAdvisorsSummaries(group.advisors);
+                            return <AdvisorGroup key={i}
                                 name={group.name}
-                                advisors={group.advisors} />)
+                                advisors={advisors} />;
+                        })
                     }
                 </div>
             );

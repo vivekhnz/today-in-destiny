@@ -2,7 +2,7 @@ import React from 'react';
 import { Route } from 'react-router';
 import App from './app/components/App';
 import Home from './app/components/Home';
-import Activity from './app/components/Activity';
+import AdvisorDetails from './app/components/AdvisorDetails';
 
 let endpoints = {
     advisors: '/api/advisors',
@@ -11,7 +11,7 @@ let endpoints = {
 let routes = (
     <Route component={App}>
         <Route path='/' component={Home} />
-        <Route path='/activities/:id' component={Activity} />
+        <Route path='/activities/:id' component={AdvisorDetails} />
     </Route>
 );
 

@@ -1,7 +1,7 @@
 import alt from '../alt';
 import {default as api} from '../../services/apiClient';
 
-class ActivityActions {
+class DetailsActions {
     constructor() {
         this.generateActions(
             'fetchAdvisorSuccess',
@@ -16,4 +16,4 @@ class ActivityActions {
     }
 }
 
-export default alt.createActions(ActivityActions);
+export default alt.createActions(DetailsActions);
