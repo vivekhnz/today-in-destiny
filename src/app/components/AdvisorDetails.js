@@ -23,13 +23,18 @@ export default class AdvisorDetails extends React.Component {
         this.onDetailsChanged = this.onDetailsChanged.bind(this);
     }
 
-    componentDidMount() {
+    update() {
         this.onAdvisorsChanged(AdvisorsStore.getState());
         this.onDetailsChanged(DetailsStore.getState());
-        
+        if (!this.state.details) {
+            DetailsActions.fetchAdvisor(this.props.params.id);
+        }
+    }
+
+    componentDidMount() {
         AdvisorsStore.listen(this.onAdvisorsChanged);
         DetailsStore.listen(this.onDetailsChanged);
-        DetailsActions.fetchAdvisor(this.props.params.id);
+        this.update();
     }
 
     componentWillUnmount() {
@@ -39,8 +44,7 @@ export default class AdvisorDetails extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (prevProps.params.id !== this.props.params.id) {
-            this.onAdvisorsChanged(AdvisorsStore.getState());
-            DetailsActions.fetchAdvisor(this.props.params.id);
+            this.update();
         }
     }
 
