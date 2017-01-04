@@ -18,3 +18,10 @@ export function parseModifiers(category) {
     }
     return null;
 }
+
+export function currency(name, quantity) {
+    return {
+        name: name,
+        quantity: quantity
+    };
+}

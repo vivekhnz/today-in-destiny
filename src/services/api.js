@@ -118,12 +118,9 @@ function reduceModifiers(modifiers) {
 }
 
 function getAdvisorDetails(advisor) {
-    return [
-        { name: 'Time Remaining' },
-        { name: 'Objective' },
-        { name: 'Modifiers' },
-        { name: 'Rewards' }
-    ];
+    return {
+        rewards: advisor.rewards
+    };
 }
 
 export default new APIService();

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import SmallHeader from './SmallHeader';
+import ActivityRewards from './ActivityRewards';
 
 import AdvisorsStore from '../stores/AdvisorsStore';
 import DetailsStore from '../stores/DetailsStore';
@@ -112,6 +113,16 @@ export default class AdvisorDetails extends React.Component {
         );
     }
 
+    renderGroup(name, content) {
+        return (
+            <div className="advisorGroupContainer">
+                <p className="groupHeader">{name}</p>
+                <div className="groupHeaderSeparator" />
+                {content}
+            </div>
+        );
+    }
+
     renderDetails() {
         if (this.state.errorMessage) {
             return <div className="errorMessage">{this.state.errorMessage}</div>;
@@ -119,23 +130,16 @@ export default class AdvisorDetails extends React.Component {
         if (!this.state.details) {
             return <div className="errorMessage">Loading...</div>;
         }
-        if (this.state.details.length > 0) {
-            let childElements = this.state.details
-                ? this.state.details.map((item, i) =>
-                    <div key={i} className="advisorGroupContainer">
-                        <p className="groupHeader">{item.name}</p>
-                        <div className="groupHeaderSeparator" />
-                    </div>)
-                : null;
-            return (
-                <div>
-                    {childElements}
-                </div>
-            );
-        }
-        else {
-            return <div className="errorMessage">We couldn't find any activity details.</div>;
-        }
+
+        let rewards = this.state.details.rewards ?
+            this.renderGroup('Rewards', <ActivityRewards rewards={this.state.details.rewards} />)
+            : null;
+        
+        return (
+            <div>
+                {rewards}
+            </div>
+        );
     }
 
     render() {

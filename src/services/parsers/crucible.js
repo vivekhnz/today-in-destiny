@@ -1,3 +1,5 @@
+import { currency } from './utils';
+
 let CRUCIBLE_MODES = {
     '6v6': [
         'Classic 6v6', 'Freelance 6v6', 'Iron Banner Clash',
@@ -23,16 +25,25 @@ export let parseDailyCrucible = createCrucibleParser({
     activity: 'dailycrucible',
     category: 'daily',
     type: 'Daily Crucible Playlist',
-    icon: "/images/advisors/icons/dailyCrucible.png"
+    icon: "/images/advisors/icons/dailyCrucible.png",
+    rewards: {
+        currencies: [currency('Legendary Marks', 15)]
+    }
 });
 export let parseWeeklyCrucible = createCrucibleParser({
     activity: 'weeklycrucible',
     category: 'weekly',
     type: 'Weekly Crucible Playlist',
-    icon: "/images/advisors/icons/weeklyCrucible.png"
+    icon: "/images/advisors/icons/weeklyCrucible.png",
+    rewards: {
+        currencies: [
+            currency('Radiant Treasure', 1),
+            currency('Legendary Marks', 30)
+        ]
+    }
 });
 
-function createCrucibleParser({activity, category, type, icon}) {
+function createCrucibleParser({activity, category, type, icon, rewards}) {
     return {
         activities: [activity],
         parser: ({activities, manifest}) => {
@@ -41,7 +52,8 @@ function createCrucibleParser({activity, category, type, icon}) {
                 name: 'Unknown Playlist',
                 type: type,
                 image: '/images/advisors/backgrounds/featuredCrucible.jpg',
-                icon: icon
+                icon: icon,
+                rewards: rewards
             };
             let advisor = activities[activity];
 
