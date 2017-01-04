@@ -1,5 +1,4 @@
 import React from 'react';
-import Masonry from 'react-masonry-component';
 
 import SmallHeader from './SmallHeader';
 
@@ -7,12 +6,6 @@ import AdvisorsStore from '../stores/AdvisorsStore';
 import DetailsStore from '../stores/DetailsStore';
 import DetailsActions from '../actions/DetailsActions';
 
-let masonryOptions = {
-    transitionDuration: 0,
-    columnWidth: '.masonrySizer',
-    percentPosition: true,
-    gutter: 16
-};
 var overlayColor = 'rgba(39, 58, 65, 0.75)';
 
 export default class AdvisorDetails extends React.Component {
@@ -129,16 +122,15 @@ export default class AdvisorDetails extends React.Component {
         if (this.state.details.length > 0) {
             let childElements = this.state.details
                 ? this.state.details.map((item, i) =>
-                    <div key={i} className="masonryItem">
-                        <p className="detailsItemName">{item.name}</p>
+                    <div key={i} className="advisorGroupContainer">
+                        <p className="groupHeader">{item.name}</p>
+                        <div className="groupHeaderSeparator" />
                     </div>)
                 : null;
             return (
-                <Masonry className="detailsMasonry"
-                    options={masonryOptions}>
-                    <div className="masonrySizer" />
+                <div>
                     {childElements}
-                </Masonry>
+                </div>
             );
         }
         else {
