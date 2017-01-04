@@ -33,7 +33,7 @@ export let parseHeroicStrikes = createPlaylistParser({
     rewards: {
         currencies: [
             currency('Treasures of the Dawning', 1),
-            currency('Legendary Marks', 30),
+            currency('Legendary Marks', 30, 10),
             currency('Legendary Engram', 1)
         ]
     }

@@ -38,7 +38,7 @@ export let parseWeeklyCrucible = createCrucibleParser({
     rewards: {
         currencies: [
             currency('Radiant Treasure', 1),
-            currency('Legendary Marks', 30)
+            currency('Legendary Marks', 30, 10)
         ]
     }
 });

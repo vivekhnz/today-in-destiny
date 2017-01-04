@@ -19,9 +19,10 @@ export function parseModifiers(category) {
     return null;
 }
 
-export function currency(name, quantity) {
+export function currency(name, maxQuantity, perCompletion = undefined) {
     return {
         name: name,
-        quantity: quantity
+        quantity: maxQuantity,
+        perCompletion: perCompletion
     };
 }
