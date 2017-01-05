@@ -115,9 +115,9 @@ export default class AdvisorDetails extends React.Component {
 
     renderGroup(name, content) {
         return (
-            <div className="advisorGroupContainer">
-                <p className="groupHeader">{name}</p>
-                <div className="groupHeaderSeparator" />
+            <div className="detailsGroupContainer">
+                <p className="detailsGroupName">{name}</p>
+                <div className="detailsGroupSeparator" />
                 {content}
             </div>
         );

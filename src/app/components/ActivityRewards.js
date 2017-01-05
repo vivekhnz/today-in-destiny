@@ -11,13 +11,18 @@ export default class ActivityRewards extends React.Component {
                 quantity = `${item.perCompletion} per completion`;
             }
         }
-        return <li key={i}>{item.name} x {quantity}</li>;
+        return (
+            <li key={i}>
+                <img src={item.icon} />
+                <p>{item.name} x {quantity}</p>
+            </li>
+        );
     }
 
     renderCurrencies(currencies) {
         if (currencies) {
             let items = currencies.map((item, i) => this.renderCurrencyItem(item, i));
-            return <ul>{items}</ul>;
+            return <ul className="rewardCurrencies">{items}</ul>;
         }
         return null;
     }
