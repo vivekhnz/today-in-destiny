@@ -21,13 +21,33 @@ let CRUCIBLE_MODES = {
     ]
 };
 
+let POST_GAME_REWARDS = [
+    'Hex Caster ARC',
+    'Red Spectre',
+    'Eyasluna',
+    'Ill Will',
+    'Hopscotch Pilgrim',
+    'Cryptic Dragon',
+    'NL Shadow 701X',
+    'Matador 64',
+    'Party Crasher +1',
+    '20/20 AMR7',
+    '77 Wizard',
+    'Steel Oracle Z-11',
+    'The Ash Factory',
+    'Unending Deluge III'
+];
+
 export let parseDailyCrucible = createCrucibleParser({
     activity: 'dailycrucible',
     category: 'daily',
     type: 'Daily Crucible Playlist',
     icon: "/images/advisors/icons/dailyCrucible.png",
     rewards: {
-        currencies: [currency('Legendary Marks', 15)]
+        currencies: [currency('Legendary Marks', 15)],
+        rewardSets: {
+            'Post-Game Rewards': POST_GAME_REWARDS
+        }
     }
 });
 export let parseWeeklyCrucible = createCrucibleParser({
@@ -39,7 +59,10 @@ export let parseWeeklyCrucible = createCrucibleParser({
         currencies: [
             currency('Radiant Treasure', 1),
             currency('Legendary Marks', 30, 10)
-        ]
+        ],
+        rewardSets: {
+            'Post-Game Rewards': POST_GAME_REWARDS
+        }
     }
 });
 

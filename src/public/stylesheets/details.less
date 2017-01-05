@@ -88,7 +88,17 @@
         transparent 50%, @sec-fg-color 50%,
         @sec-fg-color 75%, transparent 75%, transparent);
     background-size: 4px 4px;
-    margin: 0px 0px 16px 0px;
+    margin: 0px 0px 24px 0px;
+}
+.detailsSubGroupName {
+    .subheader();
+    color: @sec-fg-color;
+    margin: 24px 0px 16px 0px;
+    border-bottom: 1px solid @ter-fg-color;
+    
+    @media @layout-narrow {
+        .subtitle();
+    }
 }
 
 .rewardCurrencies {
