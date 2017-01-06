@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { default as bungie } from './bungie';
 import ManifestService from './manifest';
 import {
@@ -5,6 +6,8 @@ import {
     getOptionalVendorDependencies,
     parse
 } from './parsers';
+
+const ITEMS_MANIFEST = 'build/gen/items.json';
 
 let VENDORS = {
     xur: 2796397637,
@@ -18,6 +21,7 @@ export default function buildCache() {
         let definitions = [];
         let activities = null;
         let vendors = {};
+        let items = {};
 
         let loadAdvisors = () => {
             return bungie.getPublicAdvisorsV2()
@@ -59,15 +63,34 @@ export default function buildCache() {
             return Promise.all(
                 advisorVendors.map(id => loadVendor(id, VENDORS[id])));
         };
+        let loadItemsManifest = () => {
+            return new Promise((resolve, reject) => {
+                fs.readFile(ITEMS_MANIFEST, (error, data) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    else {
+                        resolve(data);
+                    }
+                });
+            }).then(data => {
+                items = JSON.parse(data);
+                return items;
+            })
+            .catch(error => {
+                console.log("Couldn't load items manifest.");
+            });
+        }
         let parseAdvisors = () => {
             let manifest = new ManifestService(
                 combineDefinitions(definitions));
-            resolve(parse(activities, vendors, manifest));
+            resolve(parse(activities, vendors, manifest, items));
         };
 
         Promise.all([
             loadAdvisors().then(loadEventVendors),
-            loadVendors()
+            loadVendors(),
+            loadItemsManifest()
         ])
             .then(parseAdvisors)
             .catch(error => reject(error));

@@ -1,4 +1,5 @@
 import React from 'react';
+import DestinyItem from './DestinyItem';
 
 export default class ActivityRewards extends React.Component {
     renderCurrencyItem(item, i) {
@@ -29,11 +30,13 @@ export default class ActivityRewards extends React.Component {
 
     renderRewardSet(set, i) {
         let rewards = set.items.map((item, n) =>
-            <li key={n}>{item}</li>);
+            <li key={n}>
+                <DestinyItem item={item} />
+            </li>);
         return (
             <div key={i}>
                 <p className="detailsSubGroupName">{set.name}</p>
-                <ul>
+                <ul className="rewardSet">
                     {rewards}
                 </ul>
             </div>

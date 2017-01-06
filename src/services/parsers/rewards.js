@@ -2,20 +2,10 @@ export let REWARDS = {
     cruciblePostGameRewards: {
         name: 'Post-Game Rewards',
         items: [
-            'Hex Caster ARC',
-            'Red Spectre',
-            'Eyasluna',
-            'Ill Will',
-            'Hopscotch Pilgrim',
-            'Cryptic Dragon',
-            'NL Shadow 701X',
-            'Matador 64',
-            'Party Crasher +1',
-            '20/20 AMR7',
-            '77 Wizard',
-            'Steel Oracle Z-11',
-            'The Ash Factory',
-            'Unending Deluge III'
+            1936633101, 1258012244, 1132793057, 658685718,
+            100397241, 1592913758, 3820351995, 3622856851,
+            1287343925, 1042281685, 3071319006, 2816115592,
+            3677466369, 1027613438
         ]
     }
 };

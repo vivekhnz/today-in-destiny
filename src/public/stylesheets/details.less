@@ -1,5 +1,18 @@
 @import "common.less";
 
+// proportions
+@rewardsGutter: 32px;
+@rewardsColumnWidth: 260;
+
+.calcRewardItemWidth(@columns) {
+    width: ~"calc((100% - (@{rewardsGutter} * (@{columns} - 1))) / @{columns})";
+}
+.calcRewardItemWidthForColumns(@columns) {
+    @media (min-width: ((@rewardsColumnWidth * @columns) + 64px)) {
+        .calcRewardItemWidth(@columns);
+    }
+}
+
 .activityHeroImage {
     height: 260px;
     background-size: cover !important;
@@ -121,4 +134,52 @@
 .rewardCurrencies li p {
     margin: -26px 0px 0px 32px;
     padding: 0px;
+}
+
+.rewardSet {
+    padding: 0px;
+    list-style-type: none;
+}
+.rewardSet li {
+    .subtitle();
+    display: inline-block;
+    margin: 0px 16px 16px 0px;
+    
+    .calcRewardItemWidth(1);
+    .calcRewardItemWidthForColumns(2);
+    .calcRewardItemWidthForColumns(3);
+    .calcRewardItemWidthForColumns(4);
+    .calcRewardItemWidthForColumns(5);
+    .calcRewardItemWidthForColumns(6);
+}
+
+.destinyItem {
+    min-height: 48px;
+    padding: 0px 0px 8px 0px;
+    border-bottom: 1px dotted @ter-fg-color;
+    cursor: pointer;
+}
+.destinyItem:hover {
+    border-bottom: 1px solid @pri-fg-color;
+}
+.destinyItem a {
+    text-decoration: none;
+}
+.destinyItem img {
+    width: 48px;
+    height: 48px;
+}
+.destinyItemText {
+    margin: -48px 0px 0px 58px;
+}
+.destinyItem .itemName {
+    .subtitle();
+    color: @pri-fg-color;
+    font-size: 1em;
+}
+.destinyItem .itemType {
+    .subtitle();
+    color: @sec-fg-color;
+    font-size: 0.75em;
+    text-transform: uppercase;
 }

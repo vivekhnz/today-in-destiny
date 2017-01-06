@@ -106,12 +106,12 @@ export function getCurrencies() {
     return currencies;
 }
 
-export function parse(activities, vendors, manifest) {
+export function parse(activities, vendors, manifest, items) {
     let advisors = {};
     for (let identifier in ADVISOR_PARSERS) {
         let parser = ADVISOR_PARSERS[identifier];
         let advisor = parseAdvisor(
-            parser, activities, vendors, manifest);
+            parser, activities, vendors, manifest, items);
         if (advisor) {
             advisors[identifier] = advisor;
         }
@@ -119,7 +119,7 @@ export function parse(activities, vendors, manifest) {
     return advisors;
 }
 
-function parseAdvisor(parser, activities, vendors, manifest) {
+function parseAdvisor(parser, activities, vendors, manifest, items) {
     if (!parser) return null;
 
     let expiresAt = null;
@@ -197,7 +197,7 @@ function parseAdvisor(parser, activities, vendors, manifest) {
     // parse rewards
     if (parser.currencies || advisor.rewardSets) {
         advisor.rewards = parseRewards(
-            parser.currencies, advisor.rewardSets);
+            parser.currencies, advisor.rewardSets, items);
 
         // clear identifiers
         advisor.rewardSets = undefined;
@@ -283,7 +283,7 @@ function parseCost(cost, manifest) {
     }
 }
 
-function parseRewards(currencies, rewardSets) {
+function parseRewards(currencies, rewardSets, items) {
     let output = {};
 
     // attach currency icons
@@ -305,7 +305,20 @@ function parseRewards(currencies, rewardSets) {
         rewardSets.forEach(set => {
             let definition = REWARDS[set];
             if (definition && definition.name && definition.items) {
-                output.rewardSets.push(definition);
+                // lookup item definitions
+                let itemDefinitions = [];
+                definition.items.forEach(hash => {
+                    let itemDef = items[hash];
+                    if (itemDef) {
+                        itemDefinitions.push(itemDef);
+                    }
+                }, this);
+
+                // add reward set
+                output.rewardSets.push({
+                    name: definition.name,
+                    items: itemDefinitions
+                });
             }
         }, this);
     }
