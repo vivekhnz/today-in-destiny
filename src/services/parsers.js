@@ -87,6 +87,25 @@ export function getOptionalVendorDependencies(activities) {
     return dependencies;
 }
 
+export function getCurrencies() {
+    let currencies = [];
+    for (let identifier in ADVISOR_PARSERS) {
+        let parser = ADVISOR_PARSERS[identifier];
+        // does this activity reward any currencies?
+        if (parser.currencies) {
+            parser.currencies.forEach(currency => {
+                if (currency.name) {
+                    // ensure we don't add the same currency twice
+                    if (!currencies.includes(currency.name)) {
+                        currencies.push(currency.name);
+                    }
+                }
+            }, this);
+        }
+    }
+    return currencies;
+}
+
 export function parse(activities, vendors, manifest) {
     let advisors = {};
     for (let identifier in ADVISOR_PARSERS) {

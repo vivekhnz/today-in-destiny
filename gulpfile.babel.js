@@ -17,6 +17,8 @@ import nodemon from 'gulp-nodemon';
 import browserSync from 'browser-sync';
 let sync = browserSync.create();
 
+import { verifyManifest } from './manifest.js';
+
 var production = process.env.NODE_ENV === 'production';
 
 // configuration
@@ -89,6 +91,9 @@ function compileJS(src, dest = null) {
         .pipe(gulp.dest(dest || getDestination(src)));
 }
 gulp.task('babel', () => compileJS(config.js, 'build'));
+
+// verify manifest
+gulp.task('manifest', () => verifyManifest());
 
 // compile LESS stylesheets
 gulp.task('stylesheets', () => {
@@ -213,7 +218,9 @@ gulp.task('reload-watch', () => {
 
 // execute all build tasks
 gulp.task('build', [
-    'babel', 'copy', 'stylesheets', 'images', 'bundle-vendor', 'bundle-app'
+    'babel', 'manifest',
+    'copy', 'stylesheets', 'images',
+    'bundle-vendor', 'bundle-app'
 ]);
 
 // build and start server
