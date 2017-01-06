@@ -1,5 +1,6 @@
 import time from './time';
 import { bnet } from './parsers/utils';
+import { REWARDS, CURRENCIES } from './parsers/rewards';
 import { default as parseXur } from './parsers/xur';
 import { default as parseTrials } from './parsers/trials';
 import { default as parseIronBanner } from './parsers/ironBanner';
@@ -174,6 +175,15 @@ function parseAdvisor(parser, activities, vendors, manifest) {
         }
     }
 
+    // parse rewards
+    if (parser.currencies || advisor.rewardSets) {
+        advisor.rewards = parseRewards(
+            parser.currencies, advisor.rewardSets);
+
+        // clear identifiers
+        advisor.rewardSets = undefined;
+    }
+
     // attach metadata
     advisor.expiresAt = expiresAt;
 
@@ -218,7 +228,7 @@ function parseItems(category, manifest) {
                         description: definition.itemDescription,
                         quantity: item.quantity
                     };
-                    
+
                     // get costs
                     let costs = [];
                     item.costs.forEach(cost => {
@@ -252,6 +262,36 @@ function parseCost(cost, manifest) {
         icon: bnet(definition.icon),
         quantity: cost.value
     }
+}
+
+function parseRewards(currencies, rewardSets) {
+    let output = {};
+
+    // attach currency icons
+    if (currencies) {
+        output.currencies = [];
+        currencies.forEach(currency => {
+            let icon = CURRENCIES[currency.name];
+            if (!icon) {
+                icon = 'unknown.jpg';
+            }
+            currency.icon = `/images/items/currencies/${icon}`;
+            output.currencies.push(currency);
+        }, this);
+    }
+
+    // parse reward sets
+    if (rewardSets) {
+        output.rewardSets = [];
+        rewardSets.forEach(set => {
+            let definition = REWARDS[set];
+            if (definition && definition.name && definition.items) {
+                output.rewardSets.push(definition);
+            }
+        }, this);
+    }
+
+    return output;
 }
 
 export function getFeaturedItems(id, vendors) {

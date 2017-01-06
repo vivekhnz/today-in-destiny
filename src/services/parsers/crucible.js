@@ -21,54 +21,31 @@ let CRUCIBLE_MODES = {
     ]
 };
 
-let POST_GAME_REWARDS = [
-    'Hex Caster ARC',
-    'Red Spectre',
-    'Eyasluna',
-    'Ill Will',
-    'Hopscotch Pilgrim',
-    'Cryptic Dragon',
-    'NL Shadow 701X',
-    'Matador 64',
-    'Party Crasher +1',
-    '20/20 AMR7',
-    '77 Wizard',
-    'Steel Oracle Z-11',
-    'The Ash Factory',
-    'Unending Deluge III'
-];
-
 export let parseDailyCrucible = createCrucibleParser({
     activity: 'dailycrucible',
     category: 'daily',
     type: 'Daily Crucible Playlist',
     icon: "/images/advisors/icons/dailyCrucible.png",
-    rewards: {
-        currencies: [currency('Legendary Marks', 15)],
-        rewardSets: {
-            'Post-Game Rewards': POST_GAME_REWARDS
-        }
-    }
+    currencies: [currency('Legendary Marks', 15)],
+    rewardSets: ['cruciblePostGameRewards']
 });
 export let parseWeeklyCrucible = createCrucibleParser({
     activity: 'weeklycrucible',
     category: 'weekly',
     type: 'Weekly Crucible Playlist',
     icon: "/images/advisors/icons/weeklyCrucible.png",
-    rewards: {
-        currencies: [
-            currency('Radiant Treasure', 1),
-            currency('Legendary Marks', 30, 10)
-        ],
-        rewardSets: {
-            'Post-Game Rewards': POST_GAME_REWARDS
-        }
-    }
+    currencies: [
+        currency('Radiant Treasure', 1),
+        currency('Legendary Marks', 30, 10)
+    ],
+    rewardSets: ['cruciblePostGameRewards']
 });
 
-function createCrucibleParser({activity, category, type, icon, rewards}) {
+function createCrucibleParser(
+    {activity, category, type, icon, currencies, rewardSets}) {
     return {
         activities: [activity],
+        currencies: currencies,
         parser: ({activities, manifest}) => {
             let output = {
                 category: category,
@@ -76,7 +53,7 @@ function createCrucibleParser({activity, category, type, icon, rewards}) {
                 type: type,
                 image: '/images/advisors/backgrounds/featuredCrucible.jpg',
                 icon: icon,
-                rewards: rewards
+                rewardSets: rewardSets
             };
             let advisor = activities[activity];
 

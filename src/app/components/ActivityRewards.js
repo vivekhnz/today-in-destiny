@@ -27,12 +27,12 @@ export default class ActivityRewards extends React.Component {
         return null;
     }
 
-    renderRewardSet(name, items, i) {
-        let rewards = items.map((item, n) =>
+    renderRewardSet(set, i) {
+        let rewards = set.items.map((item, n) =>
             <li key={n}>{item}</li>);
         return (
             <div key={i}>
-                <p className="detailsSubGroupName">{name}</p>
+                <p className="detailsSubGroupName">{set.name}</p>
                 <ul>
                     {rewards}
                 </ul>
@@ -42,12 +42,8 @@ export default class ActivityRewards extends React.Component {
 
     renderRewardSets(rewardSets) {
         if (rewardSets) {
-            let sets = [];
-            let i = 0;
-            for (let set in rewardSets) {
-                sets.push(this.renderRewardSet(set, rewardSets[set], i))
-                i++;
-            }
+            let sets = rewardSets.map((set, i) =>
+                this.renderRewardSet(set, i));
             return <div>{sets}</div>;
         }
         return null;

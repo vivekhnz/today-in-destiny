@@ -6,9 +6,7 @@ export let parseDailyStory = createMissionParser({
     type: 'Daily Story Mission',
     image: "/images/advisors/backgrounds/default.jpg",
     icon: "/images/advisors/icons/dailyStory.png",
-    rewards: {
-        currencies: [currency('Legendary Marks', 15)]
-    }
+    currencies: [currency('Legendary Marks', 15)]
 });
 export let parseNightfall = createMissionParser({
     activity: 'nightfall',
@@ -16,12 +14,10 @@ export let parseNightfall = createMissionParser({
     type: 'Nightfall Strike',
     image: "/images/advisors/backgrounds/nightfall.jpg",
     icon: "/images/advisors/icons/nightfall.png",
-    rewards: {
-        currencies: [
-            currency('Skeleton Key', 1),
-            currency('Unknown Rewards', 1)
-        ]
-    }
+    currencies: [
+        currency('Skeleton Key', 1),
+        currency('Unknown Rewards', 1)
+    ]
 });
 export let parseHeroicStrikes = createPlaylistParser({
     activity: 'heroicstrike',
@@ -30,40 +26,41 @@ export let parseHeroicStrikes = createPlaylistParser({
     name: 'SIVA Crisis Heroic',
     image: "/images/advisors/backgrounds/heroicStrikes.jpg",
     icon: "/images/advisors/icons/heroicStrikes.png",
-    rewards: {
-        currencies: [
-            currency('Treasures of the Dawning', 1),
-            currency('Legendary Marks', 30, 10),
-            currency('Legendary Engram', 1)
-        ]
-    }
+    currencies: [
+        currency('Treasures of the Dawning', 1),
+        currency('Legendary Marks', 30, 10),
+        currency('Legendary Engram', 1)
+    ]
 });
 
-function createMissionParser({activity, category, type, image, icon, rewards}) {
-    return createParser(activity, {
+function createMissionParser(
+    {activity, category, type, image, icon, currencies, rewardSets}) {
+    return createParser(activity, currencies, {
         category: category,
         type: type,
         name: 'Unknown Mission',
         image: image,
         icon: icon,
-        rewards: rewards
+        rewardSets: rewardSets
     });
 }
 
-function createPlaylistParser({activity, category, type, name, image, icon, rewards}) {
-    return createParser(activity, {
+function createPlaylistParser(
+    {activity, category, type, name, image, icon, currencies, rewardSets}) {
+    return createParser(activity, currencies, {
         category: category,
         type: type,
         name: name,
         image: image,
         icon: icon,
-        rewards: rewards
+        rewardSets: rewardSets
     });
 }
 
-function createParser(activity, defaults) {
+function createParser(activity, currencies, defaults) {
     return {
         activities: [activity],
+        currencies: currencies,
         parser: ({activities, manifest}) => {
             let output = defaults;
             let advisor = activities[activity];
