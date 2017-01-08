@@ -44,15 +44,45 @@ function verifyCurrencyIcons() {
 
 function verifyRewardDefinitions() {
     return new Promise((resolve, reject) => {
+        let itemHashes = getRewardItemHashes();
+
         let diffExistingManifest = items => {
             console.log('Found existing items manifest.');
-            resolve();
+
+            let loadDefinitions = null;
+            let newItems = diffItemHashes(items, itemHashes);
+            if (newItems.length === 0) {
+                console.log('No new items added.');
+                loadDefinitions = Promise.resolve(items);
+            }
+            else {
+                console.log(`${newItems.length} new items added.`);
+                loadDefinitions = retrieveWorldDB()
+                    .then(database => {
+                        return extractDefinitions(database, newItems);
+                    })
+                    .then(definitions => {
+                        for (let hash in definitions) {
+                            items[hash] = definitions[hash];
+                        }
+                        return items;
+                    }).catch(error => {
+                        console.log("Couldn't retrieve extra definitions:");
+                        console.log(error.message);
+                        return items;
+                    });
+            }
+
+            return loadDefinitions
+                .then(defs => writeManifest(itemHashes, defs))
+                .then(() => resolve());
         };
         let createNewManifest = () => {
             console.log('Pre-existing items manifest not found.');
-            let itemHashes = getRewardItemHashes();
             if (itemHashes.length === 0) {
-                console.log('No items within reward sets.');
+                console.log('No items within reward sets. Writing empty manifest...');
+                return writeManifest(itemHashes, {})
+                    .then(() => resolve());
             }
             else {
                 console.log(`${itemHashes.length} unique items within reward sets.`);
@@ -104,6 +134,26 @@ function getRewardItemHashes() {
         }
     }
     return itemHashes;
+}
+
+function diffItemHashes(existing, itemHashes) {
+    // extract item hashes from existing manifest
+    let existingHashes = [];
+    for (let hash in existing) {
+        existingHashes.push(hash);
+    }
+
+    // determine newly added items
+    let newItems = [];
+    for (let i = 0; i < itemHashes.length; i++) {
+        let hash = `${itemHashes[i]}`;
+        if (!existingHashes.includes(hash)) {
+            if (!newItems.includes(hash)) {
+                newItems.push(hash);
+            }
+        }
+    }
+    return newItems;
 }
 
 function retrieveWorldDB() {
@@ -227,6 +277,7 @@ function extractDefinitions(db, itemHashes) {
 
 function parseDefinitions(rows) {
     if (rows) {
+        console.log(`Retrieved ${rows.length} definitions from database.`);
         let output = {};
         rows.forEach(row => {
             let json = JSON.parse(row.json);
