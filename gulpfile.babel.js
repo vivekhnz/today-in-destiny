@@ -93,7 +93,7 @@ function compileJS(src, dest = null) {
 gulp.task('babel', () => compileJS(config.js, 'build'));
 
 // verify manifest
-gulp.task('manifest', () => verifyManifest());
+gulp.task('manifest', ['babel'], () => verifyManifest());
 
 // compile LESS stylesheets
 gulp.task('stylesheets', () => {
