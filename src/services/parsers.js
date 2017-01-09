@@ -294,7 +294,7 @@ function parseRewards(currencies, rewardSets, items) {
             if (!icon) {
                 icon = 'unknown.jpg';
             }
-            currency.icon = `/images/items/currencies/${icon}`;
+            currency.icon = `/images/currencies/${icon}`;
             output.currencies.push(currency);
         }, this);
     }
