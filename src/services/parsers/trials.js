@@ -1,4 +1,4 @@
-import {bnet} from './utils';
+import { bnet } from './utils';
 
 export default {
     activities: ['trials'],
@@ -6,7 +6,11 @@ export default {
         let output = {
             category: 'events',
             image: "/images/advisors/backgrounds/trials.jpg",
-            icon: "/images/advisors/icons/trials.png"
+            icon: "/images/advisors/icons/trials.png",
+            rewardSets: [
+                'trials5wins', 'trials7wins', 'trialsFlawless',
+                'trialsPostGame', 'trialsGoldTier'
+            ]
         };
         if (activities.trials.display) {
             output.name = activities.trials.display.flavor;

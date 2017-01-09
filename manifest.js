@@ -82,6 +82,7 @@ function verifyRewardDefinitions() {
 
             return loadDefinitions
                 .then(defs => writeManifest(itemHashes, defs))
+                .then(cleanup)
                 .then(() => resolve());
         };
         let createNewManifest = () => {
