@@ -17,6 +17,8 @@ const ITEMS_MANIFEST = 'build/gen/items.json';
 const WORLD_DB_ZIP_PATH = 'manifest/world.sqlite.zip'
 const WORLD_DB_PATH = 'manifest/world.sqlite';
 const WORLD_DB_VERSION_PATH = 'manifest/version.txt';
+const ITEM_ICONS_PATH_RELATIVE = '/images/items';
+const ITEM_ICONS_PATH_ABSOLUTE = 'build/public/images/items';
 
 function loadDependencies() {
     bungie = require('./build/services/bungie.js').default;
@@ -268,6 +270,7 @@ function extractDefinitions(db, itemHashes) {
 
     return db.all(query, hashes)
         .then(parseDefinitions)
+        .then(downloadIcons)
         .catch(error => {
             console.log('Could not retrieve definitions from database:');
             console.log(error.message);
@@ -293,6 +296,62 @@ function parseDefinitions(rows) {
     else {
         return {};
     }
+}
+
+function downloadIcons(definitions) {
+    let definitionArray = [];
+    for (let hash in definitions) {
+        definitionArray.push(definitions[hash]);
+    }
+
+    if (definitionArray.length === 0) {
+        console.log('No icons to download.');
+        return {};
+    }
+
+    console.log('Downloading icons...');
+    ensureDirectoryExists(`${ITEM_ICONS_PATH_ABSOLUTE}/*`);
+    return Promise
+        .all(definitionArray.map(downloadIcon))
+        .then(results => {
+            let output = {};
+            let successCount = 0;
+            results.forEach(result => {
+                if (result.success) {
+                    successCount++;
+                }
+                output[result.definition.hash] = result.definition;
+            }, this);
+            if (successCount === results.length) {
+                console.log(`All icons (${successCount}) downloaded successfully.`);
+            }
+            else {
+                console.log(`${successCount} / ${results.length} were downloaded.`);
+            }
+            return output;
+        });
+}
+
+function downloadIcon(definition) {
+    return new Promise((resolve, reject) => {
+        let filename = `/${definition.hash}.jpg`;
+        let outputPathRelative = `${ITEM_ICONS_PATH_RELATIVE}${filename}`;
+        let outputPathAbsolute = `${ITEM_ICONS_PATH_ABSOLUTE}${filename}`;
+        request
+            .get(definition.icon)
+            .on('error', error => resolve({
+                success: false,
+                definition: definition
+            }))
+            .pipe(fs.createWriteStream(outputPathAbsolute))
+            .on('close', () => {
+                definition.icon = outputPathRelative;
+                resolve({
+                    success: true,
+                    definition: definition
+                });
+            });
+    });
 }
 
 function writeManifest(itemHashes, definitions = null) {
@@ -345,83 +404,3 @@ function ensureDirectoryExists(path) {
         }
     }
 }
-
-// function verifyRewardDefinitions() {
-//     // build list of item hashes
-//     let itemHashes = [];
-//     for (let id in REWARDS) {
-//         let set = REWARDS[id];
-//         if (set.items) {
-//             set.items.forEach(hash => {
-//                 if (!itemHashes.includes(hash)) {
-//                     itemHashes.push(hash);
-//                 }
-//             }, this);
-//         }
-//     }
-//     console.log(`${itemHashes.length} unique items within reward sets.`);
-
-//     try {
-//         // load existing manifest
-//         let data = fs.readFileSync(ITEMS_MANIFEST);
-
-//         console.log('Found existing items manifest.');
-//         let existing = JSON.parse(data);
-//         if (existing) {
-//             performManifestDiff(existing, itemHashes);
-//         }
-//         else {
-//             console.log("Existing manifest was invalid.");
-//             writeManifest(itemHashes);
-//         }
-//     } catch (error) {
-//         console.log('Pre-existing items manifest not found.');
-//         writeManifest(itemHashes);
-//     }
-// }
-
-// function performManifestDiff(existing, itemHashes) {
-//     // extract item hashes from existing manifest
-//     let existingHashes = [];
-//     for (let hash in existing) {
-//         existingHashes.push(hash);
-//     }
-
-//     // determine newly added items
-//     let newItems = [];
-//     for (let i = 0; i < itemHashes.length; i++) {
-//         let hash = `${itemHashes[i]}`;
-//         if (!existingHashes.includes(hash)) {
-//             if (!newItems.includes(hash)) {
-//                 newItems.push(hash);
-//             }
-//         }
-//     }
-//     if (newItems.length === 0) {
-//         console.log('No new items added.');
-//     }
-//     else {
-//         console.log(`${newItems.length} new items added.`);
-
-//         bungie.getManifest().then(data => {
-//             console.log(data);
-//         }).catch(error => {
-//             console.log("Couldn't download Bungie manifest.");
-//         });
-//     }
-
-//     // export new manifest
-//     // writeManifest(itemHashes, existing);
-// }
-
-// function writeManifest(itemHashes, existing = null) {
-//     let items = generateItemManifest(itemHashes, existing);
-
-//     ensureDirectoryExists(ITEMS_MANIFEST);
-//     try {
-//         fs.writeFileSync(ITEMS_MANIFEST, JSON.stringify(items));
-//         console.log(`Saved generated items manifest to '${ITEMS_MANIFEST}'`);
-//     } catch (error) {
-//         console.log(`Couldn't save generated items manifest (${error})`);
-//     }
-// }
