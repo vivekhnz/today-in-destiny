@@ -10,15 +10,20 @@ import request from 'request';
 import path from 'path';
 import unzip from 'unzip';
 import db from 'sqlite';
+import imagemin from 'imagemin';
+import { default as jpegtran } from 'imagemin-jpegtran';
+import rimraf from 'rimraf';
 
 let bungie, getCurrencies, CURRENCIES, REWARDS = undefined;
 
 const ITEMS_MANIFEST = 'build/gen/items.json';
-const WORLD_DB_ZIP_PATH = 'manifest/world.sqlite.zip'
+const WORLD_DB_ZIP_PATH = 'tmp/world.sqlite.zip'
 const WORLD_DB_PATH = 'manifest/world.sqlite';
 const WORLD_DB_VERSION_PATH = 'manifest/version.txt';
-const ITEM_ICONS_PATH_RELATIVE = '/images/items';
+const RAW_ITEM_ICONS_PATH = 'tmp/items/';
+const ITEM_ICONS_PATH_RELATIVE = '/images/items/';
 const ITEM_ICONS_PATH_ABSOLUTE = 'build/public/images/items';
+const TEMP_DIR = 'tmp';
 
 function loadDependencies() {
     bungie = require('./build/services/bungie.js').default;
@@ -95,6 +100,7 @@ function verifyRewardDefinitions() {
                     .then(definitions => {
                         return writeManifest(itemHashes, definitions);
                     })
+                    .then(cleanup)
                     .then(() => resolve());
             }
         };
@@ -227,6 +233,7 @@ function downloadDatabase(relativeURL) {
 
 function unzipDatabase({path, version}) {
     return new Promise((resolve, reject) => {
+        ensureDirectoryExists(WORLD_DB_PATH);
         fs.createReadStream(path)
             .on('error', error => reject(error))
             .pipe(unzip.Parse())
@@ -310,9 +317,10 @@ function downloadIcons(definitions) {
     }
 
     console.log('Downloading icons...');
-    ensureDirectoryExists(`${ITEM_ICONS_PATH_ABSOLUTE}/*`);
+    ensureDirectoryExists(`${RAW_ITEM_ICONS_PATH}*`);
     return Promise
         .all(definitionArray.map(downloadIcon))
+        .then(compressIcons)
         .then(results => {
             let output = {};
             let successCount = 0;
@@ -334,9 +342,9 @@ function downloadIcons(definitions) {
 
 function downloadIcon(definition) {
     return new Promise((resolve, reject) => {
-        let filename = `/${definition.hash}.jpg`;
+        let filename = `${definition.hash}.jpg`;
         let outputPathRelative = `${ITEM_ICONS_PATH_RELATIVE}${filename}`;
-        let outputPathAbsolute = `${ITEM_ICONS_PATH_ABSOLUTE}${filename}`;
+        let outputPathAbsolute = `${RAW_ITEM_ICONS_PATH}${filename}`;
         request
             .get(definition.icon)
             .on('error', error => resolve({
@@ -352,6 +360,13 @@ function downloadIcon(definition) {
                 });
             });
     });
+}
+
+function compressIcons(definitions) {
+    let inputPath = `${RAW_ITEM_ICONS_PATH}*.jpg`;
+    let config = { plugins: [jpegtran()] };
+    return imagemin([inputPath], ITEM_ICONS_PATH_ABSOLUTE, config)
+        .then(() => definitions);
 }
 
 function writeManifest(itemHashes, definitions = null) {
@@ -403,4 +418,19 @@ function ensureDirectoryExists(path) {
             current = `${current}/${directories[i]}`;
         }
     }
+}
+
+function cleanup() {
+    return new Promise((resolve, reject) => {
+        rimraf(TEMP_DIR, error => {
+            if (error) {
+                console.log("Couldn't delete temp folder:");
+                console.log(error);
+            }
+            else {
+                console.log('Deleted temp folder.');
+            }
+            resolve();
+        });
+    });
 }
