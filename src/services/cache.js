@@ -51,6 +51,9 @@ export default function buildCache() {
                     else {
                         console.log(`No vendor data returned from ${vendorID}.`);
                     }
+                })
+                .catch(error => {
+                    console.log(`No vendor data returned from ${vendorID}.`);
                 });
         };
         let loadVendors = () => {
@@ -77,9 +80,9 @@ export default function buildCache() {
                 items = JSON.parse(data);
                 return items;
             })
-            .catch(error => {
-                console.log("Couldn't load items manifest.");
-            });
+                .catch(error => {
+                    console.log("Couldn't load items manifest.");
+                });
         }
         let parseAdvisors = () => {
             let manifest = new ManifestService(

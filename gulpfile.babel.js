@@ -26,7 +26,8 @@ var config = {
     appDependencies: [
         'react', 'react-dom', 'react-router',
         'alt', 'iso',
-        'react-masonry-component', 'react-element-query'
+        'react-masonry-component', 'react-element-query',
+        'react-popover'
     ],
     utils: {
         babel: {

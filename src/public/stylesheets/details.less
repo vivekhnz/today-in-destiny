@@ -1,18 +1,5 @@
 @import "common.less";
 
-// proportions
-@rewardsGutter: 32px;
-@rewardsColumnWidth: 260;
-
-.calcRewardItemWidth(@columns) {
-    width: ~"calc((100% - (@{rewardsGutter} * (@{columns} - 1))) / @{columns})";
-}
-.calcRewardItemWidthForColumns(@columns) {
-    @media (min-width: ((@rewardsColumnWidth * @columns) + 64px)) {
-        .calcRewardItemWidth(@columns);
-    }
-}
-
 .activityHeroImage {
     height: 260px;
     background-size: cover !important;
@@ -106,7 +93,7 @@
 .detailsSubGroupName {
     .subheader();
     color: @sec-fg-color;
-    margin: 24px 0px 16px 0px;
+    margin: 8px 0px 12px 0px;
     border-bottom: 1px solid @ter-fg-color;
     
     @media @layout-narrow {
@@ -117,7 +104,7 @@
 .rewardCurrencies {
     padding: 0px;
     list-style-type: none;
-    margin: 0px;
+    margin: 0px 0px 24px 0px;
 }
 .rewardCurrencies li {
     .subtitle();
@@ -143,43 +130,56 @@
 .rewardSet li {
     .subtitle();
     display: inline-block;
-    margin: 0px 16px 16px 0px;
-    
-    .calcRewardItemWidth(1);
-    .calcRewardItemWidthForColumns(2);
-    .calcRewardItemWidthForColumns(3);
-    .calcRewardItemWidthForColumns(4);
-    .calcRewardItemWidthForColumns(5);
-    .calcRewardItemWidthForColumns(6);
+    margin: 0px 12px 6px 0px;
+
+    @media @layout-narrow {
+        margin: 0px 8px 3px 0px;
+    }
 }
 
 .destinyItem {
-    min-height: 48px;
-    padding: 0px 0px 8px 0px;
-    border-bottom: 1px dotted @ter-fg-color;
+    min-height: 64px;
     cursor: pointer;
-}
-.destinyItem:hover {
-    border-bottom: 1px solid @pri-fg-color;
+
+    @media @layout-narrow {
+        min-height: 48px;
+    }
 }
 .destinyItem a {
     text-decoration: none;
 }
 .destinyItem img {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
+
+    @media @layout-narrow {
+        width: 48px;
+        height: 48px;
+    }
 }
-.destinyItemText {
-    margin: -48px 0px 0px 58px;
+
+.Popover-body {
+    box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.25);
 }
-.destinyItem .itemName {
+.Popover-tip {
+    fill: @pri-fg-color;
+}
+.itemDetailsPopover {
+    background: @pri-fg-color;
+    width: 200px;
+}
+.itemDetailsPopover .popupContent {
+    padding: 8px;
+}
+.itemDetailsPopover .itemName {
     .subtitle();
-    color: @pri-fg-color;
+    color: @contrast-color;
     font-size: 1em;
+    text-overflow: ellipsis;
 }
-.destinyItem .itemType {
+.itemDetailsPopover .itemType {
     .subtitle();
-    color: @sec-fg-color;
+    color: @ter-fg-color;
     font-size: 0.75em;
     text-transform: uppercase;
 }

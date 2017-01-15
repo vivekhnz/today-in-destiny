@@ -12,6 +12,7 @@
     "react-dom": "^15.4.0",
     "react-element-query": "^3.0.2",
     "react-masonry-component": "^4.4.0",
+    "react-popover": "^0.4.4",
     "react-router": "^3.0.0",
     "request": "^2.79.0",
     "swig": "^1.4.2"
