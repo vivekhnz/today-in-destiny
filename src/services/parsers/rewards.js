@@ -1,3 +1,25 @@
+let STRIKE_SPECIFIC_LOOT = {
+    'Blighted Chalice': [3872841536],
+    'Cerberus Vae III': [4049432596],
+    'Dust Palace': [
+        4049432596, 2620256215, 2620256212, 2620256213
+    ],
+    'Echo Chamber': [3052681344, 790630350],
+    "The Devil's Lair": [1387145760, 2440643321],
+    'Sepiks Perfected': [1387145760, 2440643321],
+    'Shield Brothers': [4049432596, 2862544759],
+    'The Summoning Pits': [1387145760, 1207988981],
+    'The Abomination Heist': [1387145760, 1207988981],
+    'The Nexus': [2405148796],
+    'The Shadow Thief': [4118379255, 3556663880, 2620256214],
+    'Fallen S.A.B.E.R.': [3556663880, 2843928135],
+    'The Sunless Cell': [1865744636, 3848584870],
+    'The Undying Mind': [3052681344, 1242830876],
+    'The Will of Crota': [4068577415, 290931251],
+    'The Wretched Eye': [1387145760, 3872841536, 149060560],
+    "Winter's Run": [1994742696]
+};
+
 export let REWARDS = {
     cruciblePostGameRewards: {
         name: 'Post-Game Rewards',
@@ -97,7 +119,7 @@ export let REWARDS = {
         ]
     },
 
-    'kfNormalMode': {
+    kfNormalMode: {
         name: 'Normal Mode',
         items: [
             2372257458, 3176299288, 3176299289,
@@ -110,7 +132,7 @@ export let REWARDS = {
             3542867423,
         ]
     },
-    'kfHeroicMode': {
+    kfHeroicMode: {
         name: 'Heroic Mode',
         items: [
             2372257457, 3176299291,
@@ -122,7 +144,7 @@ export let REWARDS = {
             1846107924, 521951205, 372855005, 2028036495, 1658688592
         ]
     },
-    'kfSecrets': {
+    kfSecrets: {
         name: 'Secrets',
         items: [
             3688594189, 202245945
@@ -145,8 +167,26 @@ export let REWARDS = {
         items: [
             2372257463, 885685675
         ]
+    },
+
+    strikeHoardChests: {
+        name: 'Strike Hoard Chests',
+        items: getStrikeSpecificLoot()
     }
 };
+
+function getStrikeSpecificLoot() {
+    let output = [];
+    for (let strike in STRIKE_SPECIFIC_LOOT) {
+        let items = STRIKE_SPECIFIC_LOOT[strike];
+        items.forEach(item => {
+            if (!output.includes(item)) {
+                output.push(item);
+            }
+        }, this);
+    }
+    return output;
+}
 
 export let CURRENCIES = {
     'Unknown Rewards': 'unknown.jpg',

@@ -30,7 +30,8 @@ export let parseHeroicStrikes = createPlaylistParser({
         currency('Treasures of the Dawning', 1),
         currency('Legendary Marks', 30, 10),
         currency('Legendary Engram', 1)
-    ]
+    ],
+    rewardSets: ['strikeHoardChests']
 });
 
 function createMissionParser(
@@ -62,7 +63,11 @@ function createParser(activity, currencies, defaults) {
         activities: [activity],
         currencies: currencies,
         parser: ({activities, manifest}) => {
-            let output = defaults;
+            let output = {};
+            for (let prop in defaults) {
+                output[prop] = defaults[prop];
+            }
+
             let advisor = activities[activity];
 
             // obtain activity modifiers
