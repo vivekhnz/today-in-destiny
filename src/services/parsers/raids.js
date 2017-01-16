@@ -1,6 +1,7 @@
 import { parseModifiers } from './utils';
 
 let RAID_CHALLENGE_MODES = {
+    'Warpriest Challenge': 'warpriest',
     'Golgoroth Challenge': 'golgoroth',
     'Oryx Challenge': 'oryx',
     'Vosik Challenge': 'vosik',
@@ -19,7 +20,11 @@ export let parseWrathOfTheMachine = createRaidParser({
 export let parseKingsFall = createRaidParser({
     activity: 'kingsfall',
     identifier: 'kf',
-    name: "King's Fall"
+    name: "King's Fall",
+    rewardSets: [
+        'kfNormalMode', 'kfHeroicMode',
+        'kfSecrets'
+    ]
 });
 
 function createRaidParser({activity, identifier, name, rewardSets}) {
