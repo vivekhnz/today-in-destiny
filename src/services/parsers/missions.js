@@ -1,4 +1,5 @@
-import { bnet, parseModifiers, currency } from './utils';
+import { bnet, parseModifiers, currency, copy } from './utils';
+import { getStrikeLoot } from './rewards';
 
 export let parseDailyStory = createMissionParser({
     activity: 'dailychapter',
@@ -63,10 +64,7 @@ function createParser(activity, currencies, defaults) {
         activities: [activity],
         currencies: currencies,
         parser: ({activities, manifest}) => {
-            let output = {};
-            for (let prop in defaults) {
-                output[prop] = defaults[prop];
-            }
+            let output = copy(defaults);
 
             let advisor = activities[activity];
 
@@ -84,6 +82,17 @@ function createParser(activity, currencies, defaults) {
                     output.name = activity.activityName;
                 }
                 output.image = bnet(advisor.display.image) || output.image;
+            }
+
+            // obtain strike-specific loot
+            if (output.name) {
+                let rewardSet = getStrikeLoot(output.name);
+                if (rewardSet) {
+                    if (!output.rewardSets) {
+                        output.rewardSets = [];
+                    }
+                    output.rewardSets.push(rewardSet);
+                }
             }
 
             return output;

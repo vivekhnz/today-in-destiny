@@ -26,3 +26,11 @@ export function currency(name, maxQuantity, perCompletion = undefined) {
         perCompletion: perCompletion
     };
 }
+
+export function copy(obj) {
+    let output = {};
+    for (let prop in obj) {
+        output[prop] = obj[prop];
+    }
+    return output;
+}

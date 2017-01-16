@@ -37,7 +37,7 @@ function createRaidParser({activity, identifier, name, rewardSets}) {
                 type: 'Raid',
                 image: `/images/advisors/backgrounds/raid-${identifier}.jpg`,
                 icon: `/images/advisors/icons/raid-${identifier}.png`,
-                rewardSets: rewardSets
+                rewardSets: [...rewardSets]
             };
             let advisor = activities[activity];
 
@@ -55,18 +55,10 @@ function createRaidParser({activity, identifier, name, rewardSets}) {
                         if (bossID) {
                             // set challenge mode background
                             output.image = `/images/advisors/backgrounds/raid-${identifier}-${bossID}.jpg`;
-                            
+
                             // add challenge mode rewards
                             let challengeRewards = `${identifier}Challenge-${bossID}`;
-                            if (rewardSets) {
-                                output.rewardSets = [
-                                    challengeRewards,
-                                    ...rewardSets
-                                ];
-                            }
-                            else {
-                                output.rewardSets = [challengeRewards];
-                            }
+                            output.rewardSets.splice(0, 0, challengeRewards);
                         }
                     }
                     else {

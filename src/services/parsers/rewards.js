@@ -1,23 +1,64 @@
 let STRIKE_SPECIFIC_LOOT = {
-    'Blighted Chalice': [3872841536],
-    'Cerberus Vae III': [4049432596],
-    'Dust Palace': [
-        4049432596, 2620256215, 2620256212, 2620256213
-    ],
-    'Echo Chamber': [3052681344, 790630350],
-    "The Devil's Lair": [1387145760, 2440643321],
-    'Sepiks Perfected': [1387145760, 2440643321],
-    'Shield Brothers': [4049432596, 2862544759],
-    'The Summoning Pits': [1387145760, 1207988981],
-    'The Abomination Heist': [1387145760, 1207988981],
-    'The Nexus': [2405148796],
-    'The Shadow Thief': [4118379255, 3556663880, 2620256214],
-    'Fallen S.A.B.E.R.': [3556663880, 2843928135],
-    'The Sunless Cell': [1865744636, 3848584870],
-    'The Undying Mind': [3052681344, 1242830876],
-    'The Will of Crota': [4068577415, 290931251],
-    'The Wretched Eye': [1387145760, 3872841536, 149060560],
-    "Winter's Run": [1994742696]
+    blightedChalice: {
+        strikes: ['Blighted Chalice'],
+        items: [3872841536]
+    },
+    cerberusVaeIII: {
+        strikes: ['Cerberus Vae III'],
+        items: [4049432596]
+    },
+    dustPalace: {
+        strikes: ['Dust Palace'],
+        items: [4049432596, 2620256215, 2620256212, 2620256213]
+    },
+    echoChamber: {
+        strikes: ['Echo Chamber'],
+        items: [3052681344, 790630350]
+    },
+    sepiksPrime: {
+        strikes: ["The Devil's Lair", 'Sepiks Perfected'],
+        items: [1387145760, 2440643321]
+    },
+    shieldBrothers: {
+        strikes: ['Shield Brothers'],
+        items: [4049432596, 2862544759]
+    },
+    hiveAbomination: {
+        strikes: ['The Summoning Pits', 'The Abomination Heist'],
+        items: [1387145760, 1207988981]
+    },
+    nexus: {
+        strikes: ['The Nexus'],
+        items: [2405148796]
+    },
+    shadowThief: {
+        strikes: ['The Shadow Thief'],
+        items: [4118379255, 3556663880, 2620256214]
+    },
+    saber: {
+        strikes: ['Fallen S.A.B.E.R.'],
+        items: [3556663880, 2843928135]
+    },
+    sunlessCell: {
+        strikes: ['The Sunless Cell'],
+        items: [1865744636, 3848584870]
+    },
+    undyingMind: {
+        strikes: ['The Undying Mind'],
+        items: [3052681344, 1242830876]
+    },
+    willOfCrota: {
+        strikes: ['The Will of Crota'],
+        items: [4068577415, 290931251]
+    },
+    wretchedEye: {
+        strikes: ['The Wretched Eye'],
+        items: [1387145760, 3872841536, 149060560]
+    },
+    wintersRun: {
+        strikes: ["Winter's Run"],
+        items: [1994742696]
+    }
 };
 
 export let REWARDS = {
@@ -171,21 +212,39 @@ export let REWARDS = {
 
     strikeHoardChests: {
         name: 'Strike Hoard Chests',
-        items: getStrikeSpecificLoot()
+        items: combineStrikeSpecificLoot()
     }
 };
+for (let strike in STRIKE_SPECIFIC_LOOT) {
+    let loot = STRIKE_SPECIFIC_LOOT[strike];
+    REWARDS[`strike-${strike}`] = {
+        name: 'Strike Hoard Chest',
+        items: loot.items
+    };
+}
 
-function getStrikeSpecificLoot() {
+function combineStrikeSpecificLoot() {
     let output = [];
     for (let strike in STRIKE_SPECIFIC_LOOT) {
-        let items = STRIKE_SPECIFIC_LOOT[strike];
-        items.forEach(item => {
+        let loot = STRIKE_SPECIFIC_LOOT[strike];
+        loot.items.forEach(item => {
             if (!output.includes(item)) {
                 output.push(item);
             }
         }, this);
     }
     return output;
+}
+
+export function getStrikeLoot(strikeName) {
+    let output = [];
+    for (let strike in STRIKE_SPECIFIC_LOOT) {
+        let loot = STRIKE_SPECIFIC_LOOT[strike];
+        if (loot.strikes.includes(strikeName)) {
+            return `strike-${strike}`;
+        }
+    }
+    return undefined;
 }
 
 export let CURRENCIES = {
