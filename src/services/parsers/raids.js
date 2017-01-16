@@ -10,7 +10,11 @@ let RAID_CHALLENGE_MODES = {
 export let parseWrathOfTheMachine = createRaidParser({
     activity: 'wrathofthemachine',
     identifier: 'wotm',
-    name: 'Wrath of the Machine'
+    name: 'Wrath of the Machine',
+    rewardSets: [
+        'wotmNormalMode', 'wotmHeroicMode',
+        'wotmSecrets'
+    ]
 });
 export let parseKingsFall = createRaidParser({
     activity: 'kingsfall',
@@ -18,7 +22,7 @@ export let parseKingsFall = createRaidParser({
     name: "King's Fall"
 });
 
-function createRaidParser({activity, identifier, name}) {
+function createRaidParser({activity, identifier, name, rewardSets}) {
     return {
         activities: [activity],
         parser: ({activities, manifest}) => {
@@ -27,7 +31,8 @@ function createRaidParser({activity, identifier, name}) {
                 name: name,
                 type: 'Raid',
                 image: `/images/advisors/backgrounds/raid-${identifier}.jpg`,
-                icon: `/images/advisors/icons/raid-${identifier}.png`
+                icon: `/images/advisors/icons/raid-${identifier}.png`,
+                rewardSets: rewardSets
             };
             let advisor = activities[activity];
 
@@ -41,10 +46,22 @@ function createRaidParser({activity, identifier, name}) {
                         output.name = activeChallenge;
                         output.type = name;
 
-                        // get challenge mode background image
                         let bossID = RAID_CHALLENGE_MODES[activeChallenge];
                         if (bossID) {
+                            // set challenge mode background
                             output.image = `/images/advisors/backgrounds/raid-${identifier}-${bossID}.jpg`;
+                            
+                            // add challenge mode rewards
+                            let challengeRewards = `${identifier}Challenge-${bossID}`;
+                            if (rewardSets) {
+                                output.rewardSets = [
+                                    challengeRewards,
+                                    ...rewardSets
+                                ];
+                            }
+                            else {
+                                output.rewardSets = [challengeRewards];
+                            }
                         }
                     }
                     else {

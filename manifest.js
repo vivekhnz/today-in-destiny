@@ -189,7 +189,8 @@ function retrieveWorldDB() {
     }).catch(error => {
         console.log("Couldn't download Bungie manifest:");
         console.log(error.message);
-        return Promise.reject(error);
+        console.log('Attempting to load existing DB...');
+        return connectToDB(WORLD_DB_PATH);
     });
 }
 
@@ -348,10 +349,13 @@ function downloadIcon(definition) {
         let outputPathAbsolute = `${RAW_ITEM_ICONS_PATH}${filename}`;
         request
             .get(definition.icon)
-            .on('error', error => resolve({
-                success: false,
-                definition: definition
-            }))
+            .on('error', error => {
+                definition.icon = outputPathRelative;
+                resolve({
+                    success: false,
+                    definition: definition
+                });
+            })
             .pipe(fs.createWriteStream(outputPathAbsolute))
             .on('close', () => {
                 definition.icon = outputPathRelative;
@@ -363,11 +367,17 @@ function downloadIcon(definition) {
     });
 }
 
-function compressIcons(definitions) {
-    let inputPath = `${RAW_ITEM_ICONS_PATH}*.jpg`;
+function compressIcons(results) {
+    let inputPaths = [];
+    results.forEach(result => {
+        if (result.success) {
+            inputPaths.push(`${RAW_ITEM_ICONS_PATH}${result.definition.hash}.jpg`);
+        }
+    }, this);
+
     let config = { plugins: [jpegtran()] };
-    return imagemin([inputPath], ITEM_ICONS_PATH_ABSOLUTE, config)
-        .then(() => definitions);
+    return imagemin(inputPaths, ITEM_ICONS_PATH_ABSOLUTE, config)
+        .then(() => results);
 }
 
 function writeManifest(itemHashes, definitions = null) {
