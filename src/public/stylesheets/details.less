@@ -183,3 +183,61 @@
     font-size: 0.75em;
     text-transform: uppercase;
 }
+
+.modifierDetails {
+    padding: 0px;
+    list-style-type: none;
+    margin: 0px 0px 24px 0px;
+}
+.modifierDetails li {
+    .subtitle();
+    margin: 0px 0px 8px 0px;
+    vertical-align: top;
+    color: @pri-fg-color;
+    min-height: 48px;
+
+    @media @layout-narrow {
+        min-height: 32px;
+    }
+}
+.modifierDetails li .modifierIcon {
+    width: 48px;
+    height: 48px;
+    background-color: @pri-fg-color;
+    margin-right: 8px;
+
+    @media @layout-narrow {
+        width: 32px;
+        height: 32px;
+    }
+}
+.modifierDetails li img {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin: 12px 0px 0px 12px;
+
+    @media @layout-narrow {
+        width: 20px;
+        height: 20px;
+        margin: 6px 0px 0px 6px;
+    }
+}
+.modifierDetails li .modifierContent {
+    margin: -42px 0px 0px 56px;
+
+    @media @layout-narrow {
+        margin: -32px 0px 0px 40px;
+    }
+}
+.modifierDetails li .modifierName {
+    .subtitle();
+    color: @pri-fg-color;
+    font-size: 1em;
+    text-overflow: ellipsis;
+}
+.modifierDetails li .modifierDescription {
+    .subtitle();
+    color: @sec-fg-color;
+    font-size: 0.75em;
+}

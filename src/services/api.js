@@ -119,7 +119,8 @@ function reduceModifiers(modifiers) {
 
 function getAdvisorDetails(advisor) {
     return {
-        rewards: advisor.rewards
+        rewards: advisor.rewards,
+        modifiers: advisor.modifiers
     };
 }
 

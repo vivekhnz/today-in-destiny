@@ -2,6 +2,7 @@ import React from 'react';
 
 import SmallHeader from './SmallHeader';
 import ActivityRewards from './ActivityRewards';
+import ActivityModifiers from './ActivityModifiers';
 
 import AdvisorsStore from '../stores/AdvisorsStore';
 import DetailsStore from '../stores/DetailsStore';
@@ -131,12 +132,16 @@ export default class AdvisorDetails extends React.Component {
             return <div className="errorMessage">Loading...</div>;
         }
 
+        let modifiers = this.state.details.modifiers ?
+            this.renderGroup('Modifiers', <ActivityModifiers modifiers={this.state.details.modifiers} />)
+            : null;
         let rewards = this.state.details.rewards ?
             this.renderGroup('Rewards', <ActivityRewards rewards={this.state.details.rewards} />)
             : null;
         
         return (
             <div>
+                {modifiers}
                 {rewards}
             </div>
         );
