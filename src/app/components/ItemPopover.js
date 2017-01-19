@@ -9,16 +9,15 @@ let ITEM_TIER_COLORS = {
 };
 
 export default class ItemPopover extends React.Component {
-    renderHeader(content) {
-        let noContent = content ? '' : 'noContent';
+    renderHeader() {
         let headerStyle = {};
         let tierColor = ITEM_TIER_COLORS[this.props.item.tier];
         if (tierColor) {
             headerStyle.background = tierColor;
         }
         return (
-            <div className={`popupHeader ${noContent}`}
-                 style={headerStyle}>
+            <div className='popupHeader'
+                style={headerStyle}>
                 <p className="itemName">{this.props.item.name}</p>
                 <p className="itemType">{this.props.item.type}</p>
             </div>
@@ -90,13 +89,35 @@ export default class ItemPopover extends React.Component {
         );
     }
 
+    renderCost(item, i) {
+        return (
+            <li key={i}>
+                <img src={item.icon} />
+                <p>{item.name} x {item.quantity}</p>
+            </li>
+        );
+    }
+
+    renderCosts() {
+        if (this.props.item.costs) {
+            let items = this.props.item.costs.map(
+                (item, i) => this.renderCost(item, i));
+            return <ul>{items}</ul>;
+        }
+        return null;
+    }
+
     render() {
+        let header = this.renderHeader();
         let content = this.renderContent();
-        let header = this.renderHeader(content);
+        let costs = this.renderCosts();
         return (
             <div className='itemDetailsPopover'>
                 {header}
                 {content}
+                <div className='popupCosts'>
+                    {costs}
+                </div>
             </div>
         );
     }

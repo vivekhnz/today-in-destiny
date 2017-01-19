@@ -162,7 +162,7 @@
     box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.25);
 }
 .Popover-tip {
-    fill: @pri-fg-color;
+    fill: @darker-color;
 }
 .itemDetailsPopover {
     background: @pri-fg-color;
@@ -172,10 +172,6 @@
 .itemDetailsPopover .popupHeader {
     background: rgba(255, 255, 255, 0.1);
     padding: 8px;
-
-    &.noContent {
-        border-bottom: 4px solid @pri-fg-color;
-    }
 }
 .itemDetailsPopover .itemName {
     .subtitle();
@@ -239,6 +235,32 @@
     margin-right: 8px;
 }
 .itemDetailsPopover .perks li p {
+    margin: -26px 0px 0px 32px;
+    padding: 0px;
+    font-size: 0.75em;
+    color: @contrast-color;
+}
+.itemDetailsPopover .popupCosts {
+    background: @darker-color;
+    padding: 8px 8px 0px 8px;
+}
+.itemDetailsPopover .popupCosts ul {
+    padding: 0px 0px 8px 0px;
+    list-style-type: none;
+}
+.itemDetailsPopover .popupCosts ul li {
+    .subtitle();
+    margin: 0px 0px 8px 0px;
+    vertical-align: top;
+    color: @pri-fg-color;
+}
+.itemDetailsPopover .popupCosts ul li img {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+.itemDetailsPopover .popupCosts ul li p {
     margin: -26px 0px 0px 32px;
     padding: 0px;
     font-size: 0.75em;
