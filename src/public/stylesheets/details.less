@@ -166,10 +166,16 @@
 }
 .itemDetailsPopover {
     background: @pri-fg-color;
-    width: 200px;
+    min-width: 200px;
+    max-width: 300px;
 }
-.itemDetailsPopover .popupContent {
+.itemDetailsPopover .popupHeader {
+    background: rgba(255, 255, 255, 0.1);
     padding: 8px;
+
+    &.noContent {
+        border-bottom: 4px solid @pri-fg-color;
+    }
 }
 .itemDetailsPopover .itemName {
     .subtitle();
@@ -179,9 +185,64 @@
 }
 .itemDetailsPopover .itemType {
     .subtitle();
+    color: @contrast-color;
+    opacity: 0.5;
+    font-size: 0.75em;
+    text-transform: uppercase;
+}
+.itemDetailsPopover .popupContent {
+    padding: 8px;
+}
+.itemDetailsPopover hr {
+    border: 1px solid @sec-fg-color;
+}
+.itemDetailsPopover .primaryStat .statValue {
+    .subtitle();
+    color: @contrast-color;
+    font-size: 1em;
+    text-overflow: ellipsis;
+    margin-right: 4px;
+}
+.itemDetailsPopover .primaryStat .statName {
+    .subtitle();
     color: @ter-fg-color;
     font-size: 0.75em;
     text-transform: uppercase;
+}
+.itemDetailsPopover .secondaryStat {
+    margin-right: 8px;
+}
+.itemDetailsPopover .secondaryStat .statName {
+    .subtitle();
+    color: @sec-fg-color;
+    font-size: 0.75em;
+}
+.itemDetailsPopover .secondaryStat .statValue {
+    .subtitle();
+    color: @ter-fg-color;
+    font-size: 0.75em;
+}
+.itemDetailsPopover .perks {
+    padding: 0px;
+    list-style-type: none;
+}
+.itemDetailsPopover .perks li {
+    .subtitle();
+    margin: 0px 0px 8px 0px;
+    vertical-align: top;
+    color: @pri-fg-color;
+}
+.itemDetailsPopover .perks li img {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+.itemDetailsPopover .perks li p {
+    margin: -26px 0px 0px 32px;
+    padding: 0px;
+    font-size: 0.75em;
+    color: @contrast-color;
 }
 
 .modifierDetails {

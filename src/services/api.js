@@ -1,7 +1,7 @@
 import { default as time } from './time';
 import { endpoints } from '../routes';
 import buildCache from './cache';
-import { getFeaturedItems } from './parsers';
+import { getFeaturedItemSummaries, getFeaturedItems } from './parsers';
 
 let CATEGORIES = {
     activities: 'Activities',
@@ -48,10 +48,7 @@ class APIService {
                     return buildCache().then(advisors => {
                         let advisor = advisors[params.id];
                         if (advisor) {
-                            return {
-                                id: params.id,
-                                details: getAdvisorDetails(advisor)
-                            };
+                            return getAdvisorDetails(params.id, advisor);
                         }
                         else {
                             throw new Error('An invalid advisor identifier was provided.');
@@ -84,7 +81,7 @@ function summariseAdvisors(advisors) {
                     image: advisor.image,
                     expiresAt: advisor.expiresAt,
                     modifiers: reduceModifiers(advisor.modifiers),
-                    items: getFeaturedItems(id, advisor.vendors)
+                    items: getFeaturedItemSummaries(id, advisor.vendors)
                 };
 
                 let category = categories.find(p => p.id == advisor.category);
@@ -117,10 +114,16 @@ function reduceModifiers(modifiers) {
     });
 }
 
-function getAdvisorDetails(advisor) {
+function getAdvisorDetails(id, advisor) {
+    let featuredItems = advisor.vendors ?
+        getFeaturedItems(id, advisor.vendors) : undefined;
     return {
-        rewards: advisor.rewards,
-        modifiers: advisor.modifiers
+        id: id,
+        details: {
+            rewards: advisor.rewards,
+            modifiers: advisor.modifiers,
+            featuredItems: featuredItems,
+        }
     };
 }
 

@@ -297,7 +297,8 @@ function parseDefinitions(rows) {
                 hash: json.itemHash,
                 name: json.itemName,
                 type: json.itemTypeName,
-                icon: `https://www.bungie.net${json.icon}`
+                icon: `https://www.bungie.net${json.icon}`,
+                tier: json.tierTypeName
             };
         }, this);
         return output;

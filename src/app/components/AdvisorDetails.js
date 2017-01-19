@@ -3,6 +3,7 @@ import React from 'react';
 import SmallHeader from './SmallHeader';
 import ActivityRewards from './ActivityRewards';
 import ActivityModifiers from './ActivityModifiers';
+import FeaturedItems from './FeaturedItems';
 
 import AdvisorsStore from '../stores/AdvisorsStore';
 import DetailsStore from '../stores/DetailsStore';
@@ -135,6 +136,10 @@ export default class AdvisorDetails extends React.Component {
         let modifiers = this.state.details.modifiers ?
             this.renderGroup('Modifiers', <ActivityModifiers modifiers={this.state.details.modifiers} />)
             : null;
+        let featuredItems = this.state.details.featuredItems ?
+            this.renderGroup(this.state.details.featuredItems.name,
+                <FeaturedItems items={this.state.details.featuredItems.items} />)
+            : null;
         let rewards = this.state.details.rewards ?
             this.renderGroup('Rewards', <ActivityRewards rewards={this.state.details.rewards} />)
             : null;
@@ -142,6 +147,7 @@ export default class AdvisorDetails extends React.Component {
         return (
             <div>
                 {modifiers}
+                {featuredItems}
                 {rewards}
             </div>
         );

@@ -30,6 +30,11 @@ let DEFAULTS = {
     'image': '/images/advisors/backgrounds/default.jpg',
     'icon': '/images/advisors/icons/default.png'
 };
+let STAT_ALIASES = {
+    'Intellect': 'INT',
+    'Discipline': 'DIS',
+    'Strength': 'STR'
+};
 
 export function getVendorDependencies() {
     let dependencies = [];
@@ -232,36 +237,35 @@ function parseVendor(vendor, manifest) {
 function parseItems(category, manifest) {
     if (category) {
         let items = [];
-        let hashes = [];
-
         category.forEach(item => {
-            // don't show the same item more than once
-            if (!hashes.includes(item.itemHash)) {
-                hashes.push(item.itemHash);
-                let definition = manifest.getItem(item.itemHash);
-                if (definition) {
-                    let output = {
-                        name: definition.itemName,
-                        icon: bnet(definition.icon),
-                        type: definition.itemTypeName,
-                        description: definition.itemDescription,
-                        quantity: item.quantity
-                    };
+            let definition = manifest.getItem(item.itemHash);
+            if (definition) {
+                let output = {
+                    hash: item.itemHash,
+                    name: definition.itemName,
+                    icon: bnet(definition.icon),
+                    type: definition.itemTypeName,
+                    description: definition.itemDescription,
+                    tier: definition.tierTypeName,
+                    quantity: item.quantity,
+                    stats: parseStats(
+                        item.primaryStat, item.stats, manifest),
+                    perks: parsePerks(item.perks, manifest)
+                };
 
-                    // get costs
-                    let costs = [];
-                    item.costs.forEach(cost => {
-                        let parsedCost = parseCost(cost, manifest);
-                        if (parsedCost) {
-                            costs.push(parsedCost);
-                        }
-                    }, this);
-                    if (costs.length > 0) {
-                        output.costs = costs;
+                // get costs
+                let costs = [];
+                item.costs.forEach(cost => {
+                    let parsedCost = parseCost(cost, manifest);
+                    if (parsedCost) {
+                        costs.push(parsedCost);
                     }
-
-                    items.push(output);
+                }, this);
+                if (costs.length > 0) {
+                    output.costs = costs;
                 }
+
+                items.push(output);
             }
         }, this);
         return items;
@@ -281,6 +285,71 @@ function parseCost(cost, manifest) {
         icon: bnet(definition.icon),
         quantity: cost.value
     }
+}
+
+function parseStats(primary, secondary, manifest) {
+    let stats = [];
+    if (secondary) {
+        secondary.forEach(stat => {
+            let parsed = parseStat(
+                stat, manifest, true);
+            if (parsed) {
+                stats.push(parsed);
+            }
+        }, this);
+    }
+    if (stats.length === 0) {
+        stats = undefined;
+    }
+    if (!primary && !stats) {
+        return undefined;
+    }
+
+    return {
+        primary: parseStat(primary, manifest, false),
+        secondary: stats
+    };
+}
+
+function parseStat(stat, manifest, useAlias) {
+    if (stat && stat.value > 0) {
+        let definition = manifest.getStat(stat.statHash);
+        if (definition) {
+            if (useAlias) {
+                let alias = STAT_ALIASES[definition.statName];
+                if (alias) {
+                    return {
+                        name: alias,
+                        value: stat.value
+                    };
+                }
+            }
+            else {
+                return {
+                    name: definition.statName,
+                    value: stat.value
+                };
+            }
+        }
+    }
+    return undefined;
+}
+
+function parsePerks(perks, manifest) {
+    if (!perks || perks.length === 0) {
+        return undefined;
+    }
+    let output = [];
+    perks.forEach(perk => {
+        let definition = manifest.getPerk(perk.perkHash);
+        if (definition) {
+            output.push({
+                icon: bnet(definition.displayIcon),
+                description: definition.displayDescription
+            });
+        }
+    }, this);
+    return output;
 }
 
 function parseRewards(currencies, rewardSets, items) {
@@ -326,7 +395,7 @@ function parseRewards(currencies, rewardSets, items) {
     return output;
 }
 
-export function getFeaturedItems(id, vendors) {
+export function getFeaturedItemSummaries(id, vendors) {
     let parser = ADVISOR_PARSERS[id];
     if (parser) {
         let featured = parser.featuredItems;
@@ -343,10 +412,34 @@ export function getFeaturedItems(id, vendors) {
 
 function reduceItems(items) {
     if (!items) return undefined;
-    return items.map(item => {
-        return {
-            name: item.name,
-            icon: item.icon
-        };
-    });
+    let hashes = [];
+    let output = [];
+    items.forEach(item => {
+        if (!hashes.includes(item.hash)) {
+            hashes.push(item.hash);
+            output.push({
+                name: item.name,
+                icon: item.icon
+            });
+        }
+    }, this);
+    return output;
+}
+
+export function getFeaturedItems(id, vendors) {
+    let parser = ADVISOR_PARSERS[id];
+    if (parser) {
+        let featured = parser.featuredItems;
+        if (featured && featured.vendor && featured.category) {
+            let vendor = vendors[featured.vendor];
+            if (vendor && vendor.stock) {
+                let category = vendor.stock[featured.category];
+                return {
+                    name: featured.category,
+                    items: category
+                };
+            }
+        }
+    }
+    return undefined;
 }

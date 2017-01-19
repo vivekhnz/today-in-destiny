@@ -1,5 +1,6 @@
 import React from 'react';
 import Popover from 'react-popover';
+import ItemPopover from './ItemPopover';
 
 export default class DestinyItem extends React.Component {
     constructor(props) {
@@ -15,23 +16,11 @@ export default class DestinyItem extends React.Component {
         });
     }
 
-    renderPopover() {
-        return (
-            <div className='itemDetailsPopover'>
-                <div className='popupContent'>
-                    <p className="itemName">{this.props.item.name}</p>
-                    <p className="itemType">{this.props.item.type}</p>
-                </div>
-            </div>
-        );
-    }
-
     render() {
         let armoryLink = `https://www.bungie.net/en/Armory/Detail?item=${this.props.item.hash}`;
-        let popover = this.renderPopover();
         return (
             <Popover
-                body={popover}
+                body={<ItemPopover item={this.props.item} />}
                 isOpen={this.state.isPopupOpen}>
                 <div className="destinyItem"
                     onMouseOver={() => this.togglePopover(true)}

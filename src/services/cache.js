@@ -108,7 +108,10 @@ function parseVendorStock(data) {
                 return {
                     itemHash: sale.item.itemHash,
                     quantity: sale.item.stackSize,
-                    costs: sale.costs
+                    costs: sale.costs,
+                    primaryStat: sale.item.primaryStat,
+                    stats: sale.item.stats,
+                    perks: sale.item.perks
                 };
             })
     }, this);

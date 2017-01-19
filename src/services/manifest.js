@@ -1,17 +1,12 @@
 export default class ManifestService {
     constructor(definitions) {
-        if (definitions) {
-            this.definitions = {
-                activities: definitions.activities || [],
-                items: definitions.items || []
-            };
-        }
-        else {
-            this.definitions = {
-                activities: [],
-                items: []
-            };
-        }
+        if (!definitions) definitions = {};
+        this.definitions = {
+            activities: definitions.activities || [],
+            items: definitions.items || [],
+            stats: definitions.stats || [],
+            perks: definitions.perks || []
+        };
     }
 
     getActivity(hash) {
@@ -20,5 +15,13 @@ export default class ManifestService {
 
     getItem(hash) {
         return this.definitions.items[hash];
+    }
+
+    getStat(hash) {
+        return this.definitions.stats[hash];
+    }
+
+    getPerk(hash) {
+        return this.definitions.perks[hash];
     }
 };
