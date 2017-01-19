@@ -229,6 +229,7 @@ function parseVendor(vendor, manifest) {
     }
 
     return {
+        name: vendor.name,
         refreshesAt: vendor.refreshesAt,
         stock: stock
     };
@@ -426,20 +427,58 @@ function reduceItems(items) {
     return output;
 }
 
-export function getFeaturedItems(id, vendors) {
+export function getStock(id, vendors) {
     let parser = ADVISOR_PARSERS[id];
     if (parser) {
-        let featured = parser.featuredItems;
-        if (featured && featured.vendor && featured.category) {
-            let vendor = vendors[featured.vendor];
-            if (vendor && vendor.stock) {
-                let category = vendor.stock[featured.category];
-                return {
-                    name: featured.category,
-                    items: category
-                };
-            }
+        return {
+            featured: getFeaturedItems(
+                parser.featuredItems, vendors),
+            other: getOtherItems(
+                parser.featuredItems, vendors)
+        };
+    }
+    return undefined;
+}
+
+function getFeaturedItems(featured, vendors) {
+    if (featured && featured.vendor && featured.category) {
+        let vendor = vendors[featured.vendor];
+        if (vendor && vendor.stock) {
+            let category = vendor.stock[featured.category];
+            return {
+                name: featured.category,
+                items: category
+            };
         }
     }
     return undefined;
+}
+
+function getOtherItems(featured, vendors) {
+    let output = [];
+    for (let vendorID in vendors) {
+        let vendor = vendors[vendorID];
+        let categories = [];
+        for (let categoryName in vendor.stock) {
+            if (vendorID !== featured.vendor
+                || categoryName != featured.category) {
+                categories.push({
+                    name: categoryName,
+                    items: vendor.stock[categoryName]
+                });
+            }
+        }
+        if (categories.length > 0) {
+            output.push({
+                name: vendor.name,
+                categories: categories
+            });
+        }
+    }
+    if (output.length > 0) {
+        return output;
+    }
+    else {
+        return undefined;
+    }
 }

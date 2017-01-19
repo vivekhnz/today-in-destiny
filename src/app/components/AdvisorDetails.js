@@ -4,6 +4,7 @@ import SmallHeader from './SmallHeader';
 import ActivityRewards from './ActivityRewards';
 import ActivityModifiers from './ActivityModifiers';
 import FeaturedItems from './FeaturedItems';
+import VendorStock from './VendorStock';
 
 import AdvisorsStore from '../stores/AdvisorsStore';
 import DetailsStore from '../stores/DetailsStore';
@@ -115,9 +116,9 @@ export default class AdvisorDetails extends React.Component {
         );
     }
 
-    renderGroup(name, content) {
+    renderGroup(name, content, key = undefined) {
         return (
-            <div className="detailsGroupContainer">
+            <div key={key} className="detailsGroupContainer">
                 <p className="detailsGroupName">{name}</p>
                 <div className="detailsGroupSeparator" />
                 {content}
@@ -136,18 +137,35 @@ export default class AdvisorDetails extends React.Component {
         let modifiers = this.state.details.modifiers ?
             this.renderGroup('Modifiers', <ActivityModifiers modifiers={this.state.details.modifiers} />)
             : null;
-        let featuredItems = this.state.details.featuredItems ?
-            this.renderGroup(this.state.details.featuredItems.name,
-                <FeaturedItems items={this.state.details.featuredItems.items} />)
-            : null;
         let rewards = this.state.details.rewards ?
             this.renderGroup('Rewards', <ActivityRewards rewards={this.state.details.rewards} />)
             : null;
-        
+
+        // render vendor stock
+        let featuredItems = null;
+        let otherItems = null;
+        if (this.state.details.stock) {
+            let stock = this.state.details.stock;
+            featuredItems = stock.featured ?
+                this.renderGroup(stock.featured.name,
+                    <FeaturedItems items={stock.featured.items} />)
+                : null;
+
+            if (stock.other) {
+                otherItems = stock.other.map((vendor, i) =>
+                    this.renderGroup(vendor.name,
+                        <VendorStock categories={vendor.categories} />,
+                        `otherItems-${i}`));
+            }
+        }
+
         return (
             <div>
                 {modifiers}
                 {featuredItems}
+                <div>
+                    {otherItems}
+                </div>
                 {rewards}
             </div>
         );

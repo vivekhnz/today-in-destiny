@@ -10,10 +10,22 @@ import {
 const ITEMS_MANIFEST = 'build/gen/items.json';
 
 let VENDORS = {
-    xur: 2796397637,
-    efrideet: 2610555297,
-    tyra: 2190824863,
-    shiro: 2190824860
+    xur: {
+        hash: 2796397637,
+        name: 'Xûr'
+    },
+    efrideet: {
+        hash: 2610555297,
+        name: 'Lady Efrideet'
+    },
+    tyra: {
+        hash: 2190824863,
+        name: 'Tyra Karn'
+    },
+    shiro: {
+        hash: 2190824860,
+        name: 'Shiro-4'
+    }
 }
 
 export default function buildCache() {
@@ -37,12 +49,14 @@ export default function buildCache() {
                     }
                 })
         };
-        let loadVendor = (vendorID, vendorHash) => {
-            return bungie.getVendor(vendorHash)
+        let loadVendor = vendorID => {
+            let definition = VENDORS[vendorID];
+            return bungie.getVendor(definition.hash)
                 .then(vendor => {
                     if (vendor && vendor.data && vendor.data.saleItemCategories) {
                         definitions.push(vendor.definitions);
                         vendors[vendorID] = {
+                            name: definition.name,
                             refreshesAt: vendor.data.nextRefreshDate,
                             stock: parseVendorStock(
                                 vendor.data.saleItemCategories)
@@ -59,12 +73,12 @@ export default function buildCache() {
         let loadVendors = () => {
             let advisorVendors = getVendorDependencies();
             return Promise.all(
-                advisorVendors.map(id => loadVendor(id, VENDORS[id])));
+                advisorVendors.map(id => loadVendor(id)));
         };
         let loadEventVendors = activities => {
             let advisorVendors = getOptionalVendorDependencies(activities);
             return Promise.all(
-                advisorVendors.map(id => loadVendor(id, VENDORS[id])));
+                advisorVendors.map(id => loadVendor(id)));
         };
         let loadItemsManifest = () => {
             return new Promise((resolve, reject) => {

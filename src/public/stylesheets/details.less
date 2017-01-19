@@ -160,6 +160,7 @@
 
 .Popover-body {
     box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.25);
+    border: 1px solid @darker-color;
 }
 .Popover-tip {
     fill: @darker-color;
@@ -239,6 +240,11 @@
     padding: 0px;
     font-size: 0.75em;
     color: @contrast-color;
+}
+.itemDetailsPopover .itemDescription {
+    .subtitle();
+    color: @ter-fg-color;
+    font-size: 0.75em;
 }
 .itemDetailsPopover .popupCosts {
     background: @darker-color;

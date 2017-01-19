@@ -1,7 +1,7 @@
 import { default as time } from './time';
 import { endpoints } from '../routes';
 import buildCache from './cache';
-import { getFeaturedItemSummaries, getFeaturedItems } from './parsers';
+import { getFeaturedItemSummaries, getStock } from './parsers';
 
 let CATEGORIES = {
     activities: 'Activities',
@@ -115,14 +115,14 @@ function reduceModifiers(modifiers) {
 }
 
 function getAdvisorDetails(id, advisor) {
-    let featuredItems = advisor.vendors ?
-        getFeaturedItems(id, advisor.vendors) : undefined;
+    let stock = advisor.vendors ?
+        getStock(id, advisor.vendors) : undefined;
     return {
         id: id,
         details: {
             rewards: advisor.rewards,
             modifiers: advisor.modifiers,
-            featuredItems: featuredItems,
+            stock: stock
         }
     };
 }

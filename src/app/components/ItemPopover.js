@@ -1,7 +1,7 @@
 import React from 'react';
 
 let ITEM_TIER_COLORS = {
-    Common: '#C3BCB4',
+    Common: '#B7B1AA',
     Uncommon: '#366F42',
     Rare: '#5076A3',
     Legendary: '#522F65',
@@ -75,9 +75,20 @@ export default class ItemPopover extends React.Component {
     renderContent() {
         let stats = this.renderStats(this.props.item.stats);
         let perks = this.renderPerks();
+
+        // only show description if item has no stats or perks
+        let description = undefined;
         if (!stats && !perks) {
-            return null;
+            if (!this.props.item.description) {
+                return null;
+            }
+            description = (
+                <p className="itemDescription">
+                    {this.props.item.description}
+                </p>
+            );
         }
+
         let separator = stats && perks ?
             <hr /> : null;
         return (
@@ -85,6 +96,7 @@ export default class ItemPopover extends React.Component {
                 {stats}
                 {separator}
                 {perks}
+                {description}
             </div>
         );
     }
