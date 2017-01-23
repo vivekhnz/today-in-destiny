@@ -1,6 +1,5 @@
-import { default as time } from './time';
 import { endpoints } from '../routes';
-import buildCache from './cache';
+import getCache from './cache';
 import { getFeaturedItemSummaries, getStock } from './parsers';
 
 let CATEGORIES = {
@@ -32,10 +31,10 @@ class APIService {
 
     getAdvisors() {
         return new Promise((resolve, reject) => {
-            buildCache().then(advisors => {
+            getCache().then(cache => {
                 resolve({
-                    date: time.getCurrentDate(),
-                    advisors: summariseAdvisors(advisors)
+                    date: cache.date,
+                    advisors: summariseAdvisors(cache.advisors)
                 });
             }).catch(error => reject(error));
         });
@@ -45,8 +44,8 @@ class APIService {
         return new Promise((resolve, reject) => {
             let loadAdvisor = () => {
                 if (params && params.id) {
-                    return buildCache().then(advisors => {
-                        let advisor = advisors[params.id];
+                    return getCache().then(cache => {
+                        let advisor = cache.advisors[params.id];
                         if (advisor) {
                             return getAdvisorDetails(params.id, advisor);
                         }
