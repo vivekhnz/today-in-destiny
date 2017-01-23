@@ -8,6 +8,7 @@
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
     "iso": "^5.2.0",
+    "memory-cache": "^0.1.6",
     "react": "^15.4.0",
     "react-dom": "^15.4.0",
     "react-element-query": "^3.0.2",
