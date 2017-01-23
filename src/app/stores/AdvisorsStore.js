@@ -4,12 +4,15 @@ import AdvisorsActions from '../actions/AdvisorsActions';
 class AdvisorsStore {
     constructor() {
         this.bindActions(AdvisorsActions);
-        this.advisorGroups = [];
+        this.summaries = {};
+        this.categories = [];
     };
 
-    onFetchAdvisorsSuccess(advisors) {
-        this.date = advisors.date;
-        this.advisorGroups = advisors.advisorGroups;
+    onFetchAdvisorsSuccess(response) {
+        if (response.advisors) {
+            this.summaries = response.advisors.summaries;
+            this.categories = response.advisors.categories;
+        }
     }
 
     onFetchAdvisorsFail(error) {

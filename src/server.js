@@ -44,7 +44,15 @@ function onNavigated(error, redirect, renderProps, response) {
     else if (renderProps) {
         api.getAdvisors()
             .then(advisors => {
-                let data = { AdvisorsStore: advisors };
+                let data = {
+                    AdvisorsStore: {
+                        summaries: advisors.advisors.summaries,
+                        categories: advisors.advisors.categories
+                    },
+                    DateStore: {
+                        date: advisors.date
+                    }
+                };
                 response.status(200).send(
                     renderPage(renderProps, data));
             })

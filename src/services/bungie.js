@@ -28,6 +28,10 @@ class BungiePlatformService {
         });
     }
 
+    getManifest() {
+        return this.get('/Destiny/Manifest');
+    }
+
     getPublicAdvisorsV2() {
         return this.get('/Destiny/Advisors/V2/?definitions=true');
     }

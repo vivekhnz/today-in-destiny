@@ -1,5 +1,6 @@
 import gulp from 'gulp';
 import gulpif from 'gulp-if';
+import changed from 'gulp-changed';
 import path from 'path';
 import babel from 'gulp-babel';
 import browserify from 'browserify';
@@ -16,14 +17,17 @@ import nodemon from 'gulp-nodemon';
 import browserSync from 'browser-sync';
 let sync = browserSync.create();
 
+import { verifyManifest } from './manifest.js';
+
 var production = process.env.NODE_ENV === 'production';
 
 // configuration
 var config = {
     appDependencies: [
         'react', 'react-dom', 'react-router',
-        'alt', 'alt-container', 'iso',
-        'react-masonry-component', 'react-element-query'
+        'alt', 'iso',
+        'react-masonry-component', 'react-element-query',
+        'react-popover'
     ],
     utils: {
         babel: {
@@ -49,6 +53,7 @@ var config = {
     ],
     stylesheets: {
         src: 'src/public/stylesheets/**/**.less',
+        entry: 'src/public/stylesheets/main.less',
         outDir: 'build/public/stylesheets'
     },
     images: {
@@ -88,9 +93,12 @@ function compileJS(src, dest = null) {
 }
 gulp.task('babel', () => compileJS(config.js, 'build'));
 
+// verify manifest
+gulp.task('manifest', ['babel'], () => verifyManifest());
+
 // compile LESS stylesheets
 gulp.task('stylesheets', () => {
-    return gulp.src(config.stylesheets.src)
+    return gulp.src(config.stylesheets.entry)
         .pipe(plumber())
         .pipe(less())
         .pipe(gulpif(production, cssmin()))
@@ -100,6 +108,7 @@ gulp.task('stylesheets', () => {
 // minify images
 gulp.task('images', () => {
     return gulp.src(config.images.src)
+        .pipe(changed(config.images.outDir))
         .pipe(imagemin(config.utils.imagemin))
         .pipe(gulp.dest(config.images.outDir));
 });
@@ -210,7 +219,9 @@ gulp.task('reload-watch', () => {
 
 // execute all build tasks
 gulp.task('build', [
-    'babel', 'copy', 'stylesheets', 'images', 'bundle-vendor', 'bundle-app'
+    'babel', 'manifest',
+    'copy', 'stylesheets', 'images',
+    'bundle-vendor', 'bundle-app'
 ]);
 
 // build and start server

@@ -36,6 +36,8 @@ typings
 
 # Compiled files
 build
+tmp
+manifest
 public/js
 
 # Environment variables

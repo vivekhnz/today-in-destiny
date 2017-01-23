@@ -1,20 +1,19 @@
 import { default as time } from './time';
 import { endpoints } from '../routes';
-import { default as bungie } from './bungie';
-import ManifestService from './manifest';
-import AdvisorsService from './advisors';
+import buildCache from './cache';
+import { getFeaturedItemSummaries, getStock } from './parsers';
 
-let VENDORS = {
-    xur: 2796397637,
-    ironBanner: 2610555297,
-    cryptarchIronTemple: 2190824863,
-    vanguardIronTemple: 2190824860
+let CATEGORIES = {
+    activities: 'Activities',
+    events: 'Events',
+    daily: 'Today',
+    weekly: 'This Week'
 }
 
 class APIService {
     get(promise) {
         return (req, res) => {
-            promise.bind(this)()
+            promise.bind(this)(req.params)
                 .then(result => res.send({
                     response: result,
                     status: 'Success'
@@ -28,143 +27,104 @@ class APIService {
 
     registerEndpoints(app) {
         app.get(endpoints.advisors, this.get(this.getAdvisors));
+        app.get(endpoints.singleAdvisor, this.get(this.getSingleAdvisor));
     }
 
     getAdvisors() {
         return new Promise((resolve, reject) => {
-            let definitions = [];
-            let activities = null;
-            let vendors = {};
-
-            let loadAdvisors = () => {
-                return bungie.getPublicAdvisorsV2()
-                    .then(response => {
-                        if (response && response.data && response.data.activities) {
-                            definitions.push(response.definitions);
-                            activities = response.data.activities;
-                            return response.data.activities;
-                        }
-                        else {
-                            console.log('No advisors returned.');
-                            throw new Error("An error occurred while fetching advisors.");
-                        }
-                    })
-            };
-            let loadVendor = (vendorID, vendorHash) => {
-                return bungie.getVendor(vendorHash)
-                    .then(vendor => {
-                        if (vendor && vendor.data && vendor.data.saleItemCategories) {
-                            definitions.push(vendor.definitions);
-                            vendors[vendorID] = {
-                                refreshesAt: vendor.data.nextRefreshDate,
-                                stock: this.parseVendorStock(
-                                    vendor.data.saleItemCategories)
-                            };
-                        }
-                        else {
-                            console.log(`No vendor data returned from ${vendorID}.`);
-                        }
-                    });
-            };
-            let loadVendors = () => {
-                let advisorVendors = [
-                    'cryptarchIronTemple', 'vanguardIronTemple'
-                ];
-                return Promise.all(
-                    advisorVendors.map(id => loadVendor(id, VENDORS[id])));
-            };
-            let loadEventVendors = activities => {
-                let promises = [];
-
-                let eventVendors = {
-                    'xur': VENDORS.xur,
-                    'ironbanner': VENDORS.ironBanner
-                };
-                for (let id in eventVendors) {
-                    let advisor = activities[id];
-                    if (advisor && advisor.status && advisor.status.active) {
-                        promises.push(loadVendor(id, eventVendors[id]));
-                    }
-                }
-
-                return Promise.all(promises);
-            };
-            let parseAdvisors = () => {
-                let manifest = new ManifestService(
-                    this.combineDefinitions(definitions));
-                let service = new AdvisorsService(
-                    activities, vendors, manifest);
-                let advisors = service.getAdvisors();
-                let categories = this.groupByCategory(advisors);
+            buildCache().then(advisors => {
                 resolve({
                     date: time.getCurrentDate(),
-                    advisorGroups: categories
+                    advisors: summariseAdvisors(advisors)
                 });
-            };
-
-            Promise.all([
-                loadAdvisors().then(loadEventVendors),
-                loadVendors()
-            ])
-                .then(parseAdvisors)
-                .catch(error => reject(error));
+            }).catch(error => reject(error));
         });
     }
 
-    parseVendorStock(data) {
-        let stock = {};
-        data.forEach(category => {
-            stock[category.categoryTitle] =
-                category.saleItems.map(sale => {
-                    return {
-                        itemHash: sale.item.itemHash,
-                        quantity: sale.item.stackSize,
-                        costs: sale.costs
-                    };
-                })
-        }, this);
-        return stock;
-    }
-
-    combineDefinitions(collection) {
-        let output = {};
-        collection.forEach(definitions => {
-            for (let type in definitions) {
-                let existing = output[type];
-                let defs = definitions[type];
-                if (existing) {
-                    for (let key in defs) {
-                        output[type][key] = defs[key];
-                    }
+    getSingleAdvisor(params) {
+        return new Promise((resolve, reject) => {
+            let loadAdvisor = () => {
+                if (params && params.id) {
+                    return buildCache().then(advisors => {
+                        let advisor = advisors[params.id];
+                        if (advisor) {
+                            return getAdvisorDetails(params.id, advisor);
+                        }
+                        else {
+                            throw new Error('An invalid advisor identifier was provided.');
+                        }
+                    });
                 }
                 else {
-                    output[type] = defs;
+                    throw new Error('No advisor identifier was provided.');
                 }
             }
-        }, this);
-        return output;
-    }
-
-    groupByCategory(advisors) {
-        let categories = [];
-        if (advisors) {
-            advisors.forEach(advisor => {
-                if (advisor && advisor.category) {
-                    let category = categories.find(p => p.name == advisor.category);
-                    if (category) {
-                        category.advisors.push(advisor);
-                    }
-                    else {
-                        categories.push({
-                            name: advisor.category,
-                            advisors: [advisor]
-                        });
-                    }
-                }
-            }, this);
-        }
-        return categories;
+            loadAdvisor()
+                .then(response => resolve(response))
+                .catch(error => reject(error));
+        });
     }
 };
+
+function summariseAdvisors(advisors) {
+    let summaries = {};
+    let categories = [];
+    if (advisors) {
+        for (let id in advisors) {
+            let advisor = advisors[id];
+            if (advisor && advisor.category) {
+                summaries[id] = {
+                    id: id,
+                    name: advisor.name,
+                    type: advisor.type,
+                    icon: advisor.icon,
+                    image: advisor.image,
+                    expiresAt: advisor.expiresAt,
+                    modifiers: reduceModifiers(advisor.modifiers),
+                    items: getFeaturedItemSummaries(id, advisor.vendors)
+                };
+
+                let category = categories.find(p => p.id == advisor.category);
+                if (category) {
+                    category.advisors.push(id);
+                }
+                else {
+                    categories.push({
+                        id: advisor.category,
+                        name: CATEGORIES[advisor.category] || advisor.category,
+                        advisors: [id]
+                    });
+                }
+            }
+        }
+    }
+    return {
+        summaries: summaries,
+        categories: categories
+    };
+}
+
+function reduceModifiers(modifiers) {
+    if (!modifiers) return undefined;
+    return modifiers.map(modifier => {
+        return {
+            name: modifier.name,
+            icon: modifier.icon
+        };
+    });
+}
+
+function getAdvisorDetails(id, advisor) {
+    let stock = advisor.vendors ?
+        getStock(id, advisor.vendors) : undefined;
+    return {
+        id: id,
+        details: {
+            rewards: advisor.rewards,
+            modifiers: advisor.modifiers,
+            stock: stock
+        }
+    };
+}
 
 export default new APIService();

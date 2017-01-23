@@ -1,4 +1,5 @@
 import React from 'react';
+import { browserHistory } from 'react-router';
 import ElementQuery from 'react-element-query';
 import { default as time } from '../../services/time';
 
@@ -6,6 +7,18 @@ var overlayColor = 'rgba(39, 58, 65, 0.75)';
 var wideViewWidth = 422;
 
 class Advisor extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onClick = this.onClick.bind(this);
+    }
+
+    onClick(e) {
+        e.preventDefault();
+        if (this.props.id) {
+            browserHistory.push(`/activities/${this.props.id}`);
+        }
+    }
+
     renderIcon() {
         if (this.props.icon) {
             return (
@@ -66,28 +79,6 @@ class Advisor extends React.Component {
         return null;
     }
 
-    renderBounties() {
-        if (this.props.bounties) {
-            return (
-                <div>
-                    <div className="advisorSeparator" />
-                    <ul className="advisorBounties">
-                        {
-                            this.props.bounties
-                                ? this.props.bounties.map((bounty, i) =>
-                                    <li key={i}>
-                                        <img src={bounty.icon} title={bounty.name} />
-                                        <p>{bounty.description}</p>
-                                    </li>)
-                                : null
-                        }
-                    </ul>
-                </div>
-            );
-        }
-        return null;
-    }
-
     render() {
         let blockStyle = {
             background: this.props.image
@@ -98,11 +89,13 @@ class Advisor extends React.Component {
         let timeRemaining = this.renderTimeRemaining();
         let items = this.renderItems();
         let modifiers = this.renderModifiers();
-        let bounties = this.renderBounties();
+        let hasTarget = this.props.id ? 'hasTarget' : '';
 
         return (
             <ElementQuery sizes={[{ name: 'wide', width: wideViewWidth }]}>
-                <div className="advisorBlock" style={blockStyle}>
+                <div className={`masonryItem advisorBlock ${hasTarget}`}
+                    style={blockStyle}
+                    onClick={this.onClick}>
                     <div className="advisorContainer">
                         {icon}
                         <div className="advisorContent">
@@ -111,7 +104,6 @@ class Advisor extends React.Component {
                             <p className="advisorName">{this.props.name}</p>
                             {items}
                             {modifiers}
-                            {bounties}
                         </div>
                     </div>
                 </div>

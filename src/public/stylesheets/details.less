@@ -1,0 +1,332 @@
+@import "common.less";
+
+.activityHeroImage {
+    height: 260px;
+    background-size: cover !important;
+    background-position: center center !important;
+    
+    @media @layout-twoColumn {
+        height: 320px;
+    }
+    @media @layout-narrow {
+        height: 180px;
+    }
+}
+.activityHeroWrapper {
+    display: flex;
+    flex-direction: row;
+    height: 200px;
+    
+    @media @layout-twoColumn {
+        height: 260px;
+    }
+    @media @layout-narrow {
+        height: 120px;
+    }
+}
+.activityHeroContainer {
+    position: relative;
+    align-self: flex-end;
+    margin: 16px;
+    width: 100%;
+}
+.activityIcon {
+    display: none;
+    width: 96px;
+    height: 96px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+    @media @layout-twoColumn {
+        display: block;
+    }
+}
+.activityHeroContent {
+    margin: 0px 0px 8px 0px;
+
+    @media @layout-twoColumn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: 0px 0px 0px 112px;
+    }
+    @media @layout-narrow {
+        margin: 0px;
+    }
+}
+.activityType {
+    .subheader();
+    text-transform: uppercase;
+    color: @ter-fg-color;
+    
+    @media @layout-narrow {
+        .subtitle();
+    }
+}
+.activityName {
+    .header();
+    color: @contrast-color;
+
+    @media @layout-narrow {
+        .title();
+    }
+}
+
+.detailsGroupContainer {
+    margin: 0px 16px;
+}
+.detailsGroupName {
+    .title();
+    color: @pri-fg-color;
+    margin: 32px 0px 0px 0px;
+}
+.detailsGroupSeparator {
+    height: 4px;
+    background-image: linear-gradient(-45deg,
+        @sec-fg-color 25%, transparent 25%,
+        transparent 50%, @sec-fg-color 50%,
+        @sec-fg-color 75%, transparent 75%, transparent);
+    background-size: 4px 4px;
+    margin: 0px 0px 24px 0px;
+}
+.detailsSubGroupName {
+    .subheader();
+    color: @sec-fg-color;
+    margin: 8px 0px 12px 0px;
+    border-bottom: 1px solid @ter-fg-color;
+    
+    @media @layout-narrow {
+        .subtitle();
+    }
+}
+
+.rewardCurrencies {
+    padding: 0px;
+    list-style-type: none;
+    margin: 0px 0px 24px 0px;
+}
+.rewardCurrencies li {
+    .subtitle();
+    margin: 0px 0px 8px 0px;
+    vertical-align: top;
+    color: @pri-fg-color;
+}
+.rewardCurrencies li img {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+.rewardCurrencies li p {
+    margin: -26px 0px 0px 32px;
+    padding: 0px;
+}
+
+.rewardSet {
+    padding: 0px;
+    list-style-type: none;
+}
+.rewardSet li {
+    .subtitle();
+    display: inline-block;
+    margin: 0px 12px 6px 0px;
+
+    @media @layout-narrow {
+        margin: 0px 8px 3px 0px;
+    }
+}
+
+.destinyItem {
+    min-height: 64px;
+    cursor: pointer;
+
+    @media @layout-narrow {
+        min-height: 48px;
+    }
+}
+.destinyItem a {
+    text-decoration: none;
+}
+.destinyItem img {
+    width: 64px;
+    height: 64px;
+
+    @media @layout-narrow {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+.Popover-body {
+    box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.25);
+    border: 1px solid @darker-color;
+}
+.Popover-tip {
+    fill: @darker-color;
+}
+.itemDetailsPopover {
+    background: @pri-fg-color;
+    min-width: 200px;
+    max-width: 300px;
+}
+.itemDetailsPopover .popupHeader {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px;
+}
+.itemDetailsPopover .itemName {
+    .subtitle();
+    color: @contrast-color;
+    font-size: 1em;
+    text-overflow: ellipsis;
+}
+.itemDetailsPopover .itemType {
+    .subtitle();
+    color: @contrast-color;
+    opacity: 0.5;
+    font-size: 0.75em;
+    text-transform: uppercase;
+}
+.itemDetailsPopover .popupContent {
+    padding: 8px;
+}
+.itemDetailsPopover hr {
+    border: 1px solid @sec-fg-color;
+}
+.itemDetailsPopover .primaryStat .statValue {
+    .subtitle();
+    color: @contrast-color;
+    font-size: 1em;
+    text-overflow: ellipsis;
+    margin-right: 4px;
+}
+.itemDetailsPopover .primaryStat .statName {
+    .subtitle();
+    color: @ter-fg-color;
+    font-size: 0.75em;
+    text-transform: uppercase;
+}
+.itemDetailsPopover .secondaryStat {
+    margin-right: 8px;
+}
+.itemDetailsPopover .secondaryStat .statName {
+    .subtitle();
+    color: @sec-fg-color;
+    font-size: 0.75em;
+}
+.itemDetailsPopover .secondaryStat .statValue {
+    .subtitle();
+    color: @ter-fg-color;
+    font-size: 0.75em;
+}
+.itemDetailsPopover .perks {
+    padding: 0px;
+    list-style-type: none;
+}
+.itemDetailsPopover .perks li {
+    .subtitle();
+    margin: 0px 0px 8px 0px;
+    vertical-align: top;
+    color: @pri-fg-color;
+}
+.itemDetailsPopover .perks li img {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+.itemDetailsPopover .perks li p {
+    margin: -26px 0px 0px 32px;
+    padding: 0px;
+    font-size: 0.75em;
+    color: @contrast-color;
+}
+.itemDetailsPopover .itemDescription {
+    .subtitle();
+    color: @ter-fg-color;
+    font-size: 0.75em;
+}
+.itemDetailsPopover .popupCosts {
+    background: @darker-color;
+    padding: 8px 8px 0px 8px;
+}
+.itemDetailsPopover .popupCosts ul {
+    padding: 0px 0px 8px 0px;
+    list-style-type: none;
+}
+.itemDetailsPopover .popupCosts ul li {
+    .subtitle();
+    margin: 0px 0px 8px 0px;
+    vertical-align: top;
+    color: @pri-fg-color;
+}
+.itemDetailsPopover .popupCosts ul li img {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+.itemDetailsPopover .popupCosts ul li p {
+    margin: -26px 0px 0px 32px;
+    padding: 0px;
+    font-size: 0.75em;
+    color: @contrast-color;
+}
+
+.modifierDetails {
+    padding: 0px;
+    list-style-type: none;
+    margin: 0px 0px 24px 0px;
+}
+.modifierDetails li {
+    .subtitle();
+    margin: 0px 0px 8px 0px;
+    vertical-align: top;
+    color: @pri-fg-color;
+    min-height: 48px;
+
+    @media @layout-narrow {
+        min-height: 32px;
+    }
+}
+.modifierDetails li .modifierIcon {
+    width: 48px;
+    height: 48px;
+    background-color: @pri-fg-color;
+    margin-right: 8px;
+
+    @media @layout-narrow {
+        width: 32px;
+        height: 32px;
+    }
+}
+.modifierDetails li img {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin: 12px 0px 0px 12px;
+
+    @media @layout-narrow {
+        width: 20px;
+        height: 20px;
+        margin: 6px 0px 0px 6px;
+    }
+}
+.modifierDetails li .modifierContent {
+    margin: -42px 0px 0px 56px;
+
+    @media @layout-narrow {
+        margin: -32px 0px 0px 40px;
+    }
+}
+.modifierDetails li .modifierName {
+    .subtitle();
+    color: @pri-fg-color;
+    font-size: 1em;
+    text-overflow: ellipsis;
+}
+.modifierDetails li .modifierDescription {
+    .subtitle();
+    color: @sec-fg-color;
+    font-size: 0.75em;
+}

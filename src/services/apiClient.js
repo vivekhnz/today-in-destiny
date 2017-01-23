@@ -22,7 +22,11 @@ class APIClient {
         });
     }
 
-    endpoint(url) {
+    endpoint(endpoint, params) {
+        let url = endpoint;
+        for (let param in params) {
+            url = url.replace(`:${param}`, params[param]);
+        }
         return new Promise((resolve, reject) => {
             this.get(url)
                 .then(data => resolve(data))
@@ -31,6 +35,7 @@ class APIClient {
     }
 
     getAdvisors() { return this.endpoint(endpoints.advisors); }
+    getSingleAdvisor(id) { return this.endpoint(endpoints.singleAdvisor, { id: id }); }
 };
 
 export default new APIClient();
