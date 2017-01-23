@@ -31,17 +31,17 @@ let VENDORS = {
 }
 
 const ADVISORS_CACHE_ID = 'advisors-cache';
+// how long data is considered 'fresh'
 const MAXIMUM_CACHE_MILLISECONDS = 900000; // 15 minutes
+// how many minutes to wait after each hour before refreshing
+const CACHE_REFRESH_OFFSET_MINUTES = 3;
 
 export default function getCache() {
     // attempt to retrieve cached data
     let cached = memcache.get(ADVISORS_CACHE_ID);
     if (cached) {
-        // determine how old the cached data is
-        let elapsed = time.getElapsedMilliseconds(cached.generatedAt);
-
         // is this data stale?
-        if (elapsed > MAXIMUM_CACHE_MILLISECONDS) {
+        if (isDataStale(cached.generatedAt)) {
             // data is too old, retrieve new data
             return regenerateCache();
         }
@@ -56,7 +56,33 @@ export default function getCache() {
     }
 }
 
+function isDataStale(generatedAt) {
+    // determine how old the cached data is
+    let elapsed = time.getElapsedMilliseconds(generatedAt);
+    if (elapsed > MAXIMUM_CACHE_MILLISECONDS) {
+        // maximum cache time exceeded
+        return true;
+    }
+    
+    // activities often reset on the hour so invalidate each hour
+    let current = time.getHoursMinutes(new Date().getTime());
+    let cacheTime = time.getHoursMinutes(Date.parse(generatedAt));
+    
+    if (current.hours > cacheTime.hours) {
+        // wait a few minutes after the hour
+        if (current.minutes > CACHE_REFRESH_OFFSET_MINUTES) {
+            // this ensures Bungie.net data is refreshed before rebuilding the cache
+            return true;
+        }
+    }
+
+    // data is still valid
+    return false;
+}
+
 function regenerateCache() {
+    console.log('Regenerating advisors cache.');
+
     // clear cache
     memcache.del(ADVISORS_CACHE_ID);
 

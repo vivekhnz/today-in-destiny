@@ -45,6 +45,17 @@ class TimeService {
         }
         return `${Math.floor(totalHours)}h ${minutes}m`;
     }
+
+    getHoursMinutes(milliseconds) {
+        let hours = milliseconds / 3600000;
+        let totalHours = Math.floor(hours);
+        let minutes = (hours - totalHours) * 60;
+
+        return {
+            hours: totalHours,
+            minutes: minutes
+        };
+    }
 };
 
 export default new TimeService();
