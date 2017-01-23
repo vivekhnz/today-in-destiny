@@ -24,7 +24,8 @@ export default class AdvisorDetails extends React.Component {
         this.onAdvisorsChanged(AdvisorsStore.getState());
         this.onDetailsChanged(DetailsStore.getState());
         if (!this.state.details) {
-            DetailsActions.fetchAdvisor(this.props.params.id);
+            DetailsActions.fetchAdvisor(
+                this.props.params.category, this.props.params.id);
         }
     }
 
@@ -40,18 +41,50 @@ export default class AdvisorDetails extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.params.id !== this.props.params.id) {
+        if (prevProps.params.category !== this.props.params.category
+            || prevProps.params.id !== this.props.params.id) {
             this.update();
         }
     }
 
+    getAdvisorSummary(categories, categoryID, advisorID) {
+        for (let c = 0; c < categories.length; c++) {
+            let category = categories[c];
+            if (category.id === categoryID) {
+                for (let a = 0; a < category.advisors.length; a++) {
+                    let advisor = category.advisors[a];
+                    if (advisor.shortID === advisorID) {
+                        return advisor;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     onAdvisorsChanged(advisors) {
-        if (advisors && advisors.summaries) {
-            let summary = advisors.summaries[this.props.params.id];
-            if (summary) {
-                this.setState({
-                    summary: summary
-                });
+        if (advisors) {
+            if (advisors.categoryMap) {
+                let category = advisors.categoryMap[this.props.params.category];
+                if (category) {
+                    let advisorID = category[this.props.params.id];
+                    if (advisorID) {
+                        this.setState({
+                            advisorID: advisorID
+                        });
+                    }
+                }
+            }
+            if (advisors.categories) {
+                let summary = this.getAdvisorSummary(
+                    advisors.categories,
+                    this.props.params.category,
+                    this.props.params.id);
+                if (summary) {
+                    this.setState({
+                        summary: summary
+                    });
+                }
             }
         }
     }
@@ -63,8 +96,8 @@ export default class AdvisorDetails extends React.Component {
                     errorMessage: store.errorMessage
                 });
             }
-            else if (store.details) {
-                let details = store.details[this.props.params.id];
+            else if (store.details && this.state.advisorID) {
+                let details = store.details[this.state.advisorID];
                 if (details) {
                     this.setState({
                         details: details

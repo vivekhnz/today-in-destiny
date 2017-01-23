@@ -14,8 +14,8 @@ class Advisor extends React.Component {
 
     onClick(e) {
         e.preventDefault();
-        if (this.props.id) {
-            browserHistory.push(`/activities/${this.props.id}`);
+        if (this.props.category && this.props.shortID) {
+            browserHistory.push(`/${this.props.category}/${this.props.shortID}`);
         }
     }
 

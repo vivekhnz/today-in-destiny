@@ -35,7 +35,9 @@ class APIService {
             getCache().then(cache => {
                 resolve({
                     date: cache.date,
-                    advisors: summariseAdvisors(cache.advisors)
+                    categories: summariseAdvisors(
+                        cache.categories, cache.advisors),
+                    categoryMap: cache.categories
                 });
             }).catch(error => reject(error));
         });
@@ -48,7 +50,10 @@ class APIService {
                     return getCache().then(cache => {
                         let advisor = cache.advisors[params.id];
                         if (advisor) {
-                            return getAdvisorDetails(params.id, advisor);
+                            return {
+                                id: params.id,
+                                details: getAdvisorDetails(params.id, advisor)
+                            };
                         }
                         else {
                             throw new Error('An invalid advisor identifier was provided.');
@@ -74,9 +79,7 @@ class APIService {
                         if (category) {
                             let advisorID = category[params.id];
                             if (advisorID) {
-                                return this.getSingleAdvisor({
-                                    id: advisorID
-                                });
+                                return this.getSingleAdvisor({ id: advisorID });
                             }
                             else {
                                 throw new Error('An invalid advisor identifier was provided.');
@@ -98,42 +101,37 @@ class APIService {
     }
 };
 
-function summariseAdvisors(advisors) {
-    let summaries = {};
-    let categories = [];
-    if (advisors) {
-        for (let id in advisors) {
-            let advisor = advisors[id];
-            if (advisor && advisor.category) {
-                summaries[id] = {
-                    id: id,
-                    name: advisor.name,
-                    type: advisor.type,
-                    icon: advisor.icon,
-                    image: advisor.image,
-                    expiresAt: advisor.expiresAt,
-                    modifiers: reduceModifiers(advisor.modifiers),
-                    items: getFeaturedItemSummaries(id, advisor.vendors)
-                };
-
-                let category = categories.find(p => p.id == advisor.category);
-                if (category) {
-                    category.advisors.push(id);
-                }
-                else {
-                    categories.push({
-                        id: advisor.category,
-                        name: CATEGORIES[advisor.category] || advisor.category,
-                        advisors: [id]
+function summariseAdvisors(categories, advisors) {
+    let output = [];
+    if (categories && advisors) {
+        for (let categoryID in categories) {
+            let category = categories[categoryID];
+            let summaries = [];
+            for (let advisorID in category) {
+                let id = category[advisorID];
+                let advisor = advisors[id];
+                if (advisor) {
+                    summaries.push({
+                        id: id,
+                        shortID: advisorID,
+                        name: advisor.name,
+                        type: advisor.type,
+                        icon: advisor.icon,
+                        image: advisor.image,
+                        expiresAt: advisor.expiresAt,
+                        modifiers: reduceModifiers(advisor.modifiers),
+                        items: getFeaturedItemSummaries(id, advisor.vendors)
                     });
                 }
             }
+            output.push({
+                id: categoryID,
+                name: CATEGORIES[categoryID] || categoryID,
+                advisors: summaries
+            });
         }
     }
-    return {
-        summaries: summaries,
-        categories: categories
-    };
+    return output;
 }
 
 function reduceModifiers(modifiers) {
@@ -150,12 +148,9 @@ function getAdvisorDetails(id, advisor) {
     let stock = advisor.vendors ?
         getStock(id, advisor.vendors) : undefined;
     return {
-        id: id,
-        details: {
-            rewards: advisor.rewards,
-            modifiers: advisor.modifiers,
-            stock: stock
-        }
+        rewards: advisor.rewards,
+        modifiers: advisor.modifiers,
+        stock: stock
     };
 }
 
