@@ -44,6 +44,7 @@ export let parseWeeklyCrucible = createCrucibleParser({
 function createCrucibleParser(
     {activity, category, type, icon, currencies, rewardSets}) {
     return {
+        shortID: 'crucible',
         activities: [activity],
         currencies: currencies,
         parser: ({activities, manifest}) => {

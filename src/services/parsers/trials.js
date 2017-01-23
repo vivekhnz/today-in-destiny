@@ -1,6 +1,7 @@
 import { bnet } from './utils';
 
 export default {
+    shortID: 'trials',
     activities: ['trials'],
     parser: ({activities, manifest}) => {
         let output = {

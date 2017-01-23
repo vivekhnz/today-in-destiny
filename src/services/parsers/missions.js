@@ -4,6 +4,7 @@ import { getStrikeLoot } from './rewards';
 export let parseDailyStory = createMissionParser({
     activity: 'dailychapter',
     category: 'daily',
+    shortID: 'story',
     type: 'Daily Story Mission',
     image: "/images/advisors/backgrounds/default.jpg",
     icon: "/images/advisors/icons/dailyStory.png",
@@ -12,6 +13,7 @@ export let parseDailyStory = createMissionParser({
 export let parseNightfall = createMissionParser({
     activity: 'nightfall',
     category: 'weekly',
+    shortID: 'nightfall',
     type: 'Nightfall Strike',
     image: "/images/advisors/backgrounds/nightfall.jpg",
     icon: "/images/advisors/icons/nightfall.png",
@@ -23,6 +25,7 @@ export let parseNightfall = createMissionParser({
 export let parseHeroicStrikes = createPlaylistParser({
     activity: 'heroicstrike',
     category: 'weekly',
+    shortID: 'strikes',
     type: 'Heroic Strike Playlist',
     name: 'SIVA Crisis Heroic',
     image: "/images/advisors/backgrounds/heroicStrikes.jpg",
@@ -36,8 +39,8 @@ export let parseHeroicStrikes = createPlaylistParser({
 });
 
 function createMissionParser(
-    {activity, category, type, image, icon, currencies, rewardSets}) {
-    return createParser(activity, currencies, {
+    {activity, category, shortID, type, image, icon, currencies, rewardSets}) {
+    return createParser(activity, currencies, shortID, {
         category: category,
         type: type,
         name: 'Unknown Mission',
@@ -48,8 +51,8 @@ function createMissionParser(
 }
 
 function createPlaylistParser(
-    {activity, category, type, name, image, icon, currencies, rewardSets}) {
-    return createParser(activity, currencies, {
+    {activity, category, shortID, type, name, image, icon, currencies, rewardSets}) {
+    return createParser(activity, currencies, shortID, {
         category: category,
         type: type,
         name: name,
@@ -59,8 +62,9 @@ function createPlaylistParser(
     });
 }
 
-function createParser(activity, currencies, defaults) {
+function createParser(activity, currencies, shortID, defaults) {
     return {
+        shortID: shortID,
         activities: [activity],
         currencies: currencies,
         parser: ({activities, manifest}) => {

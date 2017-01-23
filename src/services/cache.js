@@ -167,11 +167,12 @@ function buildCache() {
         let parseAdvisors = () => {
             let manifest = new ManifestService(
                 combineDefinitions(definitions));
-            let advisors = parse(activities, vendors, manifest, items);
+            let parsed = parse(activities, vendors, manifest, items);
             resolve({
                 generatedAt: new Date(),
                 date: time.getCurrentDate(),
-                advisors: advisors
+                advisors: parsed.advisors,
+                categories: parsed.categories
             });
         };
 

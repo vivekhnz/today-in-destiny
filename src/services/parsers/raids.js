@@ -29,6 +29,7 @@ export let parseKingsFall = createRaidParser({
 
 function createRaidParser({activity, identifier, name, rewardSets}) {
     return {
+        shortID: identifier,
         activities: [activity],
         parser: ({activities, manifest}) => {
             let output = {

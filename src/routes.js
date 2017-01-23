@@ -6,12 +6,13 @@ import AdvisorDetails from './app/components/AdvisorDetails';
 
 let endpoints = {
     advisors: '/api/advisors',
-    singleAdvisor: '/api/advisors/:id'
+    singleAdvisor: '/api/advisors/:id',
+    categoryAdvisor: '/api/category/:category/:id'
 };
 let routes = (
     <Route component={App}>
         <Route path='/' component={Home} />
-        <Route path='/activities/:id' component={AdvisorDetails} />
+        <Route path='/:category/:id' component={AdvisorDetails} />
     </Route>
 );
 

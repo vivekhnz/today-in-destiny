@@ -27,6 +27,7 @@ class APIService {
     registerEndpoints(app) {
         app.get(endpoints.advisors, this.get(this.getAdvisors));
         app.get(endpoints.singleAdvisor, this.get(this.getSingleAdvisor));
+        app.get(endpoints.categoryAdvisor, this.get(this.getCategoryAdvisor));
     }
 
     getAdvisors() {
@@ -56,6 +57,38 @@ class APIService {
                 }
                 else {
                     throw new Error('No advisor identifier was provided.');
+                }
+            }
+            loadAdvisor()
+                .then(response => resolve(response))
+                .catch(error => reject(error));
+        });
+    }
+
+    getCategoryAdvisor(params) {
+        return new Promise((resolve, reject) => {
+            let loadAdvisor = () => {
+                if (params && params.category && params.id) {
+                    return getCache().then(cache => {
+                        let category = cache.categories[params.category];
+                        if (category) {
+                            let advisorID = category[params.id];
+                            if (advisorID) {
+                                return this.getSingleAdvisor({
+                                    id: advisorID
+                                });
+                            }
+                            else {
+                                throw new Error('An invalid advisor identifier was provided.');
+                            }
+                        }
+                        else {
+                            throw new Error('An invalid activity category was provided.');
+                        }
+                    });
+                }
+                else {
+                    throw new Error('No activity category or advisor identifier was provided.');
                 }
             }
             loadAdvisor()
