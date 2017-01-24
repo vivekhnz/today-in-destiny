@@ -63,7 +63,8 @@ function onNavigated(error, redirect, renderProps, response) {
             });
     }
     else {
-        response.status(404).send('Not found');
+        // redirect to the homepage
+        response.redirect(302, '/');
     }
 }
 
