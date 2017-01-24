@@ -1,4 +1,5 @@
 import React from 'react';
+import { browserHistory } from 'react-router';
 
 import SmallHeader from './SmallHeader';
 import ActivityRewards from './ActivityRewards';
@@ -92,9 +93,11 @@ export default class AdvisorDetails extends React.Component {
     onDetailsChanged(store) {
         if (store) {
             if (store.errorMessage) {
-                this.setState({
-                    errorMessage: store.errorMessage
-                });
+                console.log(store.errorMessage);
+                // send us back to the homepage if there's an error
+                browserHistory.push('/');
+                // clear the error
+                store.errorMessage = null;
             }
             else if (store.details && this.state.advisorID) {
                 let details = store.details[this.state.advisorID];
@@ -160,9 +163,6 @@ export default class AdvisorDetails extends React.Component {
     }
 
     renderDetails() {
-        if (this.state.errorMessage) {
-            return <div className="errorMessage">{this.state.errorMessage}</div>;
-        }
         if (!this.state.details) {
             return <div className="errorMessage">Loading...</div>;
         }
