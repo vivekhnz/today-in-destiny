@@ -1,6 +1,6 @@
 {
   "name": "today-in-destiny",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A summary of what's available in Destiny today.",
   "main": "server.js",
   "dependencies": {
