@@ -1,4 +1,5 @@
 import React from 'react';
+import { browserHistory } from 'react-router';
 
 import SmallHeader from './SmallHeader';
 import ActivityRewards from './ActivityRewards';
@@ -24,7 +25,8 @@ export default class AdvisorDetails extends React.Component {
         this.onAdvisorsChanged(AdvisorsStore.getState());
         this.onDetailsChanged(DetailsStore.getState());
         if (!this.state.details) {
-            DetailsActions.fetchAdvisor(this.props.params.id);
+            DetailsActions.fetchAdvisor(
+                this.props.params.category, this.props.params.id);
         }
     }
 
@@ -40,18 +42,50 @@ export default class AdvisorDetails extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.params.id !== this.props.params.id) {
+        if (prevProps.params.category !== this.props.params.category
+            || prevProps.params.id !== this.props.params.id) {
             this.update();
         }
     }
 
+    getAdvisorSummary(categories, categoryID, advisorID) {
+        for (let c = 0; c < categories.length; c++) {
+            let category = categories[c];
+            if (category.id === categoryID) {
+                for (let a = 0; a < category.advisors.length; a++) {
+                    let advisor = category.advisors[a];
+                    if (advisor.shortID === advisorID) {
+                        return advisor;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     onAdvisorsChanged(advisors) {
-        if (advisors && advisors.summaries) {
-            let summary = advisors.summaries[this.props.params.id];
-            if (summary) {
-                this.setState({
-                    summary: summary
-                });
+        if (advisors) {
+            if (advisors.categoryMap) {
+                let category = advisors.categoryMap[this.props.params.category];
+                if (category) {
+                    let advisorID = category[this.props.params.id];
+                    if (advisorID) {
+                        this.setState({
+                            advisorID: advisorID
+                        });
+                    }
+                }
+            }
+            if (advisors.categories) {
+                let summary = this.getAdvisorSummary(
+                    advisors.categories,
+                    this.props.params.category,
+                    this.props.params.id);
+                if (summary) {
+                    this.setState({
+                        summary: summary
+                    });
+                }
             }
         }
     }
@@ -59,12 +93,14 @@ export default class AdvisorDetails extends React.Component {
     onDetailsChanged(store) {
         if (store) {
             if (store.errorMessage) {
-                this.setState({
-                    errorMessage: store.errorMessage
-                });
+                console.log(store.errorMessage);
+                // send us back to the homepage if there's an error
+                browserHistory.push('/');
+                // clear the error
+                store.errorMessage = null;
             }
-            else if (store.details) {
-                let details = store.details[this.props.params.id];
+            else if (store.details && this.state.advisorID) {
+                let details = store.details[this.state.advisorID];
                 if (details) {
                     this.setState({
                         details: details
@@ -127,9 +163,6 @@ export default class AdvisorDetails extends React.Component {
     }
 
     renderDetails() {
-        if (this.state.errorMessage) {
-            return <div className="errorMessage">{this.state.errorMessage}</div>;
-        }
         if (!this.state.details) {
             return <div className="errorMessage">Loading...</div>;
         }

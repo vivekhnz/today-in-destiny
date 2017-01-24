@@ -1,4 +1,5 @@
 export default {
+    shortID: 'ironBanner',
     activities: ['ironbanner'],
     optionalVendors: ['efrideet'],
     featuredItems: {

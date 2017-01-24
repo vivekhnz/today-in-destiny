@@ -4,14 +4,16 @@ import AdvisorsActions from '../actions/AdvisorsActions';
 class AdvisorsStore {
     constructor() {
         this.bindActions(AdvisorsActions);
-        this.summaries = {};
         this.categories = [];
+        this.categoryMap = {};
     };
 
     onFetchAdvisorsSuccess(response) {
-        if (response.advisors) {
-            this.summaries = response.advisors.summaries;
-            this.categories = response.advisors.categories;
+        if (response.categories) {
+            this.categories = response.categories;
+        }
+        if (response.categoryMap) {
+            this.categoryMap = response.categoryMap;
         }
     }
 

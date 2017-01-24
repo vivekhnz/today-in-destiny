@@ -46,8 +46,8 @@ function onNavigated(error, redirect, renderProps, response) {
             .then(advisors => {
                 let data = {
                     AdvisorsStore: {
-                        summaries: advisors.advisors.summaries,
-                        categories: advisors.advisors.categories
+                        categories: advisors.categories,
+                        categoryMap: advisors.categoryMap
                     },
                     DateStore: {
                         date: advisors.date
@@ -63,7 +63,8 @@ function onNavigated(error, redirect, renderProps, response) {
             });
     }
     else {
-        response.status(404).send('Not found');
+        // redirect to the homepage
+        response.redirect(302, '/');
     }
 }
 

@@ -8,6 +8,7 @@ export default {
     parser: () => {
         return {
             category: 'events',
+            shortID: 'xur',
             type: 'Agent of the Nine',
             name: 'Xûr has arrived...',
             image: "/images/advisors/backgrounds/xur.jpg",

@@ -1,4 +1,5 @@
 export let parseIronLordArtifacts = {
+    shortID: 'artifacts',
     vendors: ['tyra'],
     featuredItems: {
         vendor: 'tyra',
@@ -16,6 +17,7 @@ export let parseIronLordArtifacts = {
 };
 
 export let parseShiro = {
+    shortID: 'shiro',
     vendors: ['shiro'],
     featuredItems: {
         vendor: 'shiro',

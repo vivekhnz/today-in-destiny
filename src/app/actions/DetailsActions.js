@@ -9,8 +9,8 @@ class DetailsActions {
         );
     }
 
-    fetchAdvisor(id) {
-        api.getSingleAdvisor(id)
+    fetchAdvisor(category, id) {
+        api.getCategoryAdvisor(category, id)
             .then(data => this.fetchAdvisorSuccess(data))
             .catch(error => this.fetchAdvisorFail(error));
     }

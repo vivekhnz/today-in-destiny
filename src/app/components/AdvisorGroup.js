@@ -13,7 +13,7 @@ class AdvisorGroup extends React.Component {
     render() {
         let childElements = this.props.advisors
             ? this.props.advisors.map((advisor, i) =>
-                <Advisor key={i} {...advisor} />)
+                <Advisor key={i} category={this.props.id} {...advisor} />)
             : null;
 
         return (

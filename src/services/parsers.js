@@ -112,16 +112,32 @@ export function getCurrencies() {
 }
 
 export function parse(activities, vendors, manifest, items) {
-    let advisors = {};
+    let output = {
+        advisors: {},
+        categories: {}
+    };
     for (let identifier in ADVISOR_PARSERS) {
         let parser = ADVISOR_PARSERS[identifier];
         let advisor = parseAdvisor(
             parser, activities, vendors, manifest, items);
         if (advisor) {
-            advisors[identifier] = advisor;
+            output.advisors[identifier] = advisor;
+
+            // build category advisor alias map
+            if (advisor.category && parser.shortID) {
+                let category = output.categories[advisor.category];
+                if (category) {
+                    category[parser.shortID] = identifier;
+                }
+                else {
+                    category = {};
+                    category[parser.shortID] = identifier;
+                    output.categories[advisor.category] = category;
+                }
+            }
         }
     }
-    return advisors;
+    return output;
 }
 
 function parseAdvisor(parser, activities, vendors, manifest, items) {
