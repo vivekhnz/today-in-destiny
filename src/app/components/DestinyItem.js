@@ -10,10 +10,10 @@ export default class DestinyItem extends React.Component {
             isPopoverOpen: false,
             isModalOpen: false
         };
-        this.onMouseDown = this.onMouseDown.bind(this);
+        this.goToArmory = this.goToArmory.bind(this);
     }
 
-    onMouseDown(e) {
+    goToArmory(e) {
         e.preventDefault();
         let armoryLink = `https://www.bungie.net/en/Armory/Detail?item=${this.props.item.hash}`;
         window.open(armoryLink, '_blank');
@@ -40,16 +40,21 @@ export default class DestinyItem extends React.Component {
                         onTouchStart={e => {
                             e.preventDefault();
                             this.setPopupState(null, true);
-                        }}
+                        } }
                         onMouseEnter={() => this.setPopupState(true, null)}
                         onMouseLeave={() => this.setPopupState(false, null)}
-                        onMouseDown={this.onMouseDown}>
+                        onMouseDown={this.goToArmory}>
                         <img src={this.props.item.icon} />
                     </div>
                 </Popover>
                 <Modal isOpen={this.state.isModalOpen}
                     onClose={() => this.setPopupState(null, false)}>
                     <ItemPopover item={this.props.item} />
+                    <div className="Button"
+                        style={{ margin: '0px 8px 8px 8px' }}
+                        onClick={this.goToArmory}>
+                        View in Bungie.net Armory
+                    </div>
                 </Modal>
             </div>
         );
