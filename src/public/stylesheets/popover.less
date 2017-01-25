@@ -39,6 +39,28 @@
 .itemDetailsPopover .popupHeader {
     background: rgba(255, 255, 255, 0.1);
     padding: 8px;
+
+    .Modal & {
+        min-height: 52px;
+        padding: 0px;
+    }
+}
+.itemDetailsPopover .itemIcon {
+    display: none;
+
+    .Modal & {
+        display: inline-block;
+        width: 36px;
+        height: 36px;
+        margin: 8px;
+        border: 1px solid @contrast-color;
+    }
+}
+.itemDetailsPopover .popupHeader .textContainer {
+    .Modal & {
+        margin: -50px 8px 0px 56px;
+        padding-bottom: 6px;
+    }
 }
 .itemDetailsPopover .itemName {
     .subtitle();
