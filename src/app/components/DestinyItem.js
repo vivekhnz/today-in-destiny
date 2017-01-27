@@ -37,13 +37,9 @@ export default class DestinyItem extends React.Component {
                     body={<ItemPopover item={this.props.item} />}
                     isOpen={this.state.isPopoverOpen}>
                     <div className="destinyItem"
-                        onTouchStart={e => {
-                            e.preventDefault();
-                            this.setPopupState(null, true);
-                        } }
-                        onMouseEnter={() => this.setPopupState(true, null)}
-                        onMouseLeave={() => this.setPopupState(false, null)}
-                        onMouseDown={this.goToArmory}>
+                        onMouseOver={() => this.setPopupState(true, null)}
+                        onMouseOut={() => this.setPopupState(false, null)}
+                        onClick={() => this.setPopupState(false, true)}>
                         <img src={this.props.item.icon} />
                     </div>
                 </Popover>
