@@ -18,8 +18,11 @@ export default class ItemPopover extends React.Component {
         return (
             <div className='popupHeader'
                 style={headerStyle}>
-                <p className="itemName">{this.props.item.name}</p>
-                <p className="itemType">{this.props.item.type}</p>
+                <img className="itemIcon" src={this.props.item.icon} />
+                <div className="textContainer">
+                    <p className="itemName">{this.props.item.name}</p>
+                    <p className="itemType">{this.props.item.type}</p>
+                </div>
             </div>
         );
     }
