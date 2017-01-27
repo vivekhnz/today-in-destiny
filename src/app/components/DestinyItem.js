@@ -31,6 +31,9 @@ export default class DestinyItem extends React.Component {
     }
 
     render() {
+        let stackSize = this.props.item.quantity > 1 ?
+            <span className="stackSize">{this.props.item.quantity}</span>
+            : null;
         return (
             <div>
                 <Popover
@@ -41,6 +44,7 @@ export default class DestinyItem extends React.Component {
                         onMouseOut={() => this.setPopupState(false, null)}
                         onClick={() => this.setPopupState(false, true)}>
                         <img src={this.props.item.icon} />
+                        {stackSize}
                     </div>
                 </Popover>
                 <Modal isOpen={this.state.isModalOpen}

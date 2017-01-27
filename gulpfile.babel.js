@@ -48,9 +48,12 @@ var config = {
     },
     publicAssets: ['build/public/**/**.*'],
     js: 'src/**/**.js',
-    copyToOutput: [
-        'views', 'public/fonts'
-    ],
+    copyToOutput: {
+        directories: [
+            'views', 'public/fonts'
+        ],
+        files: ['public/favicon.ico']
+    },
     stylesheets: {
         src: 'src/public/stylesheets/**/**.less',
         entry: 'src/public/stylesheets/main.less',
@@ -114,13 +117,22 @@ gulp.task('images', () => {
 });
 
 // copy files that don't require compilation
-function copy(dir) {
+function copyDirectory(dir) {
     return gulp.src(`src/${dir}/**/**.*`)
         .on('error', error => console.error(error))
         .pipe(gulp.dest(`build/${dir}`));
 }
+function copyFile(file) {
+    let destination = getDestination(file);
+    return gulp.src(`src/${file}`)
+        .on('error', error => console.error(error))
+        .pipe(gulp.dest(destination));
+}
 gulp.task('copy', () => {
-    return es.merge(config.copyToOutput.map(dir => copy(dir)));
+    let tasks = [];
+    tasks.push(...config.copyToOutput.directories.map(dir => copyDirectory(dir)));
+    tasks.push(...config.copyToOutput.files.map(dir => copyFile(dir)));
+    return es.merge(tasks);
 });
 
 // generate bundles

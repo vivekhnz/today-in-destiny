@@ -138,6 +138,7 @@
 }
 
 .destinyItem {
+    position: relative;
     min-height: 64px;
     cursor: pointer;
 
@@ -152,6 +153,24 @@
     @media @layout-narrow {
         width: 48px;
         height: 48px;
+    }
+}
+.destinyItem .stackSize {
+    position: absolute;
+    right: 0px;
+    bottom: 4px;
+    padding: 3px 6px;
+
+    background: @contrast-color;
+    color: @pri-fg-color;
+
+    .bebasBold();
+    font-size: 1.3em;
+    line-height: 1em;
+
+    @media @layout-narrow {
+        font-size: 1.1em;
+        padding: 2px 4px;
     }
 }
 
