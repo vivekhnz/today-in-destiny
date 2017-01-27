@@ -91,7 +91,7 @@ function regenerateCache() {
         // cache the fresh data
         memcache.put(ADVISORS_CACHE_ID, newData);
         return newData;
-    }).catch(error => reject(error));
+    }).catch(error => Promise.reject(error));
 }
 
 function buildCache() {
