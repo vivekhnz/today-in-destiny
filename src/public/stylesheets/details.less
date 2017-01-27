@@ -138,15 +138,13 @@
 }
 
 .destinyItem {
+    position: relative;
     min-height: 64px;
     cursor: pointer;
 
     @media @layout-narrow {
         min-height: 48px;
     }
-}
-.destinyItem a {
-    text-decoration: none;
 }
 .destinyItem img {
     width: 64px;
@@ -157,120 +155,23 @@
         height: 48px;
     }
 }
+.destinyItem .stackSize {
+    position: absolute;
+    right: 0px;
+    bottom: 4px;
+    padding: 3px 6px;
 
-.Popover-body {
-    box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.25);
-    border: 1px solid @darker-color;
-}
-.Popover-tip {
-    fill: @darker-color;
-}
-.itemDetailsPopover {
-    background: @pri-fg-color;
-    min-width: 200px;
-    max-width: 300px;
-}
-.itemDetailsPopover .popupHeader {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 8px;
-}
-.itemDetailsPopover .itemName {
-    .subtitle();
-    color: @contrast-color;
-    font-size: 1em;
-    text-overflow: ellipsis;
-}
-.itemDetailsPopover .itemType {
-    .subtitle();
-    color: @contrast-color;
-    opacity: 0.5;
-    font-size: 0.75em;
-    text-transform: uppercase;
-}
-.itemDetailsPopover .popupContent {
-    padding: 8px;
-}
-.itemDetailsPopover hr {
-    border: 1px solid @sec-fg-color;
-}
-.itemDetailsPopover .primaryStat .statValue {
-    .subtitle();
-    color: @contrast-color;
-    font-size: 1em;
-    text-overflow: ellipsis;
-    margin-right: 4px;
-}
-.itemDetailsPopover .primaryStat .statName {
-    .subtitle();
-    color: @ter-fg-color;
-    font-size: 0.75em;
-    text-transform: uppercase;
-}
-.itemDetailsPopover .secondaryStat {
-    margin-right: 8px;
-}
-.itemDetailsPopover .secondaryStat .statName {
-    .subtitle();
-    color: @sec-fg-color;
-    font-size: 0.75em;
-}
-.itemDetailsPopover .secondaryStat .statValue {
-    .subtitle();
-    color: @ter-fg-color;
-    font-size: 0.75em;
-}
-.itemDetailsPopover .perks {
-    padding: 0px;
-    list-style-type: none;
-}
-.itemDetailsPopover .perks li {
-    .subtitle();
-    margin: 0px 0px 8px 0px;
-    vertical-align: top;
+    background: @contrast-color;
     color: @pri-fg-color;
-}
-.itemDetailsPopover .perks li img {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-}
-.itemDetailsPopover .perks li p {
-    margin: -26px 0px 0px 32px;
-    padding: 0px;
-    font-size: 0.75em;
-    color: @contrast-color;
-}
-.itemDetailsPopover .itemDescription {
-    .subtitle();
-    color: @ter-fg-color;
-    font-size: 0.75em;
-}
-.itemDetailsPopover .popupCosts {
-    background: @darker-color;
-    padding: 8px 8px 0px 8px;
-}
-.itemDetailsPopover .popupCosts ul {
-    padding: 0px 0px 8px 0px;
-    list-style-type: none;
-}
-.itemDetailsPopover .popupCosts ul li {
-    .subtitle();
-    margin: 0px 0px 8px 0px;
-    vertical-align: top;
-    color: @pri-fg-color;
-}
-.itemDetailsPopover .popupCosts ul li img {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-}
-.itemDetailsPopover .popupCosts ul li p {
-    margin: -26px 0px 0px 32px;
-    padding: 0px;
-    font-size: 0.75em;
-    color: @contrast-color;
+
+    .bebasBold();
+    font-size: 1.3em;
+    line-height: 1em;
+
+    @media @layout-narrow {
+        font-size: 1.1em;
+        padding: 2px 4px;
+    }
 }
 
 .modifierDetails {
