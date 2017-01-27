@@ -26,15 +26,13 @@ export default class Modal extends React.Component {
     }
 
     render() {
-        if (this.props.isOpen) {
-            return (
-                <div className="Modal" onClick={this.onClick}>
-                    <div className="Modal-wrapper">
-                        {this.props.children}
-                    </div>
+        let isOpen = this.props.isOpen ? 'isOpen' : '';
+        return (
+            <div className={`Modal ${isOpen}`} onClick={this.onClick}>
+                <div className="Modal-wrapper">
+                    {this.props.children}
                 </div>
-            );
-        }
-        return null;
+            </div>
+        );
     };
 };

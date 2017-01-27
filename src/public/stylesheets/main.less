@@ -31,6 +31,9 @@ ul {
     background-color: @sec-fg-color;
     color: @contrast-color;
     cursor: pointer;
+    transition-property: background-color, color;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
 
     &:hover {
         background-color: @accent-color;
