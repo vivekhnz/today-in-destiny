@@ -65,9 +65,7 @@ function verifyRewardDefinitions() {
             else {
                 console.log(`${newItems.length} new items added.`);
                 loadDefinitions = retrieveWorldDB()
-                    .then(database => {
-                        return extractDefinitions(database, newItems);
-                    })
+                    .then(database => extractDefinitions(database, newItems))
                     .then(definitions => {
                         for (let hash in definitions) {
                             items[hash] = definitions[hash];
@@ -95,12 +93,8 @@ function verifyRewardDefinitions() {
             else {
                 console.log(`${itemHashes.length} unique items within reward sets.`);
                 return retrieveWorldDB()
-                    .then(database => {
-                        return extractDefinitions(database, itemHashes);
-                    })
-                    .then(definitions => {
-                        return writeManifest(itemHashes, definitions);
-                    })
+                    .then(database => extractDefinitions(database, itemHashes))
+                    .then(definitions => writeManifest(itemHashes, definitions))
                     .then(cleanup)
                     .then(() => resolve());
             }
@@ -324,20 +318,16 @@ function downloadIcons(definitions) {
     return Promise
         .all(definitionArray.map(downloadIcon))
         .then(compressIcons)
-        .then(results => {
+        .then(definitions => {
             let output = {};
-            let successCount = 0;
-            results.forEach(result => {
-                if (result.success) {
-                    successCount++;
-                }
-                output[result.definition.hash] = result.definition;
+            definitions.forEach(definition => {
+                output[definition.hash] = definition;
             }, this);
-            if (successCount === results.length) {
-                console.log(`All icons (${successCount}) downloaded successfully.`);
+            if (definitions.length === definitionArray.length) {
+                console.log(`All icons (${definitions.length}) downloaded successfully.`);
             }
             else {
-                console.log(`${successCount} / ${results.length} were downloaded.`);
+                console.log(`${definitions.length} / ${definitionArray.length} were downloaded.`);
             }
             return output;
         });
@@ -350,35 +340,28 @@ function downloadIcon(definition) {
         let outputPathAbsolute = `${RAW_ITEM_ICONS_PATH}${filename}`;
         request
             .get(definition.icon)
-            .on('error', error => {
-                definition.icon = outputPathRelative;
-                resolve({
-                    success: false,
-                    definition: definition
-                });
-            })
+            .on('error', error => resolve(null))
             .pipe(fs.createWriteStream(outputPathAbsolute))
             .on('close', () => {
                 definition.icon = outputPathRelative;
-                resolve({
-                    success: true,
-                    definition: definition
-                });
+                resolve(definition);
             });
     });
 }
 
 function compressIcons(results) {
+    let output = [];
     let inputPaths = [];
     results.forEach(result => {
-        if (result.success) {
-            inputPaths.push(`${RAW_ITEM_ICONS_PATH}${result.definition.hash}.jpg`);
+        if (result) {
+            inputPaths.push(`${RAW_ITEM_ICONS_PATH}${result.hash}.jpg`);
+            output.push(result);
         }
     }, this);
 
     let config = { plugins: [jpegtran()] };
     return imagemin(inputPaths, ITEM_ICONS_PATH_ABSOLUTE, config)
-        .then(() => results);
+        .then(() => output);
 }
 
 function writeManifest(itemHashes, definitions = null) {
@@ -405,17 +388,20 @@ function writeManifest(itemHashes, definitions = null) {
 
 function generateItemManifest(itemHashes, existing = null) {
     let items = {};
-    itemHashes.forEach(hash => {
-        if (existing) {
-            items[hash] = existing[hash];
-        }
-        items[hash] = items[hash] || {
-            hash: hash,
-            name: 'Item Name',
-            type: 'Item Type',
-            icon: '/images/ui/unknownItem.png'
-        };
-    }, this);
+    if (existing) {
+        itemHashes.forEach(hash => {
+            let definition = existing[hash];
+            if (definition) {
+                items[hash] = definition;
+            }
+            // items[hash] = items[hash] || {
+            //     hash: hash,
+            //     name: 'Item Name',
+            //     type: 'Item Type',
+            //     icon: '/images/ui/unknownItem.png'
+            // };
+        }, this);
+    }
     return items;
 }
 
