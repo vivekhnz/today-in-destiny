@@ -63,11 +63,11 @@ function isDataStale(generatedAt) {
         // maximum cache time exceeded
         return true;
     }
-    
+
     // activities often reset on the hour so invalidate each hour
     let current = time.getHoursMinutes(new Date().getTime());
     let cacheTime = time.getHoursMinutes(Date.parse(generatedAt));
-    
+
     if (current.hours > cacheTime.hours) {
         // wait a few minutes after the hour
         if (current.minutes > CACHE_REFRESH_OFFSET_MINUTES) {
@@ -159,10 +159,9 @@ function buildCache() {
             }).then(data => {
                 items = JSON.parse(data);
                 return items;
-            })
-                .catch(error => {
-                    console.log("Couldn't load items manifest.");
-                });
+            }).catch(error => {
+                console.log("Couldn't load items manifest.");
+            });
         }
         let parseAdvisors = () => {
             let manifest = new ManifestService(

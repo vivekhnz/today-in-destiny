@@ -1,14 +1,15 @@
 @import "common.less";
 
-.headerContainer {
+.headerWrapper {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAMAAABFaP0WAAAABlBMVEX////09PQtDxrOAAAAAXRSTlMAQObYZgAAAA5JREFUCNdjYGBkYGQEAAANAASMpCjAAAAAAElFTkSuQmCC);
     height: 160px;
-    padding: 0px 32px;
+    padding: 0px 16px;
+}
+.headerContainer {
     position: relative;
-
-    @media @layout-narrow {
-        padding: 0px 16px;
-    }
+    height: 100%;
+    max-width: 1300px;
+    margin: 0px auto;
 }
 
 .logoContainer {
@@ -25,11 +26,12 @@
 }
 .logo {
     background-image: url('../images/ui/logo-s.png');
+    background-size: cover;
     width: 54px;
     height: 87px;
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 60%;
+    transform: translateY(-60%);
     
     @media @layout-twoColumn {
         background-image: url('../images/ui/logo-m.png');
@@ -47,45 +49,26 @@
     @media @layout-narrow {
         padding: 8px 0px 2px 0px;
     }
-    @media @layout-twoColumn {
-        position: absolute;
-        right: 0px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: auto;
-        padding: 0px 32px 0px 16px;
-        height: 64px;
-        line-height: 64px;
-        text-align: right;
-    }
 }
 .dateMonth {
     .subtitle();
     text-transform: uppercase;
     color: @pri-fg-color;
-    margin: 8px 0px -4px 0px;
+    margin: 24px 0px -4px 0px;
 
     @media @layout-narrow {
         margin: 0px 4px 0px 0px;
         display: inline-block;
-    }
-    @media @layout-twoColumn {
-        .bebasRegular();
-        font-size: 3.375em;
-        display: inline-block;
-        margin: 0px 8px 0px 0px;
     }
 }
 .dateDay {
     .bebasRegular();
     font-size: 3.375em;
     color: @pri-fg-color;
+    margin-bottom: 4px;
 
     @media @layout-narrow {
         .subtitle();
-        display: inline-block;
-    }
-    @media @layout-twoColumn {
         display: inline-block;
     }
 }
@@ -98,47 +81,30 @@
     @media @layout-narrow {
         display: none;
     }
-    @media @layout-twoColumn {
-        position: absolute;
-        left: -10px;
-        margin: 0px;
-    }
 }
 .dateEdgeLeft {
     .dateEdge;
     border-width: 10px 32px 0 0;
     border-color: @accent-color transparent transparent transparent;
-    
-    @media @layout-twoColumn {
-        top: 0px;
-        border-width: 0 10px 32px 0;
-        border-color: transparent @accent-color transparent transparent;
-    }
 }
 .dateEdgeRight {
     .dateEdge;
     border-width: 0 32px 10px 0;
     border-color: transparent @accent-color transparent transparent;
     float: right;
-
-    @media @layout-twoColumn {
-        bottom: 0px;
-        border-width: 0 0 32px 10px;
-        border-color: transparent transparent @accent-color transparent;
-    }
 }
 
 .headerTextContainer {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    margin-left: 80px;
+    margin-left: 70px;
 
     @media @layout-narrow {
         margin-left: 0px;
     }
     @media @layout-twoColumn {
-        margin-left: 96px;
+        margin-left: 88px;
     }
 }
 .headerLine1 {

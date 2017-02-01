@@ -17,7 +17,7 @@ class AdvisorGroup extends React.Component {
             : null;
 
         return (
-            <div className="advisorGroupContainer">
+            <div>
                 <p className="groupHeader">{this.props.name}</p>
                 <div className="groupHeaderSeparator" />
                 <Masonry className="masonry"

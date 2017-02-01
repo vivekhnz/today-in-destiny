@@ -154,7 +154,7 @@ export default class AdvisorDetails extends React.Component {
 
     renderGroup(name, content, key = undefined) {
         return (
-            <div key={key} className="detailsGroupContainer">
+            <div key={key}>
                 <p className="detailsGroupName">{name}</p>
                 <div className="detailsGroupSeparator" />
                 {content}
@@ -193,7 +193,7 @@ export default class AdvisorDetails extends React.Component {
         }
 
         return (
-            <div>
+            <div className="detailsGroups">
                 {modifiers}
                 {featuredItems}
                 <div>

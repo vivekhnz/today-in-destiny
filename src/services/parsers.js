@@ -394,10 +394,14 @@ function parseRewards(currencies, rewardSets, items) {
                 // lookup item definitions
                 let itemDefinitions = [];
                 definition.items.forEach(hash => {
-                    let itemDef = items[hash];
-                    if (itemDef) {
-                        itemDefinitions.push(itemDef);
-                    }
+                    let itemDef = items[hash] || {
+                        hash: hash,
+                        name: 'Unknown Item',
+                        type: 'Unknown Item',
+                        icon: '/images/ui/unknownItem.png',
+                        tier: 'Common'
+                    };
+                    itemDefinitions.push(itemDef);
                 }, this);
 
                 // add reward set

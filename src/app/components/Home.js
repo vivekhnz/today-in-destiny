@@ -34,7 +34,7 @@ export default class Home extends React.Component {
         }
         if (this.state.categories.length > 0) {
             return (
-                <div>
+                <div className="advisorGroups">
                     {
                         this.state.categories.map((group, i) =>
                             <AdvisorGroup key={i}

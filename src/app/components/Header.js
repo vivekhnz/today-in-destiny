@@ -35,14 +35,16 @@ class Header extends React.Component {
             ? this.renderDateContainer()
             : null;
         return (
-            <div className="headerContainer">
-                {dateContainer}
-                <div className="logoContainer">
-                    <div className="logo"/>
-                </div>
-                <div className="headerTextContainer">
-                    <p className="headerLine1">Today in</p>
-                    <p className="headerLine2">Destiny</p>
+            <div className="headerWrapper">
+                <div className="headerContainer">
+                    {dateContainer}
+                    <div className="logoContainer">
+                        <div className="logo" />
+                    </div>
+                    <div className="headerTextContainer">
+                        <p className="headerLine1">Today in</p>
+                        <p className="headerLine2">Destiny</p>
+                    </div>
                 </div>
             </div>
         );
