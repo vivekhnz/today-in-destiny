@@ -1,13 +1,11 @@
 @import "common.less";
 
 .smallHeaderContainer {
-    padding: 0px 32px;
     position: relative;
     height: 60px;
-
-    @media @layout-narrow {
-        padding: 0px 16px;
-    }
+    padding: 0px 16px;
+    max-width: 1300px;
+    margin: 0px auto;
 }
 .smallDateContainer {
     background-color: @accent-color;
@@ -23,6 +21,7 @@
 }
 .smallLogo {
     background-image: url('../images/ui/logo-xs.png');
+    background-size: cover;
     width: 36px;
     height: 59px;
     cursor: pointer;
