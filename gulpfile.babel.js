@@ -62,7 +62,10 @@ var config = {
     },
     stylesheets: {
         src: 'src/public/stylesheets/**/**.less',
-        entry: 'src/public/stylesheets/main.less',
+        entry: {
+            main: 'src/public/stylesheets/main.less',
+            bot: 'src/public/stylesheets/bot.less'
+        },
         outDir: 'build/public/stylesheets'
     },
     images: {
@@ -106,13 +109,15 @@ gulp.task('babel', () => compileJS(config.js, 'build'));
 gulp.task('manifest', ['babel'], () => verifyManifest());
 
 // compile LESS stylesheets
-gulp.task('stylesheets', () => {
-    return gulp.src(config.stylesheets.entry)
+function compileLess(entry) {
+    return gulp.src(entry)
         .pipe(plumber())
         .pipe(less())
         .pipe(gulpif(production, cssmin()))
         .pipe(gulp.dest(config.stylesheets.outDir));
-});
+}
+gulp.task('stylesheets', () => compileLess(config.stylesheets.entry.main));
+gulp.task('stylesheets-bot', () => compileLess(config.stylesheets.entry.bot));
 
 // minify images
 gulp.task('images', () => {
@@ -200,7 +205,7 @@ gulp.task('server', ['build'], callback => {
 
 // run twitter bot
 // usage: 'gulp twitter-bot --option <task>'
-gulp.task('twitter-bot', ['babel', 'copy'], callback => {
+gulp.task('twitter-bot', ['babel', 'copy', 'stylesheets-bot'], callback => {
     if (process.argv.length < 5) {
         let usage = "Usage: 'gulp twitter-bot --option <task>'";
         console.log(`ERROR: No bot task was specified.\n${usage}`);
