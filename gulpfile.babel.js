@@ -200,7 +200,7 @@ gulp.task('server', ['build'], callback => {
 
 // run twitter bot
 // usage: 'gulp twitter-bot --option <task>'
-gulp.task('twitter-bot', ['babel'], callback => {
+gulp.task('twitter-bot', ['babel', 'copy'], callback => {
     if (process.argv.length < 5) {
         let usage = "Usage: 'gulp twitter-bot --option <task>'";
         console.log(`ERROR: No bot task was specified.\n${usage}`);

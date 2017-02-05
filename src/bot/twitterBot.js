@@ -1,3 +1,4 @@
+import swig from 'swig';
 import webshot from 'webshot';
 
 let TASKS = {
@@ -19,7 +20,10 @@ else {
 }
 
 function postWeeklyActivities() {
-    let html = '<html><body>Rendered by bot.</body></html>';
+    let content = {
+        content: 'Rendered by bot.'
+    };
+    let html = swig.renderFile(__dirname + '/../views/twitterBot.html', content);
     screenshot(html, 'build/weekly.png');
 }
 
