@@ -205,21 +205,22 @@ gulp.task('server', ['build'], callback => {
 
 // run twitter bot
 // usage: 'gulp twitter-bot --option <task>'
-gulp.task('twitter-bot', ['babel', 'copy', 'stylesheets-bot'], callback => {
-    if (process.argv.length < 5) {
-        let usage = "Usage: 'gulp twitter-bot --option <task>'";
-        console.log(`ERROR: No bot task was specified.\n${usage}`);
-        callback();
-    }
-    else {
-        let command = `node ${config.twitterBot} ${process.argv[4]}`;
-        child_process.exec(command, (error, stdout, stderr) => {
-            console.log(stdout);
-            console.log(stderr);
-            callback(error);
-        });
-    }
-});
+gulp.task('twitter-bot', ['babel', 'copy', 'stylesheets-bot', 'images'],
+    callback => {
+        if (process.argv.length < 5) {
+            let usage = "Usage: 'gulp twitter-bot --option <task>'";
+            console.log(`ERROR: No bot task was specified.\n${usage}`);
+            callback();
+        }
+        else {
+            let command = `node ${config.twitterBot} ${process.argv[4]}`;
+            child_process.exec(command, (error, stdout, stderr) => {
+                console.log(stdout);
+                console.log(stderr);
+                callback(error);
+            });
+        }
+    });
 
 // initialize BrowserSync
 gulp.task('sync', () => {

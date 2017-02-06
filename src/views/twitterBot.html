@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <base href="{{ baseDir|safe }}/bot.html" />
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,15 +14,24 @@
 
 <body>
     <div class="card">
-        <p class="card_name">{{ cardName|safe }}</p>
-        <p class="card_date">{{ date|safe }}</p>
-        <p class="card_twitter">@TodayInDestiny</p>
-        {% for advisor in advisors %}
-            <div class="card_advisor">
-                <p class="card_advisorType">{{ advisor.type|safe }}</p>
-                <p class="card_advisorName">{{ advisor.name|safe }}</p>
+        <img class="card_logo" src="../public/images/ui/logo-xxs.png" />
+        <div class="card_header">
+            <span class="card_name">{{ cardName|safe }}</span>
+            <span class="card_date">{{ date|safe }}</span>
+            <span class="card_twitter">@TodayInDestiny</span>
+        </div>
+        <div class="card_advisors">
+            {% for advisor in advisors %}
+            <div class="card_advisor"
+                style="background-image: url('{{ advisor.image|safe }}');">
+                <div class="card_advisorOverlay"></div>
+                <div class="card_advisorText">
+                    <p class="card_advisorType">{{ advisor.type|safe }}</p>
+                    <p class="card_advisorName">{{ advisor.name|safe }}</p>
+                </div>
             </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 </body>
 

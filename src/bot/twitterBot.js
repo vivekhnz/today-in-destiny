@@ -7,6 +7,7 @@ let TASKS = {
     'weekly': postWeeklyActivities
 };
 
+let BASE_DIR = __dirname.replace(/\\/g, '/');
 let SWIG_VIEW_PATH = `${__dirname}/../views/twitterBot.html`;
 let CSS_PATH = `${__dirname}/../public/stylesheets/bot.css`;
 let OUTPUT_HTML_FILE = `${__dirname}/bot.html`;
@@ -43,9 +44,8 @@ function loadCSS() {
             }
             else {
                 // inject absolute fonts directory
-                let dir = __dirname.replace(/\\/g, '/');
                 let absolute = data.replace(/FONTS_DIR/g,
-                    `${dir}/../public/fonts`);
+                    `${BASE_DIR}/../public/fonts`);
                 resolve(absolute);
             }
         });
@@ -72,24 +72,29 @@ function createPage(css) {
 function generateHTML(css) {
     let content = {
         css: css,
+        baseDir: BASE_DIR,
         cardName: 'This Week',
         date: 'Jan 31 - Feb 6',
         advisors: [
             {
                 name: 'Aksis Challenge',
                 type: 'Wrath of the Machine',
+                image: '../public/images/advisors/backgrounds/raid-wotm-aksis.jpg'
             },
             {
                 name: "Winter's Run",
                 type: 'Nightfall Strike',
+                image: 'https://www.bungie.net/img/theme/destiny/bgs/pgcrs/strike_winters_run.jpg'
             },
             {
                 name: 'SIVA Crisis Heroic',
                 type: 'Heroic Strike Playlist',
+                image: '../public/images/advisors/backgrounds/heroicStrikes.jpg'
             },
             {
                 name: 'Mayhem Clash',
                 type: 'Weekly Crucible Playlist',
+                image: '../public/images/advisors/backgrounds/crucible-mayhem.jpg'
             }
         ]
     };

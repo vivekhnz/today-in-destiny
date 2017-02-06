@@ -21,10 +21,64 @@ ul {
     height: 512px;
     background-color: @bg-color;
 }
+.card_logo {
+    margin: 0px 12px 0px 16px;
+}
+.card_header {
+    display: inline-block;
+    position: absolute;
+    top: 12px;
+    width: 828px;
+}
+.card_name {
+    .header();
+    margin: 0px 12px 0px 0px;
+    color: @pri-fg-color;
+}
+.card_date {
+    .subheader();
+    color: @sec-fg-color;
+    text-transform: uppercase;
+}
+.card_twitter {
+    .subheader();
+    position: absolute;
+    right: 16px;
+    bottom: 4px;
+    color: @ter-fg-color;
+    font-size: 0.95em;
+}
+.card_advisors {
+    margin: 3px 0px 0px 16px;
+    height: 452px;
+    font-size: 0;
+}
 .card_advisor {
-    background-color: #273a41;
-    margin: 0px 0px 8px 0px;
-    padding: 8px;
+    position: relative;
+    display: inline-block;
+    font-size: 1rem;
+
+    margin: 0px 16px 16px 0px;
+    width: 422px;
+    height: 210px;
+
+    background-size: cover !important;
+    background-position: center center !important;
+}
+.card_advisorOverlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+
+    background-color: rgba(39, 58, 65, 0.75);
+}
+.card_advisorText {
+    position: absolute;
+    width: 390px;
+    left: 16px;
+    bottom: 24px;
+    z-index: 1;
 }
 .card_advisorType {
     .subtitle();
