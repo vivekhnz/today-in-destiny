@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <title>Today in Destiny</title>
-    </head>
-    <body>
-        <div>
-            <h1>Today in Destiny</h1>
-            <p>{{ content|safe }}</p>
-        </div>
-    </body>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Today in Destiny</title>
+    <style>
+        {{ css|safe }}
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <p class="card_name">{{ cardName|safe }}</p>
+        <p class="card_date">{{ date|safe }}</p>
+        <p class="card_twitter">@TodayInDestiny</p>
+        {% for advisor in advisors %}
+            <div class="card_advisor">
+                <p class="card_advisorType">{{ advisor.type|safe }}</p>
+                <p class="card_advisorName">{{ advisor.name|safe }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+
 </html>

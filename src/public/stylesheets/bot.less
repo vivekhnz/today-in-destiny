@@ -1,9 +1,9 @@
 // imports
 @import "common.less";
+@import "botfonts.less";
 
 // core styles
 body {
-    background-color: @bg-color;
     margin: 0px;
     padding: 0px;
 }
@@ -13,4 +13,27 @@ p {
 }
 ul {
     margin: 0px;
+}
+
+// card styles
+.card {
+    width: 892px;
+    height: 512px;
+    background-color: @bg-color;
+}
+.card_advisor {
+    background-color: #273a41;
+    margin: 0px 0px 8px 0px;
+    padding: 8px;
+}
+.card_advisorType {
+    .subtitle();
+    text-transform: uppercase;
+    color: @ter-fg-color;
+}
+.card_advisorName {
+    .title();
+    color: @contrast-color;
+    line-height: 0.9em;
+    margin: 4px 0px;
 }
