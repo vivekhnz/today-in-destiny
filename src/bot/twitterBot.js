@@ -31,6 +31,7 @@ let WEEKLY_CARD = {
 };
 
 let BASE_DIR = __dirname.replace(/\\/g, '/');
+let PHANTOMJS_PATH = `${__dirname}/../../vendor/phantomjs/bin/phantomjs`;
 let SWIG_VIEW_PATH = `${__dirname}/../views/twitterBot.html`;
 let CSS_PATH = `${__dirname}/../public/stylesheets/bot.css`;
 let OUTPUT_DIR = `${__dirname}/temp`;
@@ -227,6 +228,12 @@ function screenshot(file) {
                 height: 512
             }
         };
+
+        // use the Heroku buildpack version if we are in production
+        if (process.env.NODE_ENV === 'production') {
+            options.phantomPath = PHANTOMJS_PATH;
+        }
+        
         webshot(file, OUTPUT_IMAGE, options, error => {
             if (error) {
                 console.log(`Webshot ${error}`);
