@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+    dotenv.config();
+}
 if (!process.env.BUNGIE_API_KEY) {
     console.error("The 'BUNGIE_API_KEY' environment variable has not been set.");
     process.exit(1);
@@ -394,12 +396,6 @@ function generateItemManifest(itemHashes, existing = null) {
             if (definition) {
                 items[hash] = definition;
             }
-            // items[hash] = items[hash] || {
-            //     hash: hash,
-            //     name: 'Item Name',
-            //     type: 'Item Type',
-            //     icon: '/images/ui/unknownItem.png'
-            // };
         }, this);
     }
     return items;
