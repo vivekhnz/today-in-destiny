@@ -31,6 +31,17 @@
                     <div class="card_advisorContent">
                         <p class="card_advisorType">{{ advisor.type|safe }}</p>
                         <p class="card_advisorName">{{ advisor.name|safe }}</p>
+                        {% if advisor.modifiers %}
+                        <div class="card_advisorSeparator"></div>
+                        <ul class="card_advisorModifiers">
+                            {% for modifier in advisor.modifiers %}
+                            <li>
+                                <img src="{{ modifier.icon }}" title="{{ modifier.name }}" />
+                                <p>{{ modifier.name }}</p>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
                     </div>
                 </div>
             </div>

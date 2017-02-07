@@ -86,13 +86,53 @@ function generateHTML(css) {
                 name: "Winter's Run",
                 type: 'Nightfall Strike',
                 image: 'https://www.bungie.net/img/theme/destiny/bgs/pgcrs/strike_winters_run.jpg',
-                icon: '../public/images/advisors/icons/nightfall.png'
+                icon: '../public/images/advisors/icons/nightfall.png',
+                modifiers: [
+                    {
+                        name: 'Epic',
+                        icon: 'https://www.bungie.net/common/destiny_content/icons/0e0bf4a994a154fe65e395fdb6879fbd.png',
+                    },
+                    {
+                        name: 'Berserk',
+                        icon: 'https://www.bungie.net/common/destiny_content/icons/9776029c3976d417da5bb2dcb6c5656f.png',
+                    },
+                    {
+                        name: 'Small Arms',
+                        icon: 'https://www.bungie.net/common/destiny_content/icons/8c39385a1ebe6aa8e35d578986a739db.png',
+                    },
+                    {
+                        name: 'Chaff',
+                        icon: 'https://www.bungie.net/common/destiny_content/icons/93a7d2813b5a18ac03359365adf6d297.png',
+                    },
+                    {
+                        name: 'Match Game',
+                        icon: 'https://www.bungie.net/common/destiny_content/icons/220e70a5086743ae4c686fb0300441f5.png',
+                    }
+                ]
             },
             {
                 name: 'SIVA Crisis Heroic',
                 type: 'Heroic Strike Playlist',
                 image: '../public/images/advisors/backgrounds/heroicStrikes.jpg',
-                icon: '../public/images/advisors/icons/heroicStrikes.png'
+                icon: '../public/images/advisors/icons/heroicStrikes.png',
+                modifiers: [
+                    {
+                        name: 'Heroic',
+                        icon: 'https://www.bungie.net/common/destiny_content/icons/26f8f731b4ec5f49a602a11781b24e69.png',
+                    },
+                    {
+                        name: 'Small Arms',
+                        icon: 'https://www.bungie.net/common/destiny_content/icons/8c39385a1ebe6aa8e35d578986a739db.png',
+                    },
+                    {
+                        name: 'Chaff',
+                        icon: 'https://www.bungie.net/common/destiny_content/icons/93a7d2813b5a18ac03359365adf6d297.png',
+                    },
+                    {
+                        name: 'Airborne',
+                        icon: 'https://www.bungie.net/common/destiny_content/icons/a3aed50629c80eb45187b3caddf329db.png',
+                    }
+                ]
             },
             {
                 name: 'Mayhem Clash',
@@ -129,17 +169,16 @@ function screenshot(file) {
 
 function cleanup() {
     return new Promise((resolve, reject) => {
-        resolve();
-        // rimraf(OUTPUT_HTML_FILE, error => {
-        //     if (error) {
-        //         console.log("Couldn't delete generated HTML page:");
-        //         console.log(error);
-        //         reject(error);
-        //     }
-        //     else {
-        //         console.log('Deleted generated HTML page.');
-        //         resolve();
-        //     }
-        // });
+        rimraf(OUTPUT_HTML_FILE, error => {
+            if (error) {
+                console.log("Couldn't delete generated HTML page:");
+                console.log(error);
+                reject(error);
+            }
+            else {
+                console.log('Deleted generated HTML page.');
+                resolve();
+            }
+        });
     });
 }
