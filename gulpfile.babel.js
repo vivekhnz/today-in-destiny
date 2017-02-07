@@ -1,7 +1,8 @@
+import child_process from 'child_process';
+import path from 'path';
 import gulp from 'gulp';
 import gulpif from 'gulp-if';
 import changed from 'gulp-changed';
-import path from 'path';
 import babel from 'gulp-babel';
 import browserify from 'browserify';
 import watchify from 'watchify';
@@ -42,10 +43,15 @@ var config = {
         },
         nodemon: {
             script: 'build/server.js',
-            watch: ['build/**/**.js', '!build/**/**.bundle.js'],
+            watch: [
+                'build/**/**.js',
+                '!build/**/**.bundle.js',
+                '!build/bot/**/**.js'
+            ],
             ext: 'js'
         }
     },
+    twitterBot: 'build/bot/twitterBot.js',
     publicAssets: ['build/public/**/**.*'],
     js: 'src/**/**.js',
     copyToOutput: {
@@ -56,7 +62,10 @@ var config = {
     },
     stylesheets: {
         src: 'src/public/stylesheets/**/**.less',
-        entry: 'src/public/stylesheets/main.less',
+        entry: {
+            main: 'src/public/stylesheets/main.less',
+            bot: 'src/public/stylesheets/bot.less'
+        },
         outDir: 'build/public/stylesheets'
     },
     images: {
@@ -100,13 +109,15 @@ gulp.task('babel', () => compileJS(config.js, 'build'));
 gulp.task('manifest', ['babel'], () => verifyManifest());
 
 // compile LESS stylesheets
-gulp.task('stylesheets', () => {
-    return gulp.src(config.stylesheets.entry)
+function compileLess(entry) {
+    return gulp.src(entry)
         .pipe(plumber())
         .pipe(less())
         .pipe(gulpif(production, cssmin()))
         .pipe(gulp.dest(config.stylesheets.outDir));
-});
+}
+gulp.task('stylesheets', () => compileLess(config.stylesheets.entry.main));
+gulp.task('stylesheets-bot', () => compileLess(config.stylesheets.entry.bot));
 
 // minify images
 gulp.task('images', () => {
@@ -191,6 +202,25 @@ gulp.task('server', ['build'], callback => {
         })
         .on('error', error => { throw error; });
 });
+
+// run twitter bot
+// usage: 'gulp twitter-bot --option <task>'
+gulp.task('twitter-bot', ['babel', 'copy', 'stylesheets-bot', 'images'],
+    callback => {
+        if (process.argv.length < 5) {
+            let usage = "Usage: 'gulp twitter-bot --option <task>'";
+            console.log(`ERROR: No bot task was specified.\n${usage}`);
+            callback();
+        }
+        else {
+            let command = `node ${config.twitterBot} ${process.argv[4]}`;
+            child_process.exec(command, (error, stdout, stderr) => {
+                console.log(stdout);
+                console.log(stderr);
+                callback(error);
+            });
+        }
+    });
 
 // initialize BrowserSync
 gulp.task('sync', () => {

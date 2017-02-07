@@ -1,6 +1,6 @@
 {
   "name": "today-in-destiny",
-  "version": "1.0.3",
+  "version": "1.1",
   "description": "A summary of what's available in Destiny today.",
   "main": "server.js",
   "dependencies": {
@@ -38,10 +38,12 @@
     "rimraf": "^2.5.4",
     "sqlite": "^2.2.4",
     "swig": "^1.4.2",
+    "twitter": "^1.7.0",
     "unzip": "^0.1.11",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "webshot": "~0.5.1"
   },
   "scripts": {
     "start": "node build/server.js"
