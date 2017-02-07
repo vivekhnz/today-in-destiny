@@ -38,6 +38,7 @@
     "rimraf": "^2.5.4",
     "sqlite": "^2.2.4",
     "swig": "^1.4.2",
+    "twitter": "^1.7.0",
     "unzip": "^0.1.11",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

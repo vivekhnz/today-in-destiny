@@ -1,7 +1,18 @@
+import dotenv from 'dotenv';
+dotenv.config();
+if (!process.env.TWITTER_CONSUMER_KEY
+    || !process.env.TWITTER_CONSUMER_SECRET
+    || !process.env.TWITTER_ACCESS_TOKEN_KEY
+    || !process.env.TWITTER_ACCESS_TOKEN_SECRET) {
+    console.error("One or more Twitter secret key environment variables have not been set.");
+    process.exit(1);
+}
+
 import fs from 'fs';
 import request from 'request';
 import swig from 'swig';
 import webshot from 'webshot';
+import Twitter from 'twitter';
 import rimraf from 'rimraf';
 import { default as time } from '../services/time';
 
@@ -41,6 +52,7 @@ function postWeeklyActivities() {
     Promise.all([retry(getAdvisors, 5), loadCSS()])
         .then(createPage)
         .then(screenshot)
+        .then(tweet)
         .then(cleanup)
         .catch(error => console.log("Couldn't post weekly activities."));
 }
@@ -48,7 +60,7 @@ function postWeeklyActivities() {
 function retry(promiseFunction, maxRetries) {
     return new Promise((resolve, reject) => {
         let retries = 0;
-        
+
         let runTask = () => promiseFunction()
             .then(result => resolve(result))
             .catch(error => {
@@ -212,6 +224,21 @@ function screenshot(file) {
             }
         });
     });
+}
+
+function tweet() {
+    let content = {
+        status: 'Test tweet from bot script'
+    };
+
+    let twitter = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+        access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+    });
+    return twitter.post('statuses/update', content)
+        .then(tweet => console.log('Tweet posted.'));
 }
 
 function cleanup() {
