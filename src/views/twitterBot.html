@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base href="{{ baseDir|safe }}/bot.html" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Today in Destiny</title>
+    <style>
+        {{ css|safe }}
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <img class="card_logo" src="../public/images/ui/logo-xxs.png" />
+        <div class="card_header">
+            <span class="card_name">{{ cardName|safe }}</span>
+            <span class="card_date">{{ date|safe }}</span>
+            <span class="card_twitter">@TodayInDestiny</span>
+        </div>
+        <div class="card_advisors">
+            {% for advisor in advisors %}
+            <div class="card_advisor"
+                style="background-image: url('{{ advisor.image|safe }}');">
+                <div class="card_advisorOverlay"></div>
+                <div class="card_advisorContainer">
+                    <div class="card_advisorIcon"
+                        style="background-image: url('{{ advisor.icon|safe }}');"></div>
+                    <div class="card_advisorContent">
+                        <p class="card_advisorType">{{ advisor.type|safe }}</p>
+                        <p class="card_advisorName">{{ advisor.name|safe }}</p>
+                        {% if advisor.modifiers %}
+                        <div class="card_advisorSeparator"></div>
+                        <ul class="card_advisorModifiers">
+                            {% for modifier in advisor.modifiers %}
+                            <li>
+                                <img src="{{ modifier.icon }}" title="{{ modifier.name }}" />
+                                <p>{{ modifier.name }}</p>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>
