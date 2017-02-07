@@ -1,10 +1,20 @@
 import fs from 'fs';
+import request from 'request';
 import swig from 'swig';
 import webshot from 'webshot';
 import rimraf from 'rimraf';
+import { default as time } from '../services/time';
 
 let TASKS = {
     'weekly': postWeeklyActivities
+};
+
+let API_ENDPOINT = 'https://todayindestiny.herokuapp.com/api/advisors';
+let WEEKLY_CARD = {
+    name: 'This Week',
+    category: 'weekly',
+    advisors: ['wotm', 'nightfall', 'strikes', 'crucible', 'kf'],
+    maxAdvisors: 4
 };
 
 let BASE_DIR = __dirname.replace(/\\/g, '/');
@@ -28,11 +38,32 @@ else {
 }
 
 function postWeeklyActivities() {
-    loadCSS()
+    Promise.all([getAdvisors(), loadCSS()])
         .then(createPage)
         .then(screenshot)
         .then(cleanup)
         .catch(error => console.log("Couldn't post weekly activities."));
+}
+
+function getAdvisors() {
+    return new Promise((resolve, reject) => {
+        request(API_ENDPOINT, (error, response, body) => {
+            try {
+                if (error) {
+                    throw error;
+                }
+                let data = JSON.parse(body);
+                if (response.statusCode === 200) {
+                    resolve(data.response);
+                }
+                else {
+                    reject(new Error(data.status));
+                }
+            } catch (e) {
+                reject(new Error('An error occurred.'));
+            }
+        });
+    });
 }
 
 function loadCSS() {
@@ -52,97 +83,87 @@ function loadCSS() {
     });
 }
 
-function createPage(css) {
+function createPage([data, css]) {
     return new Promise((resolve, reject) => {
-        let html = generateHTML(css);
-        console.log('HTML generated. Saving file...');
-        fs.writeFile(OUTPUT_HTML_FILE, html, error => {
-            if (error) {
-                console.log('HTML file could not be saved.');
-                reject(error);
-            }
-            else {
-                console.log('HTML file saved.');
-                resolve(OUTPUT_HTML_FILE);
-            }
-        });
+        if (data) {
+            let content = generateContent(WEEKLY_CARD, data);
+            content.css = css;
+            let html = swig.renderFile(SWIG_VIEW_PATH, content);
+
+            console.log('HTML generated. Saving file...');
+            fs.writeFile(OUTPUT_HTML_FILE, html, error => {
+                if (error) {
+                    console.log('HTML file could not be saved.');
+                    reject(error);
+                }
+                else {
+                    console.log('HTML file saved.');
+                    resolve(OUTPUT_HTML_FILE);
+                }
+            });
+        }
+        else {
+            reject('No advisor data retrieved.');
+        }
     });
 }
 
-function generateHTML(css) {
-    let content = {
-        css: css,
+function generateContent(card, data) {
+    let output = {
         baseDir: BASE_DIR,
-        cardName: 'This Week',
-        date: 'Jan 31 - Feb 6',
-        advisors: [
-            {
-                name: 'Aksis Challenge',
-                type: 'Wrath of the Machine',
-                image: '../public/images/advisors/backgrounds/raid-wotm-aksis.jpg',
-                icon: '../public/images/advisors/icons/raid-wotm.png'
-            },
-            {
-                name: "Winter's Run",
-                type: 'Nightfall Strike',
-                image: 'https://www.bungie.net/img/theme/destiny/bgs/pgcrs/strike_winters_run.jpg',
-                icon: '../public/images/advisors/icons/nightfall.png',
-                modifiers: [
-                    {
-                        name: 'Epic',
-                        icon: 'https://www.bungie.net/common/destiny_content/icons/0e0bf4a994a154fe65e395fdb6879fbd.png',
-                    },
-                    {
-                        name: 'Berserk',
-                        icon: 'https://www.bungie.net/common/destiny_content/icons/9776029c3976d417da5bb2dcb6c5656f.png',
-                    },
-                    {
-                        name: 'Small Arms',
-                        icon: 'https://www.bungie.net/common/destiny_content/icons/8c39385a1ebe6aa8e35d578986a739db.png',
-                    },
-                    {
-                        name: 'Chaff',
-                        icon: 'https://www.bungie.net/common/destiny_content/icons/93a7d2813b5a18ac03359365adf6d297.png',
-                    },
-                    {
-                        name: 'Match Game',
-                        icon: 'https://www.bungie.net/common/destiny_content/icons/220e70a5086743ae4c686fb0300441f5.png',
-                    }
-                ]
-            },
-            {
-                name: 'SIVA Crisis Heroic',
-                type: 'Heroic Strike Playlist',
-                image: '../public/images/advisors/backgrounds/heroicStrikes.jpg',
-                icon: '../public/images/advisors/icons/heroicStrikes.png',
-                modifiers: [
-                    {
-                        name: 'Heroic',
-                        icon: 'https://www.bungie.net/common/destiny_content/icons/26f8f731b4ec5f49a602a11781b24e69.png',
-                    },
-                    {
-                        name: 'Small Arms',
-                        icon: 'https://www.bungie.net/common/destiny_content/icons/8c39385a1ebe6aa8e35d578986a739db.png',
-                    },
-                    {
-                        name: 'Chaff',
-                        icon: 'https://www.bungie.net/common/destiny_content/icons/93a7d2813b5a18ac03359365adf6d297.png',
-                    },
-                    {
-                        name: 'Airborne',
-                        icon: 'https://www.bungie.net/common/destiny_content/icons/a3aed50629c80eb45187b3caddf329db.png',
-                    }
-                ]
-            },
-            {
-                name: 'Mayhem Clash',
-                type: 'Weekly Crucible Playlist',
-                image: '../public/images/advisors/backgrounds/crucible-mayhem.jpg',
-                icon: '../public/images/advisors/icons/weeklyCrucible.png'
-            }
-        ]
+        cardName: card.name,
+        date: time.getCurrentWeekString(),
+        advisors: []
     };
-    return swig.renderFile(SWIG_VIEW_PATH, content);
+
+    let category = null;
+    for (let i = 0; i < data.categories.length; i++) {
+        let advisorCategory = data.categories[i];
+        if (advisorCategory.id === card.category) {
+            category = advisorCategory;
+        }
+    }
+
+    if (category) {
+        for (let i = 0; i < category.advisors.length; i++) {
+            if (output.advisors.length >= card.maxAdvisors) {
+                break;
+            }
+
+            let advisor = category.advisors[i];
+            if (card.advisors.includes(advisor.shortID)) {
+                let modifiers = undefined;
+                if (advisor.modifiers) {
+                    modifiers = [];
+                    advisor.modifiers.forEach(modifier => {
+                        modifiers.push({
+                            name: modifier.name,
+                            icon: formatURL(modifier.icon)
+                        });
+                    }, this);
+                }
+
+                output.advisors.push({
+                    name: advisor.name,
+                    type: advisor.type,
+                    image: formatURL(advisor.image),
+                    icon: formatURL(advisor.icon),
+                    modifiers: modifiers
+                });
+            }
+        }
+    }
+
+    return output;
+}
+
+function formatURL(url) {
+    if (url.startsWith('http')) {
+        return url;
+    }
+    else {
+        return `../public${url}`;
+    }
 }
 
 function screenshot(file) {

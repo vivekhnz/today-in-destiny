@@ -19,6 +19,19 @@ class TimeService {
         };
     }
 
+    getCurrentWeekString() {
+        // calculate time in UTC-9 (where reset is at midnight)
+        var date = new Date();
+        date.setUTCHours(date.getUTCHours() - 9);
+        let start = `${MONTHS[date.getUTCMonth()]} ${date.getUTCDate()}`;
+        
+        // find the date of the end of the week
+        date.setDate(date.getDate() + 6);
+        let end = `${MONTHS[date.getUTCMonth()]} ${date.getUTCDate()}`;
+
+        return `${start} - ${end}`;
+    }
+
     getElapsedMilliseconds(utcTime) {
         let currentTime = new Date();
         let startTime = Date.parse(utcTime);
