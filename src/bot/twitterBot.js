@@ -38,15 +38,40 @@ else {
 }
 
 function postWeeklyActivities() {
-    Promise.all([getAdvisors(), loadCSS()])
+    Promise.all([retry(getAdvisors, 5), loadCSS()])
         .then(createPage)
         .then(screenshot)
         .then(cleanup)
         .catch(error => console.log("Couldn't post weekly activities."));
 }
 
+function retry(promiseFunction, maxRetries) {
+    return new Promise((resolve, reject) => {
+        let retries = 0;
+        
+        let runTask = () => promiseFunction()
+            .then(result => resolve(result))
+            .catch(error => {
+                console.log(error.message);
+
+                retries++;
+                if (retries > maxRetries) {
+                    console.log('Failed. Max retries exceeded.');
+                    reject();
+                }
+                else {
+                    console.log(`Failed. Retrying... (${retries} / ${maxRetries})`);
+                    runTask();
+                }
+            });
+
+        runTask();
+    });
+}
+
 function getAdvisors() {
     return new Promise((resolve, reject) => {
+        console.log('Retrieving advisors...');
         request(API_ENDPOINT, (error, response, body) => {
             try {
                 if (error) {
@@ -54,6 +79,7 @@ function getAdvisors() {
                 }
                 let data = JSON.parse(body);
                 if (response.statusCode === 200) {
+                    console.log('Advisors retrieved.')
                     resolve(data.response);
                 }
                 else {
