@@ -73,12 +73,22 @@ ul {
 
     background-color: rgba(39, 58, 65, 0.75);
 }
-.card_advisorText {
+.card_advisorContainer {
     position: absolute;
     width: 390px;
     left: 16px;
     bottom: 24px;
     z-index: 1;
+}
+.card_advisorIcon {
+    width: 64px;
+    height: 64px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.card_advisorContent {
+    margin: -64px 0px 0px 80px;
 }
 .card_advisorType {
     .subtitle();
@@ -89,5 +99,5 @@ ul {
     .title();
     color: @contrast-color;
     line-height: 0.9em;
-    margin: 4px 0px;
+    margin: 8px 0px 0px 0px;
 }

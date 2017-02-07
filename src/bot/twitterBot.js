@@ -79,22 +79,26 @@ function generateHTML(css) {
             {
                 name: 'Aksis Challenge',
                 type: 'Wrath of the Machine',
-                image: '../public/images/advisors/backgrounds/raid-wotm-aksis.jpg'
+                image: '../public/images/advisors/backgrounds/raid-wotm-aksis.jpg',
+                icon: '../public/images/advisors/icons/raid-wotm.png'
             },
             {
                 name: "Winter's Run",
                 type: 'Nightfall Strike',
-                image: 'https://www.bungie.net/img/theme/destiny/bgs/pgcrs/strike_winters_run.jpg'
+                image: 'https://www.bungie.net/img/theme/destiny/bgs/pgcrs/strike_winters_run.jpg',
+                icon: '../public/images/advisors/icons/nightfall.png'
             },
             {
                 name: 'SIVA Crisis Heroic',
                 type: 'Heroic Strike Playlist',
-                image: '../public/images/advisors/backgrounds/heroicStrikes.jpg'
+                image: '../public/images/advisors/backgrounds/heroicStrikes.jpg',
+                icon: '../public/images/advisors/icons/heroicStrikes.png'
             },
             {
                 name: 'Mayhem Clash',
                 type: 'Weekly Crucible Playlist',
-                image: '../public/images/advisors/backgrounds/crucible-mayhem.jpg'
+                image: '../public/images/advisors/backgrounds/crucible-mayhem.jpg',
+                icon: '../public/images/advisors/icons/weeklyCrucible.png'
             }
         ]
     };
@@ -125,16 +129,17 @@ function screenshot(file) {
 
 function cleanup() {
     return new Promise((resolve, reject) => {
-        rimraf(OUTPUT_HTML_FILE, error => {
-            if (error) {
-                console.log("Couldn't delete generated HTML page:");
-                console.log(error);
-                reject(error);
-            }
-            else {
-                console.log('Deleted generated HTML page.');
-                resolve();
-            }
-        });
+        resolve();
+        // rimraf(OUTPUT_HTML_FILE, error => {
+        //     if (error) {
+        //         console.log("Couldn't delete generated HTML page:");
+        //         console.log(error);
+        //         reject(error);
+        //     }
+        //     else {
+        //         console.log('Deleted generated HTML page.');
+        //         resolve();
+        //     }
+        // });
     });
 }

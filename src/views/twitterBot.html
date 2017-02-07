@@ -25,9 +25,13 @@
             <div class="card_advisor"
                 style="background-image: url('{{ advisor.image|safe }}');">
                 <div class="card_advisorOverlay"></div>
-                <div class="card_advisorText">
-                    <p class="card_advisorType">{{ advisor.type|safe }}</p>
-                    <p class="card_advisorName">{{ advisor.name|safe }}</p>
+                <div class="card_advisorContainer">
+                    <div class="card_advisorIcon"
+                        style="background-image: url('{{ advisor.icon|safe }}');"></div>
+                    <div class="card_advisorContent">
+                        <p class="card_advisorType">{{ advisor.type|safe }}</p>
+                        <p class="card_advisorName">{{ advisor.name|safe }}</p>
+                    </div>
                 </div>
             </div>
             {% endfor %}
