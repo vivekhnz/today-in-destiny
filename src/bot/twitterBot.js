@@ -12,9 +12,9 @@ if (!process.env.TWITTER_CONSUMER_KEY
 
 import fs from 'fs';
 import request from 'request';
-import Canvas from 'canvas';
-import { default as twitter } from '../services/twitter';
 import { default as time } from '../services/time';
+import renderCard from './card';
+import { default as twitter } from '../services/twitter';
 
 let TASKS = {
     'weekly': postWeeklyActivities
@@ -50,9 +50,7 @@ function postWeeklyActivities() {
             tweetText = content.tweetText || tweetText;
             return renderCard(content.card);
         })
-        .then(getCanvasBuffer)
         .then(data => saveFile('build/bot/output.png', data))
-        .then(data => tweet(tweetText, data))
         .catch(error => console.log("Couldn't post weekly activities."));
 }
 
@@ -166,35 +164,6 @@ function formatURL(url) {
 function tweet(text, media) {
     return twitter.tweet(text, media)
         .then(() => console.log('Tweet posted.'));
-}
-
-function renderCard(content) {
-    let canvas = new Canvas(892, 512);
-    let context = canvas.getContext('2d');
-
-    context.fillStyle = "#d6d6d9";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    context.fillStyle = "#273a41";
-    context.font = '11px Consolas';
-    context.fillText(JSON.stringify(content), 10, 10);
-
-    return Promise.resolve(canvas);
-}
-
-function getCanvasBuffer(canvas) {
-    return new Promise((resolve, reject) => {
-        canvas.toBuffer((error, buffer) => {
-            if (error) {
-                console.log("Couldn't export canvas to buffer.");
-                reject(error);
-            }
-            else {
-                console.log('Canvas buffer exported.');
-                resolve(buffer);
-            }
-        })
-    });
 }
 
 function saveFile(path, data) {
