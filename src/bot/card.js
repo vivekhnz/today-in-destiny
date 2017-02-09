@@ -41,6 +41,13 @@ function drawCard(content, images) {
 
     canvas.drawRect(0, 0, CARD_WIDTH, CARD_HEIGHT, '#d6d6d9');
     canvas.drawImage(16, 0, LOGO_ICON);
+    let nameSize = canvas.drawText(64, 44, content.cardName,
+        '42px "Bebas Neue Bold"', '#273a41');
+    canvas.drawText(76 + nameSize.width, 44,
+        content.date.toUpperCase(),
+        'bold 18px "Bender"', '#486e7e');
+    canvas.drawText(CARD_WIDTH - 16, 44, '@TodayInDestiny',
+        'bold 15px "Bender"', '#93a3ae', 'right');
 
     return canvas.toBuffer();
 }

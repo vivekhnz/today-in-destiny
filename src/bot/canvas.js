@@ -18,6 +18,14 @@ export default class CanvasHelper {
         this.context.drawImage(image, x, y);
     }
 
+    drawText(x, y, text, font, color, align = 'left') {
+        this.context.font = font;
+        this.context.fillStyle = color;
+        this.context.textAlign = align;
+        this.context.fillText(text, x, y);
+        return this.context.measureText(text);
+    }
+
     toBuffer() {
         return new Promise((resolve, reject) => {
             this.canvas.toBuffer((error, buffer) => {
