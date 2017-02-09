@@ -1,56 +1,46 @@
-import Canvas from 'canvas';
+import fs from 'fs';
+import CanvasHelper from './canvas';
+
+let CARD_WIDTH = 892;
+let CARD_HEIGHT = 512;
+let LOGO_ICON = 'build/public/images/ui/logo-xxs.png';
 
 export default function renderCard(content) {
-    return buildCanvas(content)
-        .then(getCanvasBuffer);
+    let urls = [LOGO_ICON];
+    return loadImages(urls)
+        .then(images => drawCard(content, images));
 }
 
-function buildCanvas(content) {
-    let canvas = new Canvas(892, 512);
-    let context = canvas.getContext('2d');
-
-    context.fillStyle = "#d6d6d9";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    context.fillStyle = "#273a41";
-    context.font = '12px Consolas';
-
-    let y = 20;
-    y = drawText(context, content.cardName, y);
-    y = drawText(context, content.date, y);
-
-    content.advisors.forEach(advisor => {
-        y = drawText(context, `    ${advisor.name}`, y);
-        y = drawText(context, `    ${advisor.type}`, y);
-
-        if (advisor.modifiers) {
-            advisor.modifiers.forEach(modifier => {
-                y = drawText(context, `        ${modifier.name}`, y);
-            }, this);
-        }
-        
-        y = drawText(context, '', y);
-    }, this);
-
-    return Promise.resolve(canvas);
+function loadImages(urls) {
+    return Promise.all(urls.map(loadImage))
+        .then(images => {
+            let output = {};
+            for (let i = 0; i < images.length; i++) {
+                output[urls[i]] = images[i];
+            }
+            return output;
+        })
 }
 
-function drawText(context, text, y) {
-    context.fillText(text, 10, y);
-    return y + 20;
-}
-
-function getCanvasBuffer(canvas) {
+function loadImage(url) {
     return new Promise((resolve, reject) => {
-        canvas.toBuffer((error, buffer) => {
+        fs.readFile(url, (error, data) => {
             if (error) {
-                console.log("Couldn't export canvas to buffer.");
+                console.log(`Couldn't load image (${url})`);
                 reject(error);
             }
             else {
-                console.log('Canvas buffer exported.');
-                resolve(buffer);
+                resolve(data);
             }
         })
-    });
+    })
+}
+
+function drawCard(content, images) {
+    let canvas = new CanvasHelper(CARD_WIDTH, CARD_HEIGHT, images);
+
+    canvas.drawRect(0, 0, CARD_WIDTH, CARD_HEIGHT, '#d6d6d9');
+    canvas.drawImage(16, 0, LOGO_ICON);
+
+    return canvas.toBuffer();
 }

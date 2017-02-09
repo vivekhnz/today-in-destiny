@@ -51,6 +51,7 @@ function postWeeklyActivities() {
             return renderCard(content.card);
         })
         .then(data => saveFile('build/bot/output.png', data))
+        .then(data => tweet(tweetText, data))
         .catch(error => console.log("Couldn't post weekly activities."));
 }
 
