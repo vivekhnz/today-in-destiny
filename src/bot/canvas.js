@@ -12,28 +12,31 @@ export default class CanvasHelper {
         this.context.fillRect(x, y, w, h);
     }
 
-    drawImage(x, y, url) {
-        let image = new Canvas.Image();
-        image.src = this.images[url];
-        this.context.drawImage(image, x, y);
-    }
-
-    drawImageBackground(x, y, w, h, url) {
+    drawImage(url, x, y,
+        w = undefined, h = undefined, sizing = 'none') {
         let image = new Canvas.Image();
         image.src = this.images[url];
 
-        let sw = w > h ? image.width : image.height * (w / h);
-        let sh = h > w ? image.height : image.width * (h / w);
+        let sx = 0;
+        let sy = 0;
+        let sw = image.width;
+        let sh = image.height;
 
-        if (sh > image.height) {
-            sh = image.height;
-            sw = image.height * (w / h);
+        if (sizing === 'cover' && w && h) {
+            sw = w > h ? image.width : image.height * (w / h);
+            sh = h > w ? image.height : image.width * (h / w);
+
+            if (sh > image.height) {
+                sh = image.height;
+                sw = image.height * (w / h);
+            }
+
+            sx = (image.width - sw) / 2;
+            sy = (image.height - sh) / 2;
         }
 
-        let sx = (image.width - sw) / 2;
-        let sy = (image.height - sh) / 2;
-
-        this.context.drawImage(image, sx, sy, sw, sh, x, y, w, h);
+        this.context.drawImage(image, sx, sy, sw, sh, x, y,
+            w || image.width, h || image.height);
     }
 
     measureText(text, font, maxWidth = undefined) {

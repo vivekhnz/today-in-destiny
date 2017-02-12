@@ -21,6 +21,7 @@ function getImageURLs(content) {
     let urls = [];
     content.advisors.forEach(advisor => {
         urls.push(advisor.image);
+        urls.push(advisor.icon);
     }, this);
     urls.push(LOGO_ICON);
 
@@ -85,7 +86,7 @@ function drawCard(content, images) {
     canvas.drawRect(0, 0, CARD_WIDTH, CARD_HEIGHT, '#d6d6d9');
 
     // draw header
-    canvas.drawImage(16, 0, LOGO_ICON);
+    canvas.drawImage(LOGO_ICON, 16, 0);
     let nameSize = canvas.drawText(64, 44, content.cardName,
         '42px "Bebas Neue Bold"', '#273a41');
     canvas.drawText(76 + nameSize.width, 44,
@@ -112,7 +113,7 @@ function drawCard(content, images) {
 
 function drawAdvisor(canvas, x, y, w, h, advisor) {
     // draw background
-    canvas.drawImageBackground(x, y, w, h, advisor.image);
+    canvas.drawImage(advisor.image, x, y, w, h, 'cover');
     canvas.drawRect(x, y, w, h, 'rgba(39, 58, 65, 0.75)');
 
     // calculate content dimensions
@@ -126,7 +127,7 @@ function drawAdvisor(canvas, x, y, w, h, advisor) {
     let contentY = y + h - (contentHeight + 24);
 
     // draw icon
-    canvas.drawRect(x + 16, contentY, 64, 64, '#f4f4f4');
+    canvas.drawImage(advisor.icon, x + 16, contentY, 64, 64);
 
     // vertically center name
     let nameY = 0;
