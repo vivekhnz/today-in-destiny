@@ -23,8 +23,17 @@ class TimeService {
         // calculate time in UTC-9 (where reset is at midnight)
         var date = new Date();
         date.setUTCHours(date.getUTCHours() - 9);
-        let start = `${MONTHS[date.getUTCMonth()]} ${date.getUTCDate()}`;
         
+        // find the date of the start of the week
+        let day = date.getUTCDay();
+        if (day < 2) {
+            date.setDate(date.getDate() - (day + 5));
+        }
+        else if (day > 2) {
+            date.setDate(date.getDate() - (day - 2));
+        }
+        let start = `${MONTHS[date.getUTCMonth()]} ${date.getUTCDate()}`;
+
         // find the date of the end of the week
         date.setDate(date.getDate() + 6);
         let end = `${MONTHS[date.getUTCMonth()]} ${date.getUTCDate()}`;
