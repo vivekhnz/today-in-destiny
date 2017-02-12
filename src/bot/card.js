@@ -93,7 +93,7 @@ function drawCard(content, images) {
         'bold 18px "Bender"', '#486e7e');
     canvas.drawText(CARD_WIDTH - 16, 44, '@TodayInDestiny',
         'bold 15px "Bender"', '#93a3ae', 'right');
-    
+
     // draw advisors
     for (let i = 0; i < content.advisors.length; i++) {
         let advisor = content.advisors[i];
@@ -111,5 +111,31 @@ function drawCard(content, images) {
 }
 
 function drawAdvisor(canvas, x, y, w, h, advisor) {
+    // draw background
     canvas.drawImageBackground(x, y, w, h, advisor.image);
+    canvas.drawRect(x, y, w, h, 'rgba(39, 58, 65, 0.75)');
+
+    // calculate content dimensions
+    let contentWidth = w - 112;
+
+    let nameHeight = canvas.measureText(
+        advisor.name, '36px "Bebas Neue Bold"',
+        contentWidth).emHeightAscent;
+
+    let contentHeight = Math.max(nameHeight, 64);
+    let contentY = y + h - (contentHeight + 24);
+
+    // draw icon
+    canvas.drawRect(x + 16, contentY, 64, 64, '#f4f4f4');
+
+    // vertically center name
+    let nameY = 0;
+    if (nameHeight < 64) {
+        nameY = (64 - nameHeight) / 2;
+    }
+
+    // draw advisor name
+    canvas.drawText(x + 96, y + h - (24 + nameY),
+        advisor.name, '36px "Bebas Neue Bold"',
+        '#f4f4f4', 'left', contentWidth);
 }

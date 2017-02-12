@@ -36,12 +36,15 @@ export default class CanvasHelper {
         this.context.drawImage(image, sx, sy, sw, sh, x, y, w, h);
     }
 
-    drawText(x, y, text, font, color, align = 'left') {
-        this.context.font = font;
-        this.context.fillStyle = color;
-        this.context.textAlign = align;
-        this.context.fillText(text, x, y);
-        return this.context.measureText(text);
+    measureText(text, font, maxWidth = undefined) {
+        return drawMeasureText(this.context, false,
+            0, 0, text, font, 'black', 'left', maxWidth);
+    }
+
+    drawText(x, y, text, font, color, align = 'left',
+        maxWidth = undefined) {
+        return drawMeasureText(this.context, true,
+            x, y, text, font, color, align, maxWidth);
     }
 
     toBuffer() {
@@ -57,5 +60,67 @@ export default class CanvasHelper {
                 }
             })
         });
+    }
+}
+
+function drawMeasureText(
+    context, drawText,
+    x, y, text, font, color, align = 'left',
+    maxWidth = undefined) {
+    context.font = font;
+    context.fillStyle = color;
+    context.textAlign = align;
+
+    // wrap text
+    if (maxWidth) {
+        let lines = splitIntoLines(context, text, maxWidth);
+        if (lines.length > 1) {
+            let textHeight = 0;
+            for (let i = lines.length - 1; i >= 0; i--) {
+                let line = lines[i];
+                if (drawText) {
+                    context.fillText(line, x, y - textHeight);
+                }
+                let textSize = context.measureText(line);
+                textHeight += textSize.emHeightAscent;
+            }
+            return {
+                width: maxWidth,
+                emHeightAscent: textHeight
+            };
+        }
+    }
+
+    if (drawText) {
+        context.fillText(text, x, y);
+    }
+    return context.measureText(text);
+}
+
+function splitIntoLines(context, text, maxWidth) {
+    let after = [];
+
+    while (context.measureText(text).width > maxWidth) {
+        let words = text.split(" ");
+        if (words.length > 1) {
+            after.splice(0, 0, words[words.length - 1]);
+            words = words.slice(0, words.length - 1);
+            text = words.join(" ");
+        }
+    }
+
+    if (after.length === 0) {
+        return [text];
+    }
+    else if (after.length === 1) {
+        return [
+            text,
+            after[0]
+        ];
+    }
+    else {
+        let nextLines = splitIntoLines(context, after.join(" "), maxWidth);
+        nextLines.splice(0, 0, text);
+        return nextLines;
     }
 }
