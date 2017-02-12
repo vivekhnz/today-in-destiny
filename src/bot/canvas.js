@@ -18,6 +18,24 @@ export default class CanvasHelper {
         this.context.drawImage(image, x, y);
     }
 
+    drawImageBackground(x, y, w, h, url) {
+        let image = new Canvas.Image();
+        image.src = this.images[url];
+
+        let sw = w > h ? image.width : image.height * (w / h);
+        let sh = h > w ? image.height : image.width * (h / w);
+
+        if (sh > image.height) {
+            sh = image.height;
+            sw = image.height * (w / h);
+        }
+
+        let sx = (image.width - sw) / 2;
+        let sy = (image.height - sh) / 2;
+
+        this.context.drawImage(image, sx, sy, sw, sh, x, y, w, h);
+    }
+
     drawText(x, y, text, font, color, align = 'left') {
         this.context.font = font;
         this.context.fillStyle = color;
