@@ -1,6 +1,6 @@
 import fs from 'fs';
 import request from 'request';
-import CanvasHelper from './canvas';
+import CanvasHelper from '../services/canvas';
 
 let CARD_WIDTH = 892;
 let CARD_HEIGHT = 512;
@@ -22,6 +22,11 @@ function getImageURLs(content) {
     content.advisors.forEach(advisor => {
         urls.push(advisor.image);
         urls.push(advisor.icon);
+        if (advisor.modifiers) {
+            advisor.modifiers.forEach(modifier => {
+                urls.push(modifier.icon);
+            }, this);
+        }
     }, this);
     urls.push(LOGO_ICON);
 
@@ -118,32 +123,119 @@ function drawAdvisor(canvas, x, y, w, h, advisor) {
 
     // calculate content dimensions
     let contentWidth = w - 112;
+    let modifierWidth = (contentWidth - 32) / 2;
+    let contentHeight = 0;
 
-    let textHeight = canvas.measureText(
-        advisor.name, '36px "Bebas Neue Bold"',
-        contentWidth).emHeightAscent;
-    textHeight += canvas.measureText(
-        advisor.type.toUpperCase(), 'bold 15px "Bender"',
-        contentWidth).emHeightAscent + 4;
-
-    let contentHeight = Math.max(textHeight, 64);
-    let contentY = y + h - (contentHeight + 24);
-
-    // draw icon
-    canvas.drawImage(advisor.icon, x + 16, contentY, 64, 64);
-
-    // vertically center text
-    let textY = 0;
-    if (textHeight < 64) {
-        textY = (64 - textHeight) / 2;
+    // calculate modifier row heights
+    let modifierRows = [];
+    if (advisor.modifiers) {
+        for (let i = 0; i < advisor.modifiers.length; i += 2) {
+            let modifier = advisor.modifiers[i];
+            let m1height = drawMeasureModifier(
+                canvas, 0, 0, modifierWidth, modifier, false);
+            if (i == advisor.modifiers.length - 1) {
+                modifierRows.push({
+                    rowHeight: m1height,
+                    modifier1Height: m1height
+                });
+                contentHeight += m1height + 8;
+            }
+            else {
+                let nextModifier = advisor.modifiers[i + 1];
+                let m2height = drawMeasureModifier(
+                    canvas, 0, 0, modifierWidth, nextModifier, false);
+                let rowHeight = Math.max(m1height, m2height);
+                modifierRows.push({
+                    rowHeight: rowHeight,
+                    modifier1Height: m1height,
+                    modifier2Height: m2height
+                });
+                contentHeight += rowHeight + 8;
+            }
+        }
+        contentHeight += 20;
     }
 
-    // draw advisor name
-    textY += canvas.drawText(
-        x + 96, y + h - (24 + textY),
+    contentHeight += canvas.measureText(
         advisor.name, '36px "Bebas Neue Bold"',
-        '#f4f4f4', 'left', contentWidth).emHeightAscent;
-    canvas.drawText(x + 96, y + h - (28 + textY),
+        contentWidth).emHeightAscent + 4;
+    contentHeight += canvas.measureText(
         advisor.type.toUpperCase(), 'bold 15px "Bender"',
-        '#93a3ae', 'left', contentWidth);
+        contentWidth).emHeightAscent;
+
+    // draw icon
+    let iconY = y + h - (Math.max(contentHeight, 64) + 24);
+    canvas.drawImage(advisor.icon, x + 16, iconY, 64, 64);
+
+    // vertically center content
+    let contentY = y + h - 24;
+    if (contentHeight < 64) {
+        contentY -= (64 - contentHeight) / 2;
+    }
+
+    // draw advisor modifiers
+    if (advisor.modifiers) {
+        let column1 = x + 96;
+        let column2 = x + 128 + modifierWidth;
+
+        // draw modifiers
+        for (let i = modifierRows.length - 1; i >= 0; i--) {
+            let row = modifierRows[i];
+
+            // left column
+            let m1 = advisor.modifiers[i * 2];
+            drawMeasureModifier(canvas, column1,
+                contentY - (row.rowHeight - row.modifier1Height),
+                modifierWidth, m1, true);
+
+            // right column
+            if (row.modifier2Height) {
+                let m2 = advisor.modifiers[(i * 2) + 1];
+                drawMeasureModifier(canvas, column2,
+                    contentY - (row.rowHeight - row.modifier2Height),
+                    modifierWidth, m2, true);
+            }
+            
+            contentY -= row.rowHeight + 8;
+        }
+        contentY -= 8;
+
+        // draw separator
+        canvas.drawRect(
+            x + 96, contentY, contentWidth, 4,
+            'rgba(147, 163, 174, 0.5)');
+        contentY -= 12;
+    }
+
+    // draw advisor content
+    contentY -= canvas.drawText(
+        x + 96, contentY, advisor.name,
+        '36px "Bebas Neue Bold"', '#f4f4f4', 'left',
+        contentWidth).emHeightAscent + 4;
+    contentY -= canvas.drawText(
+        x + 96, contentY, advisor.type.toUpperCase(),
+        'bold 15px "Bender"', '#93a3ae', 'left',
+        contentWidth).emHeightAscent;
+}
+
+function drawMeasureModifier(canvas, x, bottom, w,
+    modifier, draw) {
+    // calculate dimensions
+    let textSize = canvas.measureText(
+        modifier.name, 'bold 15px "Bender"', w - 28);
+    let h = Math.max(textSize.emHeightAscent, 21);
+
+    // draw modifier
+    if (draw) {
+        let textY = bottom;
+        if (textSize.emHeightAscent < h) {
+            textY -= (h - textSize.emHeightAscent) / 2;
+        }
+
+        canvas.drawText(x + 28, Math.round(textY), modifier.name,
+            'bold 15px "Bender"', 'white', 'left', w - 28);
+        canvas.drawImage(modifier.icon, x, bottom - h, 21, 21);
+    }
+
+    return h;
 }
