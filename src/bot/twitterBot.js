@@ -12,11 +12,9 @@ if (!process.env.TWITTER_CONSUMER_KEY
 
 import fs from 'fs';
 import request from 'request';
-import swig from 'swig';
-import webshot from 'webshot';
-import rimraf from 'rimraf';
-import { default as twitter } from '../services/twitter';
 import { default as time } from '../services/time';
+import renderCard from './card';
+import { default as twitter } from '../services/twitter';
 
 let TASKS = {
     'weekly': postWeeklyActivities
@@ -29,14 +27,6 @@ let WEEKLY_CARD = {
     advisors: ['wotm', 'nightfall', 'strikes', 'crucible', 'kf'],
     maxAdvisors: 4
 };
-
-let BASE_DIR = __dirname.replace(/\\/g, '/');
-let PHANTOMJS_PATH = `${__dirname}/../../vendor/phantomjs/bin/phantomjs`;
-let SWIG_VIEW_PATH = `${__dirname}/../views/twitterBot.html`;
-let CSS_PATH = `${__dirname}/../public/stylesheets/bot.css`;
-let OUTPUT_DIR = `${__dirname}/temp`;
-let OUTPUT_HTML_FILE = `${OUTPUT_DIR}/output.html`;
-let OUTPUT_IMAGE = `${OUTPUT_DIR}/output.png`;
 
 if (process.argv.length >= 3) {
     let taskID = process.argv[2];
@@ -54,14 +44,14 @@ else {
 
 function postWeeklyActivities() {
     let tweetText = '#Destiny';
-    Promise.all([retry(getAdvisors, 5), loadCSS()])
-        .then(createPage)
+    retry(getAdvisors, 5)
+        .then(data => generateContent(WEEKLY_CARD, data))
         .then(content => {
             tweetText = content.tweetText || tweetText;
-            return screenshot(content.outputFile);
+            return renderCard(content.card);
         })
-        .then(file => tweet(tweetText, file))
-        .then(cleanup)
+        .then(data => saveFile('build/bot/output.png', data))
+        // .then(data => tweet(tweetText, data))
         .catch(error => console.log("Couldn't post weekly activities."));
 }
 
@@ -112,58 +102,8 @@ function getAdvisors() {
     });
 }
 
-function loadCSS() {
-    return new Promise((resolve, reject) => {
-        fs.readFile(CSS_PATH, 'utf8', (error, data) => {
-            if (error) {
-                console.log("Couldn't load stylesheet.");
-                reject(error);
-            }
-            else {
-                // inject absolute fonts directory
-                let absolute = data.replace(/FONTS_DIR/g,
-                    `${BASE_DIR}/../public/fonts`);
-                resolve(absolute);
-            }
-        });
-    });
-}
-
-function createPage([data, css]) {
-    return new Promise((resolve, reject) => {
-        if (data) {
-            let content = generateContent(WEEKLY_CARD, data);
-            content.css = css;
-            let html = swig.renderFile(SWIG_VIEW_PATH, content);
-
-            if (!fs.existsSync(OUTPUT_DIR)) {
-                fs.mkdirSync(OUTPUT_DIR);
-            }
-
-            console.log('HTML generated. Saving file...');
-            fs.writeFile(OUTPUT_HTML_FILE, html, error => {
-                if (error) {
-                    console.log('HTML file could not be saved.');
-                    reject(error);
-                }
-                else {
-                    console.log('HTML file saved.');
-                    resolve({
-                        outputFile: OUTPUT_HTML_FILE,
-                        tweetText: `${content.cardName} in #Destiny (${content.date})`
-                    });
-                }
-            });
-        }
-        else {
-            reject('No advisor data retrieved.');
-        }
-    });
-}
-
 function generateContent(card, data) {
     let output = {
-        baseDir: BASE_DIR,
         cardName: card.name,
         date: time.getCurrentWeekString(),
         advisors: []
@@ -207,7 +147,10 @@ function generateContent(card, data) {
         }
     }
 
-    return output;
+    return Promise.resolve({
+        card: output,
+        tweetText: `${output.cardName} in #Destiny (${output.date})`
+    });
 }
 
 function formatURL(url) {
@@ -215,75 +158,25 @@ function formatURL(url) {
         return url;
     }
     else {
-        return `../public${url}`;
+        return `build/public${url}`;
     }
 }
 
-function screenshot(file) {
-    return new Promise((resolve, reject) => {
-        let options = {
-            errorIfJSException: true,
-            windowSize: {
-                width: 892,
-                height: 512
-            }
-        };
-
-        // use the Heroku buildpack version if we are in production
-        if (process.env.NODE_ENV === 'production') {
-            options.phantomPath = PHANTOMJS_PATH;
-        }
-        
-        webshot(file, OUTPUT_IMAGE, options, error => {
-            if (error) {
-                console.log(`Webshot ${error}`);
-                reject(error);
-            }
-            else {
-                console.log('Webshot completed successfully.');
-                resolve(OUTPUT_IMAGE);
-            }
-        });
-    });
+function tweet(text, media) {
+    return twitter.tweet(text, media)
+        .then(() => console.log('Tweet posted.'));
 }
 
-function loadImage(path) {
+function saveFile(path, data) {
     return new Promise((resolve, reject) => {
-        fs.readFile(path, (error, data) => {
+        fs.writeFile(path, data, error => {
             if (error) {
-                console.log("Couldn't load image.");
+                console.log('File could not be saved.');
                 reject(error);
             }
             else {
+                console.log('File saved.');
                 resolve(data);
-            }
-        });
-    });
-}
-
-function tweet(text, imagePath) {
-    let promise = null;
-    if (imagePath) {
-        promise = loadImage(imagePath)
-            .then(media => twitter.tweet(text, media));
-    }
-    else {
-        promise = twitter.tweet(text, null);
-    }
-    return promise.then(() => console.log('Tweet posted.'));
-}
-
-function cleanup() {
-    return new Promise((resolve, reject) => {
-        rimraf(OUTPUT_DIR, error => {
-            if (error) {
-                console.log("Couldn't delete generated HTML page:");
-                console.log(error);
-                reject(error);
-            }
-            else {
-                console.log('Deleted generated HTML page.');
-                resolve();
             }
         });
     });
