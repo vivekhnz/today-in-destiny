@@ -10,6 +10,7 @@ let ADVISOR_WIDTH = (CARD_WIDTH - (
     COLUMN_GAP * (COLUMN_COUNT + 1))) / COLUMN_COUNT;
 let ADVISOR_HEIGHT = 210;
 let LOGO_ICON = 'build/public/images/ui/logo-xxs.png';
+let SEPARATOR_ICON = 'build/public/images/ui/separator.png';
 
 export default function renderCard(content) {
     return getImageURLs(content)
@@ -29,6 +30,7 @@ function getImageURLs(content) {
         }
     }, this);
     urls.push(LOGO_ICON);
+    urls.push(SEPARATOR_ICON);
 
     // remove duplicates
     let noDupes = [];
@@ -201,9 +203,9 @@ function drawAdvisor(canvas, x, y, w, h, advisor) {
         contentY -= 8;
 
         // draw separator
-        canvas.drawRect(
+        canvas.drawPattern(
             x + 96, contentY, contentWidth, 4,
-            'rgba(147, 163, 174, 0.5)');
+            SEPARATOR_ICON);
         contentY -= 12;
     }
 

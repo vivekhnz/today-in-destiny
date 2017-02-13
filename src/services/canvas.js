@@ -50,6 +50,16 @@ export default class CanvasHelper {
             x, y, text, font, color, align, maxWidth);
     }
 
+    drawPattern(x, y, w, h, url) {
+        let image = new Canvas.Image();
+        image.src = this.images[url];
+
+        let pattern = this.context.createPattern(
+            image, 'repeat')
+        this.context.fillStyle = pattern;
+        this.context.fillRect(x, y, w, h);
+    }
+
     toBuffer() {
         return new Promise((resolve, reject) => {
             this.canvas.toBuffer((error, buffer) => {
