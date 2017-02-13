@@ -119,24 +119,31 @@ function drawAdvisor(canvas, x, y, w, h, advisor) {
     // calculate content dimensions
     let contentWidth = w - 112;
 
-    let nameHeight = canvas.measureText(
+    let textHeight = canvas.measureText(
         advisor.name, '36px "Bebas Neue Bold"',
         contentWidth).emHeightAscent;
+    textHeight += canvas.measureText(
+        advisor.type.toUpperCase(), 'bold 15px "Bender"',
+        contentWidth).emHeightAscent + 4;
 
-    let contentHeight = Math.max(nameHeight, 64);
+    let contentHeight = Math.max(textHeight, 64);
     let contentY = y + h - (contentHeight + 24);
 
     // draw icon
     canvas.drawImage(advisor.icon, x + 16, contentY, 64, 64);
 
-    // vertically center name
-    let nameY = 0;
-    if (nameHeight < 64) {
-        nameY = (64 - nameHeight) / 2;
+    // vertically center text
+    let textY = 0;
+    if (textHeight < 64) {
+        textY = (64 - textHeight) / 2;
     }
 
     // draw advisor name
-    canvas.drawText(x + 96, y + h - (24 + nameY),
+    textY += canvas.drawText(
+        x + 96, y + h - (24 + textY),
         advisor.name, '36px "Bebas Neue Bold"',
-        '#f4f4f4', 'left', contentWidth);
+        '#f4f4f4', 'left', contentWidth).emHeightAscent;
+    canvas.drawText(x + 96, y + h - (28 + textY),
+        advisor.type.toUpperCase(), 'bold 15px "Bender"',
+        '#93a3ae', 'left', contentWidth);
 }
