@@ -17,7 +17,8 @@ import renderCard from './card';
 import { default as twitter } from '../services/twitter';
 
 let TASKS = {
-    'weekly': postWeeklyActivities
+    'weekly': postWeeklyActivities,
+    'daily': postDailyActivities
 };
 
 let API_ENDPOINT = 'https://todayindestiny.herokuapp.com/api/advisors';
@@ -25,7 +26,22 @@ let WEEKLY_CARD = {
     name: 'This Week',
     category: 'weekly',
     advisors: ['wotm', 'nightfall', 'strikes', 'crucible', 'kf'],
-    maxAdvisors: 4
+    maxAdvisors: 4,
+    height: 512,
+    advisorHeight: 210,
+    getDate: () => time.getCurrentWeekString()
+};
+let DAILY_CARD = {
+    name: 'Today',
+    category: 'daily',
+    advisors: ['story', 'crucible'],
+    maxAdvisors: 2,
+    height: 376,
+    advisorHeight: 300,
+    getDate: () => {
+        let date = time.getCurrentDate();
+        return `${date.month} ${date.day}`;
+    }
 };
 
 if (process.argv.length >= 3) {
@@ -50,9 +66,20 @@ function postWeeklyActivities() {
             tweetText = content.tweetText || tweetText;
             return renderCard(content.card);
         })
-        .then(data => saveFile('build/bot/output.png', data))
-        // .then(data => tweet(tweetText, data))
+        .then(data => tweet(tweetText, data))
         .catch(error => console.log("Couldn't post weekly activities."));
+}
+
+function postDailyActivities() {
+    let tweetText = '#Destiny';
+    retry(getAdvisors, 5)
+        .then(data => generateContent(DAILY_CARD, data))
+        .then(content => {
+            tweetText = content.tweetText || tweetText;
+            return renderCard(content.card);
+        })
+        .then(data => tweet(tweetText, data))
+        .catch(error => console.log("Couldn't post daily activities."));
 }
 
 function retry(promiseFunction, maxRetries) {
@@ -105,7 +132,9 @@ function getAdvisors() {
 function generateContent(card, data) {
     let output = {
         cardName: card.name,
-        date: time.getCurrentWeekString(),
+        height: card.height,
+        advisorHeight: card.advisorHeight,
+        date: card.getDate(),
         advisors: []
     };
 
@@ -165,19 +194,4 @@ function formatURL(url) {
 function tweet(text, media) {
     return twitter.tweet(text, media)
         .then(() => console.log('Tweet posted.'));
-}
-
-function saveFile(path, data) {
-    return new Promise((resolve, reject) => {
-        fs.writeFile(path, data, error => {
-            if (error) {
-                console.log('File could not be saved.');
-                reject(error);
-            }
-            else {
-                console.log('File saved.');
-                resolve(data);
-            }
-        });
-    });
 }

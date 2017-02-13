@@ -3,12 +3,10 @@ import request from 'request';
 import CanvasHelper from '../services/canvas';
 
 let CARD_WIDTH = 892;
-let CARD_HEIGHT = 512;
 let COLUMN_COUNT = 2;
 let COLUMN_GAP = 16;
 let ADVISOR_WIDTH = (CARD_WIDTH - (
     COLUMN_GAP * (COLUMN_COUNT + 1))) / COLUMN_COUNT;
-let ADVISOR_HEIGHT = 210;
 let LOGO_ICON = 'build/public/images/ui/logo-xxs.png';
 let SEPARATOR_ICON = 'build/public/images/ui/separator.png';
 
@@ -87,10 +85,10 @@ function loadImage(url) {
 
 function drawCard(content, images) {
     let canvas = new CanvasHelper(
-        CARD_WIDTH, CARD_HEIGHT, images);
+        CARD_WIDTH, content.height, images);
 
     // draw background
-    canvas.drawRect(0, 0, CARD_WIDTH, CARD_HEIGHT, '#d6d6d9');
+    canvas.drawRect(0, 0, CARD_WIDTH, content.height, '#d6d6d9');
 
     // draw header
     canvas.drawImage(LOGO_ICON, 16, 0);
@@ -110,9 +108,10 @@ function drawCard(content, images) {
         let x = COLUMN_GAP + (column * (ADVISOR_WIDTH + COLUMN_GAP));
 
         let row = Math.floor(i / COLUMN_COUNT);
-        let y = 60 + (row * (ADVISOR_HEIGHT + COLUMN_GAP));
+        let y = 60 + (row * (content.advisorHeight + COLUMN_GAP));
 
-        drawAdvisor(canvas, x, y, ADVISOR_WIDTH, ADVISOR_HEIGHT, advisor);
+        drawAdvisor(canvas, x, y, ADVISOR_WIDTH,
+            content.advisorHeight, advisor);
     }
 
     return canvas.toBuffer();
@@ -197,7 +196,7 @@ function drawAdvisor(canvas, x, y, w, h, advisor) {
                     contentY - (row.rowHeight - row.modifier2Height),
                     modifierWidth, m2, true);
             }
-            
+
             contentY -= row.rowHeight + 8;
         }
         contentY -= 8;
