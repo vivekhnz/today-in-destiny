@@ -19,6 +19,15 @@ class TimeService {
         };
     }
 
+    getUTCWeekTime() {
+        var date = new Date();
+        return {
+            day: date.getUTCDay(),
+            hour: date.getUTCHours(),
+            minute: date.getUTCMinutes()
+        }
+    }
+
     getCurrentWeekString() {
         // calculate time in UTC-9 (where reset is at midnight)
         var date = new Date();

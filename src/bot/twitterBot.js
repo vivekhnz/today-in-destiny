@@ -16,70 +16,91 @@ import { default as time } from '../services/time';
 import renderCard from './card';
 import { default as twitter } from '../services/twitter';
 
-let TASKS = {
-    'weekly': postWeeklyActivities,
-    'daily': postDailyActivities
-};
-
 let API_ENDPOINT = 'https://todayindestiny.herokuapp.com/api/advisors';
-let WEEKLY_CARD = {
-    name: 'This Week',
-    category: 'weekly',
-    advisors: ['wotm', 'nightfall', 'strikes', 'crucible', 'kf'],
-    maxAdvisors: 4,
-    height: 512,
-    advisorHeight: 210,
-    getDate: () => time.getCurrentWeekString()
-};
-let DAILY_CARD = {
-    name: 'Today',
-    category: 'daily',
-    advisors: ['story', 'crucible'],
-    maxAdvisors: 2,
-    height: 376,
-    advisorHeight: 300,
-    getDate: () => {
-        let date = time.getCurrentDate();
-        return `${date.month} ${date.day}`;
+let TASKS = [
+    {
+        // weekly
+        time: {
+            day: 2,
+            hour: 9
+        },
+        card: {
+            name: 'This Week',
+            category: 'weekly',
+            advisors: ['wotm', 'nightfall', 'strikes', 'crucible', 'kf'],
+            maxAdvisors: 4,
+            height: 512,
+            advisorHeight: 210,
+            getDate: () => time.getCurrentWeekString()
+        }
+    },
+    {
+        // daily
+        time: {
+            hour: 9
+        },
+        card: {
+            name: 'Today',
+            category: 'daily',
+            advisors: ['story', 'crucible'],
+            maxAdvisors: 2,
+            height: 376,
+            advisorHeight: 300,
+            getDate: () => {
+                let date = time.getCurrentDate();
+                return `${date.month} ${date.day}`;
+            }
+        }
     }
-};
+];
 
-if (process.argv.length >= 3) {
-    let taskID = process.argv[2];
-    let task = TASKS[taskID];
-    if (task) {
-        task();
+// determine which tasks are active
+let now = time.getUTCWeekTime();
+let cards = [];
+TASKS.forEach(task => {
+    if (isTaskActive(task.time, now)) {
+        cards.push(task.card);
     }
-    else {
-        console.log(`'${taskID}' is not a valid bot task.`);
-    }
+}, this);
+
+if (cards.length > 0) {
+    // generate and post cards
+    retry(getAdvisors, 5)
+        .then(advisors => {
+            let promises = cards.map(
+                card => postCard(card, advisors));
+            return Promise.all(promises)
+        })
+        .then(() => console.log('All cards posted.'))
 }
 else {
-    console.log('No bot task specified.');
+    console.log('No tasks active.');
 }
 
-function postWeeklyActivities() {
+function isTaskActive(taskTime, now) {
+    if (taskTime.day) {
+        if (now.day !== taskTime.day) {
+            return false;
+        }
+    }
+    if (taskTime.hour) {
+        if (now.hour !== taskTime.hour
+            || now.minute < 9 || now.minute > 19) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function postCard(card, advisors) {
     let tweetText = '#Destiny';
-    retry(getAdvisors, 5)
-        .then(data => generateContent(WEEKLY_CARD, data))
+    return generateContent(card, advisors)
         .then(content => {
             tweetText = content.tweetText || tweetText;
             return renderCard(content.card);
         })
         .then(data => tweet(tweetText, data))
-        .catch(error => console.log("Couldn't post weekly activities."));
-}
-
-function postDailyActivities() {
-    let tweetText = '#Destiny';
-    retry(getAdvisors, 5)
-        .then(data => generateContent(DAILY_CARD, data))
-        .then(content => {
-            tweetText = content.tweetText || tweetText;
-            return renderCard(content.card);
-        })
-        .then(data => tweet(tweetText, data))
-        .catch(error => console.log("Couldn't post daily activities."));
+        .catch(error => console.log(`Couldn't post card. (CARD: ${card.name})`));
 }
 
 function retry(promiseFunction, maxRetries) {
@@ -193,5 +214,5 @@ function formatURL(url) {
 
 function tweet(text, media) {
     return twitter.tweet(text, media)
-        .then(() => console.log('Tweet posted.'));
+        .then(() => console.log(`Tweet posted. (Tweet: ${text})`));
 }
