@@ -62,10 +62,7 @@ var config = {
     },
     stylesheets: {
         src: 'src/public/stylesheets/**/**.less',
-        entry: {
-            main: 'src/public/stylesheets/main.less',
-            bot: 'src/public/stylesheets/bot.less'
-        },
+        entry: 'src/public/stylesheets/main.less',
         outDir: 'build/public/stylesheets'
     },
     images: {
@@ -116,8 +113,7 @@ function compileLess(entry) {
         .pipe(gulpif(production, cssmin()))
         .pipe(gulp.dest(config.stylesheets.outDir));
 }
-gulp.task('stylesheets', () => compileLess(config.stylesheets.entry.main));
-gulp.task('stylesheets-bot', () => compileLess(config.stylesheets.entry.bot));
+gulp.task('stylesheets', () => compileLess(config.stylesheets.entry));
 
 // minify images
 gulp.task('images', () => {
@@ -204,22 +200,14 @@ gulp.task('server', ['build'], callback => {
 });
 
 // run twitter bot
-// usage: 'gulp twitter-bot --option <task>'
-gulp.task('twitter-bot', ['babel', 'copy', 'stylesheets-bot', 'images'],
+gulp.task('twitter-bot', ['babel', 'copy', 'images'],
     callback => {
-        if (process.argv.length < 5) {
-            let usage = "Usage: 'gulp twitter-bot --option <task>'";
-            console.log(`ERROR: No bot task was specified.\n${usage}`);
-            callback();
-        }
-        else {
-            let command = `node ${config.twitterBot} ${process.argv[4]}`;
-            child_process.exec(command, (error, stdout, stderr) => {
-                console.log(stdout);
-                console.log(stderr);
-                callback(error);
-            });
-        }
+        let command = `node ${config.twitterBot}`;
+        child_process.exec(command, (error, stdout, stderr) => {
+            console.log(stdout);
+            console.log(stderr);
+            callback(error);
+        });
     });
 
 // initialize BrowserSync
