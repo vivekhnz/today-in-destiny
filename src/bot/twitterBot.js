@@ -54,8 +54,20 @@ let TASKS = [
     }
 ];
 
-// determine which tasks are active
+// determine current time
 let now = time.getUTCWeekTime();
+
+// allow us to force a specific time for testing purposes
+if (process.argv.length >= 4 && process.argv[2] == '--force') {
+    let time = process.argv[3].split(':');
+    now = {
+        day: parseInt(time[0]),
+        hour: parseInt(time[1]),
+        minute: parseInt(time[2])
+    };
+}
+
+// determine which tasks are active
 let cards = [];
 TASKS.forEach(task => {
     if (isTaskActive(task.time, now)) {
