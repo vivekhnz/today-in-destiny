@@ -62,10 +62,7 @@ var config = {
     },
     stylesheets: {
         src: 'src/public/stylesheets/**/**.less',
-        entry: {
-            main: 'src/public/stylesheets/main.less',
-            bot: 'src/public/stylesheets/bot.less'
-        },
+        entry: 'src/public/stylesheets/main.less',
         outDir: 'build/public/stylesheets'
     },
     images: {
@@ -116,8 +113,7 @@ function compileLess(entry) {
         .pipe(gulpif(production, cssmin()))
         .pipe(gulp.dest(config.stylesheets.outDir));
 }
-gulp.task('stylesheets', () => compileLess(config.stylesheets.entry.main));
-gulp.task('stylesheets-bot', () => compileLess(config.stylesheets.entry.bot));
+gulp.task('stylesheets', () => compileLess(config.stylesheets.entry));
 
 // minify images
 gulp.task('images', () => {
@@ -204,7 +200,7 @@ gulp.task('server', ['build'], callback => {
 });
 
 // run twitter bot
-gulp.task('twitter-bot', ['babel', 'copy', 'stylesheets-bot', 'images'],
+gulp.task('twitter-bot', ['babel', 'copy', 'images'],
     callback => {
         let command = `node ${config.twitterBot}`;
         child_process.exec(command, (error, stdout, stderr) => {
