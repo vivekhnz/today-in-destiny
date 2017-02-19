@@ -58,17 +58,17 @@ export default function getCache() {
 
 function isDataStale(generatedAt) {
     // determine how old the cached data is
-    let elapsed = time.getElapsedMilliseconds(generatedAt);
+    let elapsed = time.since(generatedAt);
     if (elapsed > MAXIMUM_CACHE_MILLISECONDS) {
         // maximum cache time exceeded
         return true;
     }
 
     // activities often reset on the hour so invalidate each hour
-    let current = time.getHoursMinutes(new Date().getTime());
-    let cacheTime = time.getHoursMinutes(Date.parse(generatedAt));
+    let current = time.asDuration(time.now());
+    let cacheTime = time.asDuration(generatedAt);
 
-    if (current.hours > cacheTime.hours) {
+    if (current.totalHours > cacheTime.totalHours) {
         // wait a few minutes after the hour
         if (current.minutes > CACHE_REFRESH_OFFSET_MINUTES) {
             // this ensures Bungie.net data is refreshed before rebuilding the cache
@@ -168,7 +168,7 @@ function buildCache() {
                 combineDefinitions(definitions));
             let parsed = parse(activities, vendors, manifest, items);
             resolve({
-                generatedAt: new Date(),
+                generatedAt: time.now(),
                 date: time.getCurrentDate(),
                 advisors: parsed.advisors,
                 categories: parsed.categories
