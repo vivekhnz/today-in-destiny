@@ -13,12 +13,15 @@ class TimeService {
         };
     }
 
-    getUTCWeekTime() {
-        var date = new Date();
+    /**
+     * Returns the current time in either PST or PDT.
+     */
+    getPacificTime() {
+        let date = moment.utc().tz('America/Los_Angeles');
         return {
-            day: date.getUTCDay(),
-            hour: date.getUTCHours(),
-            minute: date.getUTCMinutes()
+            day: date.days(),
+            hour: date.hours(),
+            minute: date.minutes()
         }
     }
 
