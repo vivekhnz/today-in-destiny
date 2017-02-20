@@ -30,7 +30,8 @@ class Advisor extends React.Component {
 
     renderTimeRemaining() {
         if (this.props.expiresAt) {
-            let timeRemaining = time.getRemainingTime(this.props.expiresAt);
+            let duration = time.until(this.props.expiresAt);
+            let timeRemaining = time.formatDuration(duration);
             return (
                 <p className="advisorTimeRemaining">{timeRemaining}</p>
             );

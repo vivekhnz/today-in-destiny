@@ -2,13 +2,30 @@ import fs from 'fs';
 import request from 'request';
 import CanvasHelper from '../services/canvas';
 
-let CARD_WIDTH = 892;
-let COLUMN_COUNT = 2;
 let COLUMN_GAP = 16;
-let ADVISOR_WIDTH = (CARD_WIDTH - (
-    COLUMN_GAP * (COLUMN_COUNT + 1))) / COLUMN_COUNT;
 let LOGO_ICON = 'build/public/images/ui/logo-xxs.png';
 let SEPARATOR_ICON = 'build/public/images/ui/separator.png';
+
+let TEMPLATES = {
+    '1x1': {
+        width: 640,
+        height: 376,
+        columns: 1,
+        advisorHeight: 300
+    },
+    '2x1': {
+        width: 892,
+        height: 376,
+        columns: 2,
+        advisorHeight: 300
+    },
+    '2x2': {
+        width: 892,
+        height: 512,
+        columns: 2,
+        advisorHeight: 210
+    }
+};
 
 export default function renderCard(content) {
     return getImageURLs(content)
@@ -84,11 +101,16 @@ function loadImage(url) {
 }
 
 function drawCard(content, images) {
+    // retrieve template
+    let template = TEMPLATES[content.template];
+    let advisorWidth = (template.width - (
+        COLUMN_GAP * (template.columns + 1))) / template.columns;
+
     let canvas = new CanvasHelper(
-        CARD_WIDTH, content.height, images);
+        template.width, template.height, images);
 
     // draw background
-    canvas.drawRect(0, 0, CARD_WIDTH, content.height, '#d6d6d9');
+    canvas.drawRect(0, 0, template.width, template.height, '#d6d6d9');
 
     // draw header
     canvas.drawImage(LOGO_ICON, 16, 0);
@@ -97,21 +119,21 @@ function drawCard(content, images) {
     canvas.drawText(76 + nameSize.width, 44,
         content.date.toUpperCase(),
         'bold 18px "Bender"', '#486e7e');
-    canvas.drawText(CARD_WIDTH - 16, 44, '@TodayInDestiny',
+    canvas.drawText(template.width - 16, 44, '@TodayInDestiny',
         'bold 15px "Bender"', '#93a3ae', 'right');
 
     // draw advisors
     for (let i = 0; i < content.advisors.length; i++) {
         let advisor = content.advisors[i];
 
-        let column = i % COLUMN_COUNT;
-        let x = COLUMN_GAP + (column * (ADVISOR_WIDTH + COLUMN_GAP));
+        let column = i % template.columns;
+        let x = COLUMN_GAP + (column * (advisorWidth + COLUMN_GAP));
 
-        let row = Math.floor(i / COLUMN_COUNT);
-        let y = 60 + (row * (content.advisorHeight + COLUMN_GAP));
+        let row = Math.floor(i / template.columns);
+        let y = 60 + (row * (template.advisorHeight + COLUMN_GAP));
 
-        drawAdvisor(canvas, x, y, ADVISOR_WIDTH,
-            content.advisorHeight, advisor);
+        drawAdvisor(canvas, x, y, advisorWidth,
+            template.advisorHeight, advisor);
     }
 
     return canvas.toBuffer();

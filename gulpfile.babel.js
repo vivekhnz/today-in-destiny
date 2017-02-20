@@ -28,7 +28,8 @@ var config = {
         'react', 'react-dom', 'react-router',
         'alt', 'iso',
         'react-masonry-component', 'react-element-query',
-        'react-popover'
+        'react-popover',
+        'moment-timezone'
     ],
     utils: {
         babel: {
