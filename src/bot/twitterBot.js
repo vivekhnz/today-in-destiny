@@ -27,13 +27,15 @@ let TASKS = [
             hour: 1 // 1 AM
         },
         card: {
+            template: '2x2',
             name: 'This Week',
             category: 'weekly',
             advisors: ['wotm', 'nightfall', 'strikes', 'crucible', 'kf'],
             maxAdvisors: 4,
-            height: 512,
-            advisorHeight: 210,
-            getDate: () => time.getCurrentWeekString()
+            getDate: () => {
+                let week = time.getCurrentDestinyWeek();
+                return `${week.tuesday} - ${week.monday}`;
+            }
         }
     },
     {
@@ -42,15 +44,32 @@ let TASKS = [
             hour: 1 // 1 AM
         },
         card: {
+            template: '2x1',
             name: 'Today',
             category: 'daily',
             advisors: ['story', 'crucible'],
             maxAdvisors: 2,
-            height: 376,
-            advisorHeight: 300,
             getDate: () => {
                 let date = time.getCurrentDate();
                 return `${date.month} ${date.day}`;
+            }
+        }
+    },
+    {
+        // Trials of Osiris
+        time: {
+            day: 5, // Friday
+            hour: 10 // 10 AM
+        },
+        card: {
+            template: '1x1',
+            name: 'Trials of Osiris',
+            category: 'events',
+            advisors: ['trials'],
+            maxAdvisors: 1,
+            getDate: () => {
+                let week = time.getCurrentDestinyWeek();
+                return `${week.friday} - ${week.monday}`;
             }
         }
     }
@@ -165,9 +184,8 @@ function getAdvisors() {
 
 function generateContent(card, data) {
     let output = {
+        template: card.template,
         cardName: card.name,
-        height: card.height,
-        advisorHeight: card.advisorHeight,
         date: card.getDate(),
         advisors: []
     };

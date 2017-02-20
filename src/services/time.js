@@ -25,7 +25,7 @@ class TimeService {
         }
     }
 
-    getCurrentWeekString() {
+    getCurrentDestinyWeek() {
         // calculate time in UTC-9 (where reset is at midnight)
         let timestamp = moment.utc().subtract(9, 'hours');
 
@@ -35,10 +35,16 @@ class TimeService {
         }
 
         // get start and end of week
-        let start = timestamp.startOf('week').add(2, 'days').format('MMM DD');
-        let end = timestamp.add(6, 'days').format('MMM DD');
-
-        return `${start} - ${end}`;
+        timestamp.startOf('week').add(2, 'days');
+        return {
+            tuesday: timestamp.format('MMM DD'),
+            wednesday: timestamp.add(1, 'days').format('MMM DD'),
+            thursday: timestamp.add(1, 'days').format('MMM DD'),
+            friday: timestamp.add(1, 'days').format('MMM DD'),
+            saturday: timestamp.add(1, 'days').format('MMM DD'),
+            sunday: timestamp.add(1, 'days').format('MMM DD'),
+            monday: timestamp.add(1, 'days').format('MMM DD'),
+        };
     }
 
     now() {
