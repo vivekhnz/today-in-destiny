@@ -1,6 +1,6 @@
 {
   "name": "today-in-destiny",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "A summary of what's available in Destiny today.",
   "main": "server.js",
   "dependencies": {
@@ -29,6 +29,7 @@
     "imagemin-jpegtran": "^5.0.2",
     "iso": "^5.2.0",
     "memory-cache": "^0.1.6",
+    "moment-timezone": "^0.5.11",
     "react": "^15.4.0",
     "react-dom": "^15.4.0",
     "react-element-query": "^3.0.2",

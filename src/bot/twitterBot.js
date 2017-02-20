@@ -17,45 +17,66 @@ import renderCard from './card';
 import { default as twitter } from '../services/twitter';
 
 let API_ENDPOINT = 'https://todayindestiny.herokuapp.com/api/advisors';
+
+// note: times are in Pacific Time (accounts for Daylight Savings)
 let TASKS = [
     {
-        // weekly
+        // weekly activities
         time: {
-            day: 2,
-            hour: 9
+            day: 2, // Tuesday
+            hour: 1 // 1 AM
         },
         card: {
+            template: '2x2',
             name: 'This Week',
             category: 'weekly',
             advisors: ['wotm', 'nightfall', 'strikes', 'crucible', 'kf'],
             maxAdvisors: 4,
-            height: 512,
-            advisorHeight: 210,
-            getDate: () => time.getCurrentWeekString()
+            getDate: () => {
+                let week = time.getCurrentDestinyWeek();
+                return `${week.tuesday} - ${week.monday}`;
+            }
         }
     },
     {
-        // daily
+        // daily activities
         time: {
-            hour: 9
+            hour: 1 // 1 AM
         },
         card: {
+            template: '2x1',
             name: 'Today',
             category: 'daily',
             advisors: ['story', 'crucible'],
             maxAdvisors: 2,
-            height: 376,
-            advisorHeight: 300,
             getDate: () => {
                 let date = time.getCurrentDate();
                 return `${date.month} ${date.day}`;
+            }
+        }
+    },
+    {
+        // Trials of Osiris
+        time: {
+            day: 5, // Friday
+            hour: 10 // 10 AM
+        },
+        card: {
+            template: '1x1',
+            name: 'Trials of Osiris',
+            category: 'events',
+            advisors: ['trials'],
+            maxAdvisors: 1,
+            getDate: () => {
+                let week = time.getCurrentDestinyWeek();
+                return `${week.friday} - ${week.monday}`;
             }
         }
     }
 ];
 
 // determine current time
-let now = time.getUTCWeekTime();
+let now = time.getPacificTime();
 
 // allow us to force a specific time for testing purposes
 if (process.argv.length >= 4 && process.argv[2] == '--force') {
@@ -96,8 +117,7 @@ function isTaskActive(taskTime, now) {
         }
     }
     if (taskTime.hour) {
-        if (now.hour !== taskTime.hour
-            || now.minute < 9 || now.minute > 19) {
+        if (now.hour !== taskTime.hour || now.minute < 5) {
             return false;
         }
     }
@@ -164,9 +184,8 @@ function getAdvisors() {
 
 function generateContent(card, data) {
     let output = {
+        template: card.template,
         cardName: card.name,
-        height: card.height,
-        advisorHeight: card.advisorHeight,
         date: card.getDate(),
         advisors: []
     };

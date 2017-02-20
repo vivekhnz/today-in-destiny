@@ -1,90 +1,83 @@
-let MONTHS = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-];
+import moment from 'moment-timezone';
 
 class TimeService {
     /**
      * Returns the date in UTC-9 where the Destiny Daily Reset is at midnight. 
      */
     getCurrentDate() {
-        // calculate time in UTC-9 (where reset is at midnight)
-        var date = new Date();
-        date.setUTCHours(date.getUTCHours() - 9);
-
+        let timestamp = moment.utc().subtract(9, 'hours');
         return {
-            month: MONTHS[date.getUTCMonth()],
-            day: date.getUTCDate(),
-            year: date.getUTCFullYear()
+            month: timestamp.format('MMM'),
+            day: timestamp.format('DD'),
+            year: timestamp.format('YYYY')
         };
     }
 
-    getUTCWeekTime() {
-        var date = new Date();
+    /**
+     * Returns the current time in either PST or PDT.
+     */
+    getPacificTime() {
+        let date = moment.utc().tz('America/Los_Angeles');
         return {
-            day: date.getUTCDay(),
-            hour: date.getUTCHours(),
-            minute: date.getUTCMinutes()
+            day: date.days(),
+            hour: date.hours(),
+            minute: date.minutes()
         }
     }
 
-    getCurrentWeekString() {
+    getCurrentDestinyWeek() {
         // calculate time in UTC-9 (where reset is at midnight)
-        var date = new Date();
-        date.setUTCHours(date.getUTCHours() - 9);
-        
-        // find the date of the start of the week
-        let day = date.getUTCDay();
-        if (day < 2) {
-            date.setDate(date.getDate() - (day + 5));
+        let timestamp = moment.utc().subtract(9, 'hours');
+
+        // ensure we are within the same week as the Sunday before the Weekly Reset
+        if (timestamp.day() < 2) {
+            timestamp.subtract(7, 'days');
         }
-        else if (day > 2) {
-            date.setDate(date.getDate() - (day - 2));
-        }
-        let start = `${MONTHS[date.getUTCMonth()]} ${date.getUTCDate()}`;
 
-        // find the date of the end of the week
-        date.setDate(date.getDate() + 6);
-        let end = `${MONTHS[date.getUTCMonth()]} ${date.getUTCDate()}`;
-
-        return `${start} - ${end}`;
-    }
-
-    getElapsedMilliseconds(utcTime) {
-        let currentTime = new Date();
-        let startTime = Date.parse(utcTime);
-        return currentTime.getTime() - startTime;
-    }
-
-    getRemainingTime(utcTime) {
-        let currentTime = new Date();
-        let endTime = Date.parse(utcTime);
-        let totalMs = endTime - currentTime.getTime();
-        return this.getTimespanString(totalMs);
-    }
-
-    getTimespanString(totalMs) {
-        let totalMinutes = totalMs / 60000;
-        let totalHours = totalMinutes / 60;
-        let totalDays = totalHours / 24;
-
-        let hours = Math.floor(totalHours % 24);
-        let minutes = Math.floor(totalMinutes % 60);
-
-        if (totalDays >= 1) {
-            return `${Math.floor(totalDays)}d ${hours}h`;
-        }
-        return `${Math.floor(totalHours)}h ${minutes}m`;
-    }
-
-    getHoursMinutes(milliseconds) {
-        let hours = milliseconds / 3600000;
-        let totalHours = Math.floor(hours);
-        let minutes = (hours - totalHours) * 60;
-
+        // get start and end of week
+        timestamp.startOf('week').add(2, 'days');
         return {
-            hours: totalHours,
-            minutes: minutes
+            tuesday: timestamp.format('MMM DD'),
+            wednesday: timestamp.add(1, 'days').format('MMM DD'),
+            thursday: timestamp.add(1, 'days').format('MMM DD'),
+            friday: timestamp.add(1, 'days').format('MMM DD'),
+            saturday: timestamp.add(1, 'days').format('MMM DD'),
+            sunday: timestamp.add(1, 'days').format('MMM DD'),
+            monday: timestamp.add(1, 'days').format('MMM DD'),
+        };
+    }
+
+    now() {
+        return moment.utc().format();
+    }
+
+    since(utcTime) {
+        let now = moment.utc();
+        let past = moment.utc(utcTime);
+        return now.diff(past);
+    }
+
+    until(utcTime) {
+        let now = moment.utc();
+        let future = moment.utc(utcTime);
+        return future.diff(now);
+    }
+
+    formatDuration(totalMs) {
+        let duration = moment.duration(totalMs);
+        if (duration.days() > 0) {
+            return `${duration.days()}d ${duration.hours()}h`;
+        }
+        return `${duration.hours()}h ${duration.minutes()}m`;
+    }
+
+    asDuration(utcTime) {
+        let epoch = moment.unix(0);
+        let timestamp = moment.utc(utcTime);
+        let duration = moment.duration(timestamp.diff(epoch));
+        return {
+            totalHours: Math.floor(duration.asHours()),
+            minutes: duration.minutes()
         };
     }
 };
