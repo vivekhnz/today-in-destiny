@@ -14,15 +14,39 @@ class TimeService {
     }
 
     /**
-     * Returns the current time in either PST or PDT.
+     * Returns the current time in UTC and either PST or PDT.
      */
-    getPacificTime() {
-        let date = moment.utc().tz('America/Los_Angeles');
+    getCurrentTime() {
+        const utc = moment.utc();
+        const pacific = moment.utc().tz('America/Los_Angeles');
+
         return {
-            day: date.days(),
-            hour: date.hours(),
-            minute: date.minutes()
-        }
+            utc: this.toDHM(utc),
+            pacific: this.toDHM(pacific)
+        };
+    }
+
+    /**
+     * Converts a UTC day, hour and minute to Pacific
+     */
+    toPacific(utcDHM) {
+        // parse UTC time
+        const start = moment.utc().startOf('week');
+        start.add(utcDHM.day, 'days');
+        start.add(utcDHM.hour, 'hours');
+        start.add(utcDHM.minute, 'minutes');
+
+        // convert to Pacific
+        return this.toDHM(
+            start.tz('America/Los_Angeles'));
+    }
+
+    toDHM(moment) {
+        return {
+            day: moment.days(),
+            hour: moment.hours(),
+            minute: moment.minutes()
+        };
     }
 
     getCurrentDestinyWeek() {

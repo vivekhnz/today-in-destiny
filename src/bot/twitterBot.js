@@ -16,15 +16,17 @@ import { default as time } from '../services/time';
 import renderCard from './card';
 import { default as twitter } from '../services/twitter';
 
-let API_ENDPOINT = 'https://todayindestiny.herokuapp.com/api/advisors';
+const API_ENDPOINT = 'https://todayindestiny.herokuapp.com/api/advisors';
 
 // note: times are in Pacific Time (accounts for Daylight Savings)
-let TASKS = [
+const TASKS = [
     {
         // weekly activities
         time: {
-            day: 2, // Tuesday
-            hour: 1 // 1 AM
+            // Tuesday, 9 AM UTC
+            utc: true,
+            day: 2,
+            hour: 9
         },
         card: {
             template: '2x2',
@@ -41,7 +43,9 @@ let TASKS = [
     {
         // daily activities
         time: {
-            hour: 1 // 1 AM
+            // Everyday, 9 AM UTC
+            utc: true,
+            hour: 9
         },
         card: {
             template: '2x1',
@@ -58,8 +62,10 @@ let TASKS = [
     {
         // Trials of Osiris
         time: {
-            day: 5, // Friday
-            hour: 10 // 10 AM
+            // Friday, 10 AM Pacific
+            utc: false,
+            day: 5,
+            hour: 10
         },
         card: {
             template: '1x1',
@@ -76,20 +82,21 @@ let TASKS = [
 ];
 
 // determine current time
-let now = time.getPacificTime();
+let now = time.getCurrentTime();
 
 // allow us to force a specific time for testing purposes
 if (process.argv.length >= 4 && process.argv[2] == '--force') {
-    let time = process.argv[3].split(':');
-    now = {
-        day: parseInt(time[0]),
-        hour: parseInt(time[1]),
-        minute: parseInt(time[2])
+    const parsed = process.argv[3].split(':');
+    now.utc = {
+        day: parseInt(parsed[0]),
+        hour: parseInt(parsed[1]),
+        minute: parseInt(parsed[2])
     };
+    now.pacific = time.toPacific(now.utc);
 }
 
 // determine which tasks are active
-let cards = [];
+const cards = [];
 TASKS.forEach(task => {
     if (isTaskActive(task.time, now)) {
         cards.push(task.card);
@@ -111,13 +118,14 @@ else {
 }
 
 function isTaskActive(taskTime, now) {
+    const current = taskTime.utc ? now.utc : now.pacific;
     if (taskTime.day) {
-        if (now.day !== taskTime.day) {
+        if (current.day !== taskTime.day) {
             return false;
         }
     }
     if (taskTime.hour) {
-        if (now.hour !== taskTime.hour || now.minute < 5) {
+        if (current.hour !== taskTime.hour || current.minute < 5) {
             return false;
         }
     }
