@@ -8,7 +8,7 @@ class TimeService {
         let timestamp = moment.utc().subtract(9, 'hours');
         return {
             month: timestamp.format('MMM'),
-            day: timestamp.format('DD'),
+            day: timestamp.format('D'),
             year: timestamp.format('YYYY')
         };
     }
@@ -37,13 +37,13 @@ class TimeService {
         // get start and end of week
         timestamp.startOf('week').add(2, 'days');
         return {
-            tuesday: timestamp.format('MMM DD'),
-            wednesday: timestamp.add(1, 'days').format('MMM DD'),
-            thursday: timestamp.add(1, 'days').format('MMM DD'),
-            friday: timestamp.add(1, 'days').format('MMM DD'),
-            saturday: timestamp.add(1, 'days').format('MMM DD'),
-            sunday: timestamp.add(1, 'days').format('MMM DD'),
-            monday: timestamp.add(1, 'days').format('MMM DD'),
+            tuesday: timestamp.format('MMM D'),
+            wednesday: timestamp.add(1, 'days').format('MMM D'),
+            thursday: timestamp.add(1, 'days').format('MMM D'),
+            friday: timestamp.add(1, 'days').format('MMM D'),
+            saturday: timestamp.add(1, 'days').format('MMM D'),
+            sunday: timestamp.add(1, 'days').format('MMM D'),
+            monday: timestamp.add(1, 'days').format('MMM D'),
         };
     }
 
