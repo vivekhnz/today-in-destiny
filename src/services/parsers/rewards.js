@@ -119,6 +119,38 @@ export let REWARDS = {
         ]
     },
 
+    'raid-vog-challenges': {
+        name: 'Raid Challenges',
+        items: [
+            17215187, 17215186, 3974974481,
+            2512322824, 3307602312, 1620583065, 1288233773
+        ]
+    },
+    
+    'raid-crota-challenges': {
+        name: 'Raid Challenges',
+        items: [
+            2727182628, 2727182629, 3974974481,
+            3563445476, 4186638508, 3284317805, 3139712529
+        ]
+    },
+    
+    'raid-kf-challenges': {
+        name: 'Raid Challenges',
+        items: [
+            2372257456, 2372257459, 2372257463, 3974974481,
+            1344441638, 162993472, 547597837, 690024325
+        ]
+    },
+
+    'raid-wotm-challenges': {
+        name: 'Raid Challenges',
+        items: [
+            185564351, 185564350, 2634463554, 3974974481,
+            1665465325, 4274184111, 46152726, 2706628142
+        ]
+    },
+
     wotmNormalMode: {
         name: 'Normal Mode',
         items: [
@@ -145,18 +177,6 @@ export let REWARDS = {
         name: 'Secrets',
         items: [
             3742521821, 185564345, 730655315
-        ]
-    },
-    'wotmChallenge-vosik': {
-        name: 'Vosik Challenge',
-        items: [
-            185564351, 2634463554
-        ]
-    },
-    'wotmChallenge-aksis': {
-        name: 'Aksis Challenge',
-        items: [
-            185564350, 2634463554
         ]
     },
 

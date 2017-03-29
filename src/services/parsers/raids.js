@@ -41,6 +41,13 @@ export const parseFeaturedRaid = {
                 if (identifier) {
                     output.image = `/images/advisors/backgrounds/raid-${identifier}.jpg`;
                     output.icon = `/images/advisors/icons/raid-${identifier}.png`;
+
+                    output.rewardSets = [
+                        `raid-${identifier}-challenges`,
+                        `raid-${identifier}-weapons`,
+                        `raid-${identifier}-armor`,
+                        `raid-${identifier}-equipment`
+                    ];
                 }
             }
         }
@@ -58,23 +65,15 @@ export const parseFeaturedRaid = {
 export let parseWrathOfTheMachine = createRaidParser({
     activity: 'wrathofthemachine',
     identifier: 'wotm',
-    name: 'Wrath of the Machine',
-    rewardSets: [
-        'wotmNormalMode', 'wotmHeroicMode',
-        'wotmSecrets'
-    ]
+    name: 'Wrath of the Machine'
 });
 export let parseKingsFall = createRaidParser({
     activity: 'kingsfall',
     identifier: 'kf',
-    name: "King's Fall",
-    rewardSets: [
-        'kfNormalMode', 'kfHeroicMode',
-        'kfSecrets'
-    ]
+    name: "King's Fall"
 });
 
-function createRaidParser({ activity, identifier, name, rewardSets }) {
+function createRaidParser({ activity, identifier, name }) {
     return {
         shortID: identifier,
         activities: [activity],
@@ -85,7 +84,12 @@ function createRaidParser({ activity, identifier, name, rewardSets }) {
                 type: 'Raid',
                 image: `/images/advisors/backgrounds/raid-${identifier}.jpg`,
                 icon: `/images/advisors/icons/raid-${identifier}.png`,
-                rewardSets: [...rewardSets]
+                rewardSets: [
+                    `raid-${identifier}-challenges`,
+                    `raid-${identifier}-weapons`,
+                    `raid-${identifier}-armor`,
+                    `raid-${identifier}-equipment`
+                ]
             };
             let advisor = activities[activity];
 
