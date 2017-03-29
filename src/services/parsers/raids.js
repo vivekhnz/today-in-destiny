@@ -1,11 +1,52 @@
 import { parseModifiers } from './utils';
 
+const RAID_IDENTIFIERS = {
+    "Vault of Glass": 'vog',
+    "Crota's End": 'crota',
+    "King's Fall": 'kf',
+    "Wrath of the Machine": 'wotm'
+};
+
 let RAID_CHALLENGE_MODES = {
     'Warpriest Challenge': 'warpriest',
     'Golgoroth Challenge': 'golgoroth',
     'Oryx Challenge': 'oryx',
     'Vosik Challenge': 'vosik',
     'Aksis Challenge': 'aksis',
+};
+
+export const parseFeaturedRaid = {
+    shortID: 'raid',
+    activities: ['weeklyfeaturedraid'],
+    parser: ({ activities, manifest }) => {
+        const output = {
+            category: 'weekly',
+            type: 'Weekly Featured Raid',
+            name: 'Unknown Raid',
+            image: '/images/advisors/backgrounds/raid.jpg',
+            icon: '/images/advisors/icons/raid.png',
+            rewardSets: []
+        };
+
+        // obtain featured raid
+        const advisor = activities.weeklyfeaturedraid;
+        if (advisor.display) {
+            const activity = manifest.getActivity(
+                advisor.display.activityHash);
+            if (activity) {
+                output.name = activity.activityName;
+
+                // obtain raid identifier
+                const identifier = RAID_IDENTIFIERS[output.name];
+                if (identifier) {
+                    output.image = `/images/advisors/backgrounds/raid-${identifier}.jpg`;
+                    output.icon = `/images/advisors/icons/raid-${identifier}.png`;
+                }
+            }
+        }
+
+        return output;
+    }
 };
 
 export let parseWrathOfTheMachine = createRaidParser({
@@ -27,11 +68,11 @@ export let parseKingsFall = createRaidParser({
     ]
 });
 
-function createRaidParser({activity, identifier, name, rewardSets}) {
+function createRaidParser({ activity, identifier, name, rewardSets }) {
     return {
         shortID: identifier,
         activities: [activity],
-        parser: ({activities, manifest}) => {
+        parser: ({ activities, manifest }) => {
             let output = {
                 category: 'weekly',
                 name: name,
