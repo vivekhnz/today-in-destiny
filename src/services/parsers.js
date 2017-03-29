@@ -6,31 +6,30 @@ import { default as parseTrials } from './parsers/trials';
 import { default as parseIronBanner } from './parsers/ironBanner';
 import { parseDailyStory, parseNightfall, parseHeroicStrikes } from './parsers/missions';
 import { parseDailyCrucible, parseWeeklyCrucible } from './parsers/crucible';
-import { parseWrathOfTheMachine, parseKingsFall } from './parsers/raids';
+import { parseFeaturedRaid } from './parsers/raids';
 import { parseIronLordArtifacts, parseShiro } from './parsers/vendors';
 
-let ADVISOR_PARSERS = {
+const ADVISOR_PARSERS = {
     'xur': parseXur,
     'trials': parseTrials,
     'ironBanner': parseIronBanner,
+    'raid': parseFeaturedRaid,
     'dailyStory': parseDailyStory,
     'dailyCrucible': parseDailyCrucible,
-    'wrathOfTheMachine': parseWrathOfTheMachine,
     'nightfall': parseNightfall,
     'heroicStrikes': parseHeroicStrikes,
     'weeklyCrucible': parseWeeklyCrucible,
-    'kingsFall': parseKingsFall,
     'ironLordArtifacts': parseIronLordArtifacts,
     'shiro': parseShiro
 };
-let DEFAULTS = {
+const DEFAULTS = {
     'category': 'activities',
     'type': 'Featured Activity',
     'name': 'Unknown Activity',
     'image': '/images/advisors/backgrounds/default.jpg',
     'icon': '/images/advisors/icons/default.png'
 };
-let STAT_ALIASES = {
+const STAT_ALIASES = {
     'Intellect': 'INT',
     'Discipline': 'DIS',
     'Strength': 'STR'
