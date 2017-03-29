@@ -45,6 +45,12 @@ export const parseFeaturedRaid = {
             }
         }
 
+        // obtain challenge modes
+        if (advisor.activityTiers) {
+            output.modifiers = parseChallengeModes(
+                advisor.activityTiers);
+        }
+
         return output;
     }
 };
@@ -115,13 +121,21 @@ function createRaidParser({ activity, identifier, name, rewardSets }) {
 }
 
 function parseChallengeModes(tiers) {
-    // use Normal mode so we don't get the Heroic modifier
-    let normalTier = tiers.find(
-        t => t.tierDisplayName === "Normal");
-    if (normalTier && normalTier.skullCategories) {
-        let category = normalTier.skullCategories.find(
+    if (tiers.length > 0 && tiers[0].skullCategories) {
+        const category = tiers[0].skullCategories.find(
             c => c.title === "Modifiers");
-        return parseModifiers(category);
+        const modifiers = parseModifiers(category);
+
+        if (modifiers) {
+            // don't show the Heroic modifier
+            let output = [];
+            modifiers.forEach(modifier => {
+                if (modifier.name != 'Heroic') {
+                    output.push(modifier);
+                }
+            }, this);
+            return output;
+        }
     }
     return null;
 }
