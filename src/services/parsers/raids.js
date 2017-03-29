@@ -7,14 +7,6 @@ const RAID_IDENTIFIERS = {
     "Wrath of the Machine": 'wotm'
 };
 
-let RAID_CHALLENGE_MODES = {
-    'Warpriest Challenge': 'warpriest',
-    'Golgoroth Challenge': 'golgoroth',
-    'Oryx Challenge': 'oryx',
-    'Vosik Challenge': 'vosik',
-    'Aksis Challenge': 'aksis',
-};
-
 export const parseFeaturedRaid = {
     shortID: 'raid',
     activities: ['weeklyfeaturedraid'],
@@ -61,68 +53,6 @@ export const parseFeaturedRaid = {
         return output;
     }
 };
-
-export let parseWrathOfTheMachine = createRaidParser({
-    activity: 'wrathofthemachine',
-    identifier: 'wotm',
-    name: 'Wrath of the Machine'
-});
-export let parseKingsFall = createRaidParser({
-    activity: 'kingsfall',
-    identifier: 'kf',
-    name: "King's Fall"
-});
-
-function createRaidParser({ activity, identifier, name }) {
-    return {
-        shortID: identifier,
-        activities: [activity],
-        parser: ({ activities, manifest }) => {
-            let output = {
-                category: 'weekly',
-                name: name,
-                type: 'Raid',
-                image: `/images/advisors/backgrounds/raid-${identifier}.jpg`,
-                icon: `/images/advisors/icons/raid-${identifier}.png`,
-                rewardSets: [
-                    `raid-${identifier}-challenges`,
-                    `raid-${identifier}-weapons`,
-                    `raid-${identifier}-armor`,
-                    `raid-${identifier}-equipment`
-                ]
-            };
-            let advisor = activities[activity];
-
-            // obtain challenge modes
-            if (advisor.activityTiers) {
-                let modifiers = parseChallengeModes(advisor.activityTiers);
-                if (modifiers) {
-                    // is there a single challenge mode active?
-                    if (modifiers.length === 1) {
-                        let activeChallenge = modifiers[0].name;
-                        output.name = activeChallenge;
-                        output.type = name;
-
-                        let bossID = RAID_CHALLENGE_MODES[activeChallenge];
-                        if (bossID) {
-                            // set challenge mode background
-                            output.image = `/images/advisors/backgrounds/raid-${identifier}-${bossID}.jpg`;
-
-                            // add challenge mode rewards
-                            let challengeRewards = `${identifier}Challenge-${bossID}`;
-                            output.rewardSets.splice(0, 0, challengeRewards);
-                        }
-                    }
-                    else {
-                        output.modifiers = modifiers;
-                    }
-                }
-            }
-
-            return output;
-        }
-    };
-}
 
 function parseChallengeModes(tiers) {
     if (tiers.length > 0 && tiers[0].skullCategories) {
