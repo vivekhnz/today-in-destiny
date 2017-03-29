@@ -41,25 +41,6 @@ const TASKS = [
         }
     },
     {
-        // daily activities
-        time: {
-            // Everyday, 9 AM UTC
-            utc: true,
-            hour: 9
-        },
-        card: {
-            template: '2x1',
-            name: 'Today',
-            category: 'daily',
-            advisors: ['story', 'crucible'],
-            maxAdvisors: 2,
-            getDate: () => {
-                let date = time.getCurrentDate();
-                return `${date.month} ${date.day}`;
-            }
-        }
-    },
-    {
         // Trials of Osiris
         time: {
             // Friday, 10 AM Pacific
