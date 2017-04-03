@@ -35,7 +35,7 @@ export let parseWeeklyCrucible = createCrucibleParser({
     type: 'Weekly Crucible Playlist',
     icon: "/images/advisors/icons/weeklyCrucible.png",
     currencies: [
-        currency('Radiant Treasure', 1),
+        currency('Treasure of the Ages', 1),
         currency('Legendary Marks', 30, 10)
     ],
     rewardSets: ['cruciblePostGameRewards']

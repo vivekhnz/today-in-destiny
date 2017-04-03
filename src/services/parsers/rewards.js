@@ -1,4 +1,4 @@
-let STRIKE_SPECIFIC_LOOT = {
+const STRIKE_SPECIFIC_LOOT = {
     blightedChalice: {
         strikes: ['Blighted Chalice'],
         items: [3872841536]
@@ -61,7 +61,7 @@ let STRIKE_SPECIFIC_LOOT = {
     }
 };
 
-export let REWARDS = {
+export const REWARDS = {
     cruciblePostGameRewards: {
         name: 'Post-Game Rewards',
         items: [
@@ -266,8 +266,8 @@ export let REWARDS = {
         items: combineStrikeSpecificLoot()
     }
 };
-for (let strike in STRIKE_SPECIFIC_LOOT) {
-    let loot = STRIKE_SPECIFIC_LOOT[strike];
+for (const strike in STRIKE_SPECIFIC_LOOT) {
+    const loot = STRIKE_SPECIFIC_LOOT[strike];
     REWARDS[`strike-${strike}`] = {
         name: 'Strike Hoard Chest',
         items: loot.items
@@ -275,9 +275,9 @@ for (let strike in STRIKE_SPECIFIC_LOOT) {
 }
 
 function combineStrikeSpecificLoot() {
-    let output = [];
-    for (let strike in STRIKE_SPECIFIC_LOOT) {
-        let loot = STRIKE_SPECIFIC_LOOT[strike];
+    const output = [];
+    for (const strike in STRIKE_SPECIFIC_LOOT) {
+        const loot = STRIKE_SPECIFIC_LOOT[strike];
         loot.items.forEach(item => {
             if (!output.includes(item)) {
                 output.push(item);
@@ -288,9 +288,9 @@ function combineStrikeSpecificLoot() {
 }
 
 export function getStrikeLoot(strikeName) {
-    let output = [];
-    for (let strike in STRIKE_SPECIFIC_LOOT) {
-        let loot = STRIKE_SPECIFIC_LOOT[strike];
+    const output = [];
+    for (const strike in STRIKE_SPECIFIC_LOOT) {
+        const loot = STRIKE_SPECIFIC_LOOT[strike];
         if (loot.strikes.includes(strikeName)) {
             return `strike-${strike}`;
         }
@@ -298,11 +298,9 @@ export function getStrikeLoot(strikeName) {
     return undefined;
 }
 
-export let CURRENCIES = {
+export const CURRENCIES = {
     'Unknown Rewards': 'unknown.jpg',
     'Legendary Marks': 'legendaryMarks.png',
-    'Legendary Engram': 'engram.jpg',
     'Skeleton Key': 'skeletonKey.jpg',
-    'Radiant Treasure': 'radiantTreasure.jpg',
-    'Treasures of the Dawning': 'dawningTreasure.jpg'
+    'Treasure of the Ages': 'agesTreasure.png'
 };
