@@ -7,7 +7,7 @@ export let parseIronLordArtifacts = {
     },
     parser: () => {
         return {
-            category: 'weekly',
+            category: 'vendors',
             type: 'Tyra Karn',
             name: 'Iron Lord Artifacts',
             image: "/images/advisors/backgrounds/ironTemple.jpg",
@@ -25,7 +25,7 @@ export let parseShiro = {
     },
     parser: () => {
         return {
-            category: 'weekly',
+            category: 'vendors',
             type: 'Shiro-4',
             name: 'Vanguard Scout',
             image: "/images/advisors/backgrounds/felwinterPeak.jpg",
