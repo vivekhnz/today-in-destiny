@@ -19,6 +19,7 @@ export let parseNightfall = createMissionParser({
     icon: "/images/advisors/icons/nightfall.png",
     currencies: [
         currency('Skeleton Key', 1),
+        currency('Radiant Light EXP buff', 1),
         currency('Unknown Rewards', 1)
     ]
 });
@@ -31,9 +32,8 @@ export let parseHeroicStrikes = createPlaylistParser({
     image: "/images/advisors/backgrounds/heroicStrikes.jpg",
     icon: "/images/advisors/icons/heroicStrikes.png",
     currencies: [
-        currency('Treasures of the Dawning', 1),
-        currency('Legendary Marks', 30, 10),
-        currency('Legendary Engram', 1)
+        currency('Treasure of the Ages', 1),
+        currency('Legendary Marks', 30, 10)
     ],
     rewardSets: ['strikeHoardChests']
 });

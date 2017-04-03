@@ -7,7 +7,7 @@ const RAID_IDENTIFIERS = {
     "Wrath of the Machine": 'wotm'
 };
 
-export const parseFeaturedRaid = {
+export default {
     shortID: 'raid',
     activities: ['weeklyfeaturedraid'],
     parser: ({ activities, manifest }) => {
