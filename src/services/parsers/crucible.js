@@ -1,6 +1,6 @@
 import { currency } from './utils';
 
-let CRUCIBLE_MODES = {
+const CRUCIBLE_MODES = {
     '6v6': [
         'Classic 6v6', 'Freelance 6v6', 'Iron Banner Clash',
         'Inferno Clash', 'Clash', 'Control', 'Inferno Control',
@@ -21,21 +21,13 @@ let CRUCIBLE_MODES = {
     ]
 };
 
-export let parseDailyCrucible = createCrucibleParser({
-    activity: 'dailycrucible',
-    category: 'daily',
-    type: 'Daily Crucible Playlist',
-    icon: "/images/advisors/icons/dailyCrucible.png",
-    currencies: [currency('Legendary Marks', 15)],
-    rewardSets: ['cruciblePostGameRewards']
-});
-export let parseWeeklyCrucible = createCrucibleParser({
+export default createCrucibleParser({
     activity: 'weeklycrucible',
     category: 'weekly',
     type: 'Weekly Crucible Playlist',
     icon: "/images/advisors/icons/weeklyCrucible.png",
     currencies: [
-        currency('Radiant Treasure', 1),
+        currency('Treasure of the Ages', 1),
         currency('Legendary Marks', 30, 10)
     ],
     rewardSets: ['cruciblePostGameRewards']

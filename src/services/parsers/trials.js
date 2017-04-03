@@ -9,8 +9,9 @@ export default {
             image: "/images/advisors/backgrounds/trials.jpg",
             icon: "/images/advisors/icons/trials.png",
             rewardSets: [
-                'trials5wins', 'trials7wins', 'trialsFlawless',
-                'trialsPostGame', 'trialsGoldTier'
+                'trialsFlawless',
+                'trialsY3weapons', 'trialsY3armor', 'trialsEquipment',
+                'trialsY2weapons', 'trialsY2armor'
             ]
         };
         if (activities.trials.display) {

@@ -2,12 +2,12 @@ import { endpoints } from '../routes';
 import getCache from './cache';
 import { getFeaturedItemSummaries, getStock } from './parsers';
 
-let CATEGORIES = {
+const CATEGORIES = {
     activities: 'Activities',
     events: 'Events',
-    daily: 'Today',
-    weekly: 'This Week'
-}
+    weekly: 'This Week',
+    vendors: 'Vendors'
+};
 
 class APIService {
     get(promise) {

@@ -1,16 +1,19 @@
 import { bnet, parseModifiers, currency, copy } from './utils';
 import { getStrikeLoot } from './rewards';
 
-export let parseDailyStory = createMissionParser({
-    activity: 'dailychapter',
-    category: 'daily',
+export const parseWeeklyStory = createMissionParser({
+    activity: 'weeklystory',
+    category: 'weekly',
     shortID: 'story',
-    type: 'Daily Story Mission',
+    type: 'Weekly Story Playlist',
     image: "/images/advisors/backgrounds/default.jpg",
-    icon: "/images/advisors/icons/dailyStory.png",
-    currencies: [currency('Legendary Marks', 15)]
+    icon: "/images/advisors/icons/weeklyStory.png",
+    currencies: [
+        currency('Treasure of the Ages', 1),
+        currency('Legendary Marks', 100, 20)
+    ]
 });
-export let parseNightfall = createMissionParser({
+export const parseNightfall = createMissionParser({
     activity: 'nightfall',
     category: 'weekly',
     shortID: 'nightfall',
@@ -19,10 +22,11 @@ export let parseNightfall = createMissionParser({
     icon: "/images/advisors/icons/nightfall.png",
     currencies: [
         currency('Skeleton Key', 1),
+        currency('Radiant Light EXP buff', 1),
         currency('Unknown Rewards', 1)
     ]
 });
-export let parseHeroicStrikes = createPlaylistParser({
+export const parseHeroicStrikes = createPlaylistParser({
     activity: 'heroicstrike',
     category: 'weekly',
     shortID: 'strikes',
@@ -31,9 +35,8 @@ export let parseHeroicStrikes = createPlaylistParser({
     image: "/images/advisors/backgrounds/heroicStrikes.jpg",
     icon: "/images/advisors/icons/heroicStrikes.png",
     currencies: [
-        currency('Treasures of the Dawning', 1),
-        currency('Legendary Marks', 30, 10),
-        currency('Legendary Engram', 1)
+        currency('Treasure of the Ages', 1),
+        currency('Legendary Marks', 30, 10)
     ],
     rewardSets: ['strikeHoardChests']
 });
