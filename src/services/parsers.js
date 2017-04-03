@@ -5,8 +5,8 @@ import { default as parseXur } from './parsers/xur';
 import { default as parseTrials } from './parsers/trials';
 import { default as parseIronBanner } from './parsers/ironBanner';
 import { parseDailyStory, parseNightfall, parseHeroicStrikes } from './parsers/missions';
-import { parseDailyCrucible, parseWeeklyCrucible } from './parsers/crucible';
-import { parseFeaturedRaid } from './parsers/raids';
+import { default as parseWeeklyCrucible } from './parsers/crucible';
+import { default as parseFeaturedRaid } from './parsers/raids';
 import { parseIronLordArtifacts, parseShiro } from './parsers/vendors';
 
 const ADVISOR_PARSERS = {
@@ -15,7 +15,6 @@ const ADVISOR_PARSERS = {
     'ironBanner': parseIronBanner,
     'raid': parseFeaturedRaid,
     'dailyStory': parseDailyStory,
-    'dailyCrucible': parseDailyCrucible,
     'nightfall': parseNightfall,
     'heroicStrikes': parseHeroicStrikes,
     'weeklyCrucible': parseWeeklyCrucible,
