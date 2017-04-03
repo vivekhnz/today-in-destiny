@@ -1,5 +1,7 @@
 import Canvas from 'canvas';
 
+const LINE_SPACING = 2;
+
 export default class CanvasHelper {
     constructor(width, height, images) {
         this.canvas = new Canvas(width, height);
@@ -95,7 +97,8 @@ function drawMeasureText(
                     context.fillText(line, x, y - textHeight);
                 }
                 let textSize = context.measureText(line);
-                textHeight += textSize.emHeightAscent;
+                textHeight += textSize.emHeightAscent
+                    + LINE_SPACING;
             }
             return {
                 width: maxWidth,
