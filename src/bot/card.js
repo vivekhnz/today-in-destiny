@@ -24,6 +24,12 @@ let TEMPLATES = {
         height: 512,
         columns: 2,
         advisorHeight: 210
+    },
+    '2x3': {
+        width: 892,
+        height: 738,
+        columns: 2,
+        advisorHeight: 210
     }
 };
 
