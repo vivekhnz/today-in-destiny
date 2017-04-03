@@ -29,11 +29,15 @@ const TASKS = [
             hour: 9
         },
         card: {
-            template: '2x2',
+            template: '2x3',
             name: 'This Week',
             category: 'weekly',
-            advisors: ['wotm', 'nightfall', 'strikes', 'crucible', 'kf'],
-            maxAdvisors: 4,
+            advisors: [
+                'raid', 'nightfall',
+                'strikes', 'story',
+                'crucible'
+            ],
+            maxAdvisors: 6,
             getDate: () => {
                 let week = time.getCurrentDestinyWeek();
                 return `${week.tuesday} - ${week.monday}`;
