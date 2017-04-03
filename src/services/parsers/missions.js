@@ -19,6 +19,7 @@ export let parseNightfall = createMissionParser({
     icon: "/images/advisors/icons/nightfall.png",
     currencies: [
         currency('Skeleton Key', 1),
+        currency('Radiant Light EXP buff', 1),
         currency('Unknown Rewards', 1)
     ]
 });

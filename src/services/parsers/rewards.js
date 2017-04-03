@@ -302,5 +302,6 @@ export const CURRENCIES = {
     'Unknown Rewards': 'unknown.jpg',
     'Legendary Marks': 'legendaryMarks.png',
     'Skeleton Key': 'skeletonKey.jpg',
-    'Treasure of the Ages': 'agesTreasure.png'
+    'Treasure of the Ages': 'agesTreasure.png',
+    'Radiant Light EXP buff': 'radiantLight.png'
 };
