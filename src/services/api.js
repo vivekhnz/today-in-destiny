@@ -5,7 +5,6 @@ import { getFeaturedItemSummaries, getStock } from './parsers';
 const CATEGORIES = {
     activities: 'Activities',
     events: 'Events',
-    daily: 'Today',
     weekly: 'This Week',
     vendors: 'Vendors'
 };
