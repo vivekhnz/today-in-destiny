@@ -3,7 +3,7 @@ import request from 'request';
 class BungiePlatformService {
     get(endpoint) {
         let options = {
-            url: `https://www.bungie.net/Platform${endpoint}`,
+            url: `https://www.bungie.net/d1/Platform${endpoint}`,
             headers: {
                 'X-API-Key': process.env.BUNGIE_API_KEY
             }
