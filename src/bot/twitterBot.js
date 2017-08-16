@@ -43,26 +43,6 @@ const TASKS = [
                 return `${week.tuesday} - ${week.monday}`;
             }
         }
-    },
-    {
-        // Trials of Osiris
-        time: {
-            // Friday, 10 AM Pacific
-            utc: false,
-            day: 5,
-            hour: 10
-        },
-        card: {
-            template: '1x1',
-            name: 'Trials of Osiris',
-            category: 'events',
-            advisors: ['trials'],
-            maxAdvisors: 1,
-            getDate: () => {
-                let week = time.getCurrentDestinyWeek();
-                return `${week.friday} - ${week.monday}`;
-            }
-        }
     }
 ];
 
