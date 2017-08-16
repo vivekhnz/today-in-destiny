@@ -36,7 +36,13 @@ const MAXIMUM_CACHE_MILLISECONDS = 900000; // 15 minutes
 // how many minutes to wait after each hour before refreshing
 const CACHE_REFRESH_OFFSET_MINUTES = 3;
 
-export default function getCache() {
+export default function getCache(forceRefresh) {
+    // regenerate the cache if a force refresh was requested
+    if (forceRefresh) {
+        console.log('Force refresh.');
+        return regenerateCache();
+    }
+
     // attempt to retrieve cached data
     let cached = memcache.get(ADVISORS_CACHE_ID);
     if (cached) {
