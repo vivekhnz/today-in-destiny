@@ -9,6 +9,9 @@ if (!process.env.TWITTER_CONSUMER_KEY
     console.error("One or more Twitter secret key environment variables have not been set.");
     process.exit(1);
 }
+if (!process.env.API_REFRESH_TOKEN) {
+    console.error("An API refresh token was not specified. This bot will be unable to force a cache refresh when rendering a card.");
+}
 
 import fs from 'fs';
 import request from 'request';
@@ -41,26 +44,6 @@ const TASKS = [
             getDate: () => {
                 let week = time.getCurrentDestinyWeek();
                 return `${week.tuesday} - ${week.monday}`;
-            }
-        }
-    },
-    {
-        // Trials of Osiris
-        time: {
-            // Friday, 10 AM Pacific
-            utc: false,
-            day: 5,
-            hour: 10
-        },
-        card: {
-            template: '1x1',
-            name: 'Trials of Osiris',
-            category: 'events',
-            advisors: ['trials'],
-            maxAdvisors: 1,
-            getDate: () => {
-                let week = time.getCurrentDestinyWeek();
-                return `${week.friday} - ${week.monday}`;
             }
         }
     }
@@ -155,7 +138,21 @@ function retry(promiseFunction, maxRetries) {
 function getAdvisors() {
     return new Promise((resolve, reject) => {
         console.log('Retrieving advisors...');
-        request(API_ENDPOINT, (error, response, body) => {
+
+        // request a cache refresh if a refresh token was configured
+        let options = {
+            url: API_ENDPOINT
+        };
+        if (process.env.API_REFRESH_TOKEN) {
+            options.qs = {
+                refresh: 'true'
+            };
+            options.headers = {
+                'X-Refresh-Token': process.env.API_REFRESH_TOKEN
+            };
+        }
+
+        request(options, (error, response, body) => {
             try {
                 if (error) {
                     throw error;
