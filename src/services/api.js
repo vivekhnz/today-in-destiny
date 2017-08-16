@@ -12,7 +12,7 @@ const CATEGORIES = {
 class APIService {
     get(promise) {
         return (req, res) => {
-            promise.bind(this)(req.params)
+            promise.bind(this)(req.params, req.query)
                 .then(result => res.send({
                     response: result,
                     status: 'Success'
@@ -30,9 +30,10 @@ class APIService {
         app.get(endpoints.categoryAdvisor, this.get(this.getCategoryAdvisor));
     }
 
-    getAdvisors() {
+    getAdvisors(params, query) {
         return new Promise((resolve, reject) => {
-            getCache().then(cache => {
+            const forceRefresh = query.refresh === 'true';
+            getCache(forceRefresh).then(cache => {
                 resolve({
                     date: cache.date,
                     categories: summariseAdvisors(
@@ -43,11 +44,12 @@ class APIService {
         });
     }
 
-    getSingleAdvisor(params) {
+    getSingleAdvisor(params, query) {
         return new Promise((resolve, reject) => {
             let loadAdvisor = () => {
                 if (params && params.id) {
-                    return getCache().then(cache => {
+                    const forceRefresh = query.refresh === 'true';
+                    return getCache(forceRefresh).then(cache => {
                         let advisor = cache.advisors[params.id];
                         if (advisor) {
                             return {
@@ -70,11 +72,12 @@ class APIService {
         });
     }
 
-    getCategoryAdvisor(params) {
+    getCategoryAdvisor(params, query) {
         return new Promise((resolve, reject) => {
             let loadAdvisor = () => {
                 if (params && params.category && params.id) {
-                    return getCache().then(cache => {
+                    const forceRefresh = query.refresh === 'true';
+                    return getCache(forceRefresh).then(cache => {
                         let category = cache.categories[params.category];
                         if (category) {
                             let advisorID = category[params.id];
