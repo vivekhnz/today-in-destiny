@@ -103,7 +103,7 @@ class APIService {
     }
 
     shouldForceRefresh(query, headers) {
-        if (query.refresh !== 'true') {
+        if (query && query.refresh !== 'true') {
             // force refresh was not requested
             return false;
         }
@@ -111,7 +111,7 @@ class APIService {
             // no API refresh token was configured, force refresh is not supported
             return false;
         }
-        if (process.env.API_REFRESH_TOKEN !== headers[REFRESH_TOKEN_HEADER]) {
+        if (headers && process.env.API_REFRESH_TOKEN !== headers[REFRESH_TOKEN_HEADER]) {
             // incorrect refresh token
             return false;
         }
