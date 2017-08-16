@@ -9,10 +9,12 @@ const CATEGORIES = {
     vendors: 'Vendors'
 };
 
+const REFRESH_TOKEN_HEADER = 'x-refresh-token';
+
 class APIService {
     get(promise) {
         return (req, res) => {
-            promise.bind(this)(req.params, req.query)
+            promise.bind(this)(req.params, req.query, req.headers)
                 .then(result => res.send({
                     response: result,
                     status: 'Success'
@@ -30,10 +32,9 @@ class APIService {
         app.get(endpoints.categoryAdvisor, this.get(this.getCategoryAdvisor));
     }
 
-    getAdvisors(params, query) {
+    getAdvisors(params, query, headers) {
         return new Promise((resolve, reject) => {
-            const forceRefresh = query.refresh === 'true';
-            getCache(forceRefresh).then(cache => {
+            getCache(this.shouldForceRefresh(query, headers)).then(cache => {
                 resolve({
                     date: cache.date,
                     categories: summariseAdvisors(
@@ -44,12 +45,11 @@ class APIService {
         });
     }
 
-    getSingleAdvisor(params, query) {
+    getSingleAdvisor(params, query, headers) {
         return new Promise((resolve, reject) => {
             let loadAdvisor = () => {
                 if (params && params.id) {
-                    const forceRefresh = query.refresh === 'true';
-                    return getCache(forceRefresh).then(cache => {
+                    return getCache(this.shouldForceRefresh(query, headers)).then(cache => {
                         let advisor = cache.advisors[params.id];
                         if (advisor) {
                             return {
@@ -72,12 +72,11 @@ class APIService {
         });
     }
 
-    getCategoryAdvisor(params, query) {
+    getCategoryAdvisor(params, query, headers) {
         return new Promise((resolve, reject) => {
             let loadAdvisor = () => {
                 if (params && params.category && params.id) {
-                    const forceRefresh = query.refresh === 'true';
-                    return getCache(forceRefresh).then(cache => {
+                    return getCache(this.shouldForceRefresh(query, headers)).then(cache => {
                         let category = cache.categories[params.category];
                         if (category) {
                             let advisorID = category[params.id];
@@ -101,6 +100,22 @@ class APIService {
                 .then(response => resolve(response))
                 .catch(error => reject(error));
         });
+    }
+
+    shouldForceRefresh(query, headers) {
+        if (query.refresh !== 'true') {
+            // force refresh was not requested
+            return false;
+        }
+        if (!process.env.API_REFRESH_TOKEN) {
+            // no API refresh token was configured, force refresh is not supported
+            return false;
+        }
+        if (process.env.API_REFRESH_TOKEN !== headers[REFRESH_TOKEN_HEADER]) {
+            // incorrect refresh token
+            return false;
+        }
+        return true;
     }
 };
 

@@ -39,6 +39,7 @@ const CACHE_REFRESH_OFFSET_MINUTES = 3;
 export default function getCache(forceRefresh) {
     // regenerate the cache if a force refresh was requested
     if (forceRefresh) {
+        console.log('Force refresh.');
         return regenerateCache();
     }
 
