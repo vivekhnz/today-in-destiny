@@ -1,7 +1,7 @@
 # Today in Destiny
 A summary of what's available in Destiny today.
 
-[https://todayindestiny.herokuapp.com/](https://todayindestiny.herokuapp.com/)
+![Today in Destiny](preview.jpg)
 
 ## Start server
 `gulp serve`
